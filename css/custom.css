@@ -5,6 +5,9 @@
 ***** b = bottom
 ***** l = left
 ***** r = right
+***** tb = both top and bottom
+***** lr = both left and right
+***** min = minus
 ***** angka menunjukan nilai
 =========================================================================== by nicholas kotama*/
 
@@ -17,15 +20,21 @@
 .m-t-25{
 	margin-top: 25px;
 }
-.m-b-10{
-	margin-top: 10px;
+
+.m-t-min-20{
+	margin-top: -20px;
 }
+
 .m-b-20{
 	margin-top: 20px;
 }
-.m-b-25{
-	margin-top: 25px;
+
+.m-lr-10{
+	margin-left: 10px;
+	margin-right: 10px;
 }
+
+
 .p-l-0{
 	padding-left: 0 !important;
 }

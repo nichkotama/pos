@@ -4,52 +4,49 @@
         <div class="user-profile-container">
             <div class="user-profile clearfix">
                 <div class="admin-user-thumb">
-                    <img src="images/avatar/jaman_01.jpg" alt="admin">
+                    <img src="<?php echo $url_web ?>images/avatar/nicholaskotama.png" alt="admin">
                 </div>
                 <div class="admin-user-info">
                     <ul>
-                        <li><a href="#">Kamrujaman Shohel</a></li>
-                        <li><a href="#">Info@jaman.me</a></li>
+                        <li><a href="#">Nama Kasir</a></li>
+                        <li><a href="#">NIK Kasir</a></li>
                     </ul>
                 </div>
             </div>
             <div class="admin-bar">
                 <ul>
-                    <li><a href="#"><i class="zmdi zmdi-power"></i>
+                    <li><a href="#" data-toggle="tooltip" data-r="bottom" title="Logout"><i class="zmdi zmdi-power"></i>
                     </a>
                     </li>
-                    <li><a href="#"><i class="zmdi zmdi-account"></i>
+                    <li><a href="#" data-toggle="tooltip" data-placement="bottom" title="Edit Profile"><i class="zmdi zmdi-account"></i>
                     </a>
                     </li>
-                    <li><a href="#"><i class="zmdi zmdi-key"></i>
+                    <li><a href="#" data-toggle="tooltip" data-placement="bottom" title="Sales Session"><i class="zmdi zmdi-key"></i>
                     </a>
                     </li>
-                    <li><a href="#"><i class="zmdi zmdi-settings"></i>
+                    <li><a href="#" data-toggle="tooltip" data-placement="bottom" title="Config"><i class="zmdi zmdi-settings"></i>
                     </a>
                     </li>
                 </ul>
             </div>
         </div>
         <ul class="list-accordion tree-style">
-            <li class="list-title">Barang</li>
-            <li>
-                <a href="#"><i class="zmdi zmdi-view-dashboard"></i><span class="list-label">Layouts Variations</span></a>
-                <ul>
-                    <li><a href="#">Input Barang</a></li>
-                    <li><a href="#">Edit Barang</a></li>
-                    <li><a href="#">Beli Barang?</a></li>
-                </ul>
-            </li>
-            <li class="list-title">Barang</li>
-            <li>
-                <a href="#"><i class="zmdi zmdi-view-dashboard"></i><span class="list-label">Layouts Variations</span></a>
-                <ul>
-                    <li><a href="#">Input Barang</a></li>
-                    <li><a href="#">Edit Barang</a></li>
-                    <li><a href="#">Beli Barang?</a></li>
-                </ul>
-            </li>
-            <!--
+            <li class="list-title">Items</li>
+                <li>
+                    <a href="#"><i class="zmdi zmdi-view-dashboard"></i><span class="list-label">Manage Items</span></a>
+                    <ul>
+                        <li><a href="#">Input Barang</a></li>
+                        <li><a href="#">Edit Barang</a></li>
+                    </ul>
+                </li>
+            <li class="list-title">Transaksi</li>
+                <li><a href="#"><i class="zmdi zmdi-view-dashboard"></i><span class="list-label">Beli Barang (?)</span></a></li>
+                <li><a href="sales/"><i class="zmdi zmdi-time-restore"></i><span class="list-label">Sesi Penjualan</span></a></li>
+            <li class="list-title">Laporan (?)</li>
+                <li><a href="#"><i class="zmdi zmdi-receipt"></i><span class="list-label">Laporan Pembelian</span></a></li>
+                <li><a href="#"><i class="zmdi zmdi-receipt"></i><span class="list-label">Laporan Stok</span></a></li>
+                <li><a href="#"><i class="zmdi zmdi-receipt"></i><span class="list-label">Laporan Penjualan</span></a></li>
+            
             <li class="list-title">Layouts</li>
             <li>
                 <a href="#"><i class="zmdi zmdi-view-dashboard"></i><span class="list-label">Layouts Variations</span></a>
@@ -162,7 +159,7 @@
                     <li><a href="login-social.html">Social Login</a></li>
                     <li><a href="404-error.html">404 Error Page</a></li>
                 </ul>
-            </li> -->
+            </li> 
         </ul>
     </div>
 </aside>

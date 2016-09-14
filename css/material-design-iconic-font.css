@@ -4,7 +4,7 @@
  */
 @font-face {
   font-family: 'Material-Design-Iconic-Font';
-  src: url('../fonts/Material-Design-Iconic-Font.woff2?v=2.2.0') format('woff2'), url('../fonts/Material-Design-Iconic-Font.woff?v=2.2.0') format('woff'), url('../fonts/Material-Design-Iconic-Font.ttf?v=2.2.0') format('truetype');
+  src: url('../fonts/Material-Design-Iconic-Fontf066.woff?v=2.1.0') format('woff'), url('../fonts/Material-Design-Iconic-Fontf066.ttf?v=2.1.0') format('truetype');
   font-weight: normal;
   font-style: normal;
 }
@@ -74,77 +74,41 @@
   margin-left: .15em;
 }
 .zmdi-hc-spin {
-  -webkit-animation: zmdi-spin 1.5s infinite linear;
-          animation: zmdi-spin 1.5s infinite linear;
+  animation: zmdi-spin 1.5s infinite linear;
 }
 .zmdi-hc-spin-reverse {
-  -webkit-animation: zmdi-spin-reverse 1.5s infinite linear;
-          animation: zmdi-spin-reverse 1.5s infinite linear;
-}
-@-webkit-keyframes zmdi-spin {
-  0% {
-    -webkit-transform: rotate(0deg);
-            transform: rotate(0deg);
-  }
-  100% {
-    -webkit-transform: rotate(359deg);
-            transform: rotate(359deg);
-  }
+  animation: zmdi-spin-reverse 1.5s infinite linear;
 }
 @keyframes zmdi-spin {
   0% {
-    -webkit-transform: rotate(0deg);
-            transform: rotate(0deg);
+    transform: rotate(0deg);
   }
   100% {
-    -webkit-transform: rotate(359deg);
-            transform: rotate(359deg);
-  }
-}
-@-webkit-keyframes zmdi-spin-reverse {
-  0% {
-    -webkit-transform: rotate(0deg);
-            transform: rotate(0deg);
-  }
-  100% {
-    -webkit-transform: rotate(-359deg);
-            transform: rotate(-359deg);
+    transform: rotate(359deg);
   }
 }
 @keyframes zmdi-spin-reverse {
   0% {
-    -webkit-transform: rotate(0deg);
-            transform: rotate(0deg);
+    transform: rotate(0deg);
   }
   100% {
-    -webkit-transform: rotate(-359deg);
-            transform: rotate(-359deg);
+    transform: rotate(-359deg);
   }
 }
 .zmdi-hc-rotate-90 {
-  -webkit-transform: rotate(90deg);
-      -ms-transform: rotate(90deg);
-          transform: rotate(90deg);
+  transform: rotate(90deg);
 }
 .zmdi-hc-rotate-180 {
-  -webkit-transform: rotate(180deg);
-      -ms-transform: rotate(180deg);
-          transform: rotate(180deg);
+  transform: rotate(180deg);
 }
 .zmdi-hc-rotate-270 {
-  -webkit-transform: rotate(270deg);
-      -ms-transform: rotate(270deg);
-          transform: rotate(270deg);
+  transform: rotate(270deg);
 }
 .zmdi-hc-flip-horizontal {
-  -webkit-transform: scale(-1, 1);
-      -ms-transform: scale(-1, 1);
-          transform: scale(-1, 1);
+  transform: scale(-1, 1);
 }
 .zmdi-hc-flip-vertical {
-  -webkit-transform: scale(1, -1);
-      -ms-transform: scale(1, -1);
-          transform: scale(1, -1);
+  transform: scale(1, -1);
 }
 .zmdi-hc-stack {
   position: relative;
@@ -1981,7 +1945,7 @@
 .zmdi-share:before {
   content: '\f35b';
 }
-.zmdi-stackoverflow:before {
+.zmdi-stack-overflow:before {
   content: '\f35c';
 }
 .zmdi-steam-square:before {
@@ -2403,105 +2367,6 @@
 }
 .zmdi-voicemail:before {
   content: '\f3e8';
-}
-.zmdi-group:before {
-  content: '\f3e9';
-}
-.zmdi-rss:before {
-  content: '\f3ea';
-}
-.zmdi-shape:before {
-  content: '\f3eb';
-}
-.zmdi-spinner:before {
-  content: '\f3ec';
-}
-.zmdi-ungroup:before {
-  content: '\f3ed';
-}
-.zmdi-500px:before {
-  content: '\f3ee';
-}
-.zmdi-8tracks:before {
-  content: '\f3ef';
-}
-.zmdi-amazon:before {
-  content: '\f3f0';
-}
-.zmdi-blogger:before {
-  content: '\f3f1';
-}
-.zmdi-delicious:before {
-  content: '\f3f2';
-}
-.zmdi-disqus:before {
-  content: '\f3f3';
-}
-.zmdi-flattr:before {
-  content: '\f3f4';
-}
-.zmdi-flickr:before {
-  content: '\f3f5';
-}
-.zmdi-github-alt:before {
-  content: '\f3f6';
-}
-.zmdi-google-old:before {
-  content: '\f3f7';
-}
-.zmdi-linkedin:before {
-  content: '\f3f8';
-}
-.zmdi-odnoklassniki:before {
-  content: '\f3f9';
-}
-.zmdi-outlook:before {
-  content: '\f3fa';
-}
-.zmdi-paypal-alt:before {
-  content: '\f3fb';
-}
-.zmdi-pinterest:before {
-  content: '\f3fc';
-}
-.zmdi-playstation:before {
-  content: '\f3fd';
-}
-.zmdi-reddit:before {
-  content: '\f3fe';
-}
-.zmdi-skype:before {
-  content: '\f3ff';
-}
-.zmdi-slideshare:before {
-  content: '\f400';
-}
-.zmdi-soundcloud:before {
-  content: '\f401';
-}
-.zmdi-tumblr:before {
-  content: '\f402';
-}
-.zmdi-twitch:before {
-  content: '\f403';
-}
-.zmdi-vimeo:before {
-  content: '\f404';
-}
-.zmdi-whatsapp:before {
-  content: '\f405';
-}
-.zmdi-xbox:before {
-  content: '\f406';
-}
-.zmdi-yahoo:before {
-  content: '\f407';
-}
-.zmdi-youtube-play:before {
-  content: '\f408';
-}
-.zmdi-youtube:before {
-  content: '\f409';
 }
 .zmdi-3d-rotation:before {
   content: '\f101';
@@ -4312,7 +4177,7 @@
 .zmdi-share:before {
   content: '\f35b';
 }
-.zmdi-stackoverflow:before {
+.zmdi-stack-overflow:before {
   content: '\f35c';
 }
 .zmdi-steam-square:before {
@@ -4735,105 +4600,6 @@
 .zmdi-voicemail:before {
   content: '\f3e8';
 }
-.zmdi-group:before {
-  content: '\f3e9';
-}
-.zmdi-rss:before {
-  content: '\f3ea';
-}
-.zmdi-shape:before {
-  content: '\f3eb';
-}
-.zmdi-spinner:before {
-  content: '\f3ec';
-}
-.zmdi-ungroup:before {
-  content: '\f3ed';
-}
-.zmdi-500px:before {
-  content: '\f3ee';
-}
-.zmdi-8tracks:before {
-  content: '\f3ef';
-}
-.zmdi-amazon:before {
-  content: '\f3f0';
-}
-.zmdi-blogger:before {
-  content: '\f3f1';
-}
-.zmdi-delicious:before {
-  content: '\f3f2';
-}
-.zmdi-disqus:before {
-  content: '\f3f3';
-}
-.zmdi-flattr:before {
-  content: '\f3f4';
-}
-.zmdi-flickr:before {
-  content: '\f3f5';
-}
-.zmdi-github-alt:before {
-  content: '\f3f6';
-}
-.zmdi-google-old:before {
-  content: '\f3f7';
-}
-.zmdi-linkedin:before {
-  content: '\f3f8';
-}
-.zmdi-odnoklassniki:before {
-  content: '\f3f9';
-}
-.zmdi-outlook:before {
-  content: '\f3fa';
-}
-.zmdi-paypal-alt:before {
-  content: '\f3fb';
-}
-.zmdi-pinterest:before {
-  content: '\f3fc';
-}
-.zmdi-playstation:before {
-  content: '\f3fd';
-}
-.zmdi-reddit:before {
-  content: '\f3fe';
-}
-.zmdi-skype:before {
-  content: '\f3ff';
-}
-.zmdi-slideshare:before {
-  content: '\f400';
-}
-.zmdi-soundcloud:before {
-  content: '\f401';
-}
-.zmdi-tumblr:before {
-  content: '\f402';
-}
-.zmdi-twitch:before {
-  content: '\f403';
-}
-.zmdi-vimeo:before {
-  content: '\f404';
-}
-.zmdi-whatsapp:before {
-  content: '\f405';
-}
-.zmdi-xbox:before {
-  content: '\f406';
-}
-.zmdi-yahoo:before {
-  content: '\f407';
-}
-.zmdi-youtube-play:before {
-  content: '\f408';
-}
-.zmdi-youtube:before {
-  content: '\f409';
-}
 .zmdi-import-export:before {
   content: '\f30c';
 }
@@ -5019,9 +4785,6 @@
 }
 .zmdi-pages:before {
   content: '\f34a';
-}
-.zmdi-stack-overflow:before {
-  content: '\f35c';
 }
 .zmdi-calendar-account:before {
   content: '\f204';

@@ -1,0 +1,31 @@
+/* PETUNJUK PENGGUNAAN CSS INI ================================================================
+***** m = margin
+***** p = padding
+***** t = top
+***** b = bottom
+***** l = left
+***** r = right
+***** angka menunjukan nilai
+=========================================================================== by nicholas kotama*/
+
+.m-t-10{
+	margin-top: 10px;
+}
+.m-t-20{
+	margin-top: 20px;
+}
+.m-t-25{
+	margin-top: 25px;
+}
+.m-b-10{
+	margin-top: 10px;
+}
+.m-b-20{
+	margin-top: 20px;
+}
+.m-b-25{
+	margin-top: 25px;
+}
+.p-l-0{
+	padding-left: 0 !important;
+}

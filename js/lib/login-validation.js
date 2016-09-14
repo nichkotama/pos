@@ -96,11 +96,120 @@ $(document).ready(function(){
                             // Make submit button available
                             $('#forms-login button[type="submit"]').attr('disabled', false);
                         }, 5000);
+                        location.href='./dashboard';
                     }
                 }
             });
         }
     });
+
+
+
+    $( '#register-login' ).validate({
+
+        /* @validation states + elements */
+        errorClass: 'error-view',
+        validClass: 'success-view',
+        errorElement: 'span',
+        onkeyup: false,
+        onclick: false,
+
+        /* @validation rules */
+        rules: {
+            name: {
+                required: true
+            },
+            surname: {
+                required: true
+            },
+            email: {
+                required: true
+            },
+            password: {
+                required: true,
+                minlength: 6
+            }
+        },
+        messages: {
+            password: {
+                required: 'Please enter your password',
+                minlength: 'At least 6 characters'
+            }
+        },
+        // Add class 'error-view'
+        highlight: function(element, errorClass, validClass) {
+            $(element).closest('.input').removeClass(validClass).addClass(errorClass);
+            if ( $(element).is(':checkbox') || $(element).is(':radio') ) {
+                $(element).closest('.check').removeClass(validClass).addClass(errorClass);
+            }
+        },
+        // Add class 'success-view'
+        unhighlight: function(element, errorClass, validClass) {
+            $(element).closest('.input').removeClass(errorClass).addClass(validClass);
+            if ( $(element).is(':checkbox') || $(element).is(':radio') ) {
+                $(element).closest('.check').removeClass(errorClass).addClass(validClass);
+            }
+        },
+        // Error placement
+        errorPlacement: function(error, element) {
+            if ( $(element).is(':checkbox') || $(element).is(':radio') ) {
+                $(element).closest('.check').append(error);
+            } else {
+                $(element).closest('.unit').append(error);
+            }
+        },
+        // Submit the form
+        submitHandler:function() {
+            $( '#register-login' ).ajaxSubmit({
+
+                // Server response placement
+                target:'#register-login .response',
+
+                // If error occurs
+                error:function(xhr) {
+                    $('#register-login .response').html('An error occured: ' + xhr.status + ' - ' + xhr.statusText);
+                },
+
+                // Before submiting the form
+                beforeSubmit:function(){
+                    // Add class 'processing' to the submit button
+                    $('#register-login button[type="submit"]').attr('disabled', true).addClass('processing');
+                },
+
+                // If success occurs
+                success:function(){
+                    // Remove class 'processing'
+                    $('#register-login button[type="submit"]').attr('disabled', false).removeClass('processing');
+
+                    // Remove classes 'error-view' and 'success-view'
+                    $('#register-login .input').removeClass('success-view error-view');
+                    $('#register-login .check').removeClass('success-view error-view');
+
+                    // If response for the server is a 'success-message'
+                    if ( $('#register-login .success-message').length ) {
+
+                        // Reset form
+                        $('#forms-login').resetForm();
+
+                        // Prevent submitting the form while success message is shown
+                        $('#register-login button[type="submit"]').attr('disabled', true);
+
+                        setTimeout(function(){
+                            // Delete success message after 5 seconds
+                            $('#register-login .response').removeClass('success-message').html('');
+
+                            // Make submit button available
+                            $('#register-login button[type="submit"]').attr('disabled', false);
+                        }, 5000);
+                        location.href='./dashboard';
+                    }
+                }
+            });
+        }
+    });
+
+
+
     /***************************************/
     /* end form validation */
     /***************************************/

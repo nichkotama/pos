@@ -2966,3 +2966,347 @@
 .footer-container .footer-right .footer-meta i {
   color: #00bcd4;
 }
+
+.remove-task{
+  display:none;
+  cursor:pointer;
+}
+td.actions{
+  width:30px;
+}
+tr[data-type=todo]:hover .remove-task{
+  display:block
+}
+.content-editable{
+  border:none;
+}
+.content-editable:hover,.content-editable:focus{
+  background:#ffc;
+}
+.input-date-picker:hover,.input-date-picker:focus{
+  background:none !important;
+}
+
+select.todo{
+  color:white;
+  cursor:pointer;
+  border:none;
+}
+
+.calendar{
+  cursor:pointer;
+}
+.description-page th{
+  background:#eeeeee;
+  border-top: 1px solid #ddd !important;
+}
+
+select.todo option[value="agenda"]{
+  background-color: red;
+}
+
+select.todo option[value="decision"]{
+  background-color:  blue;
+}
+
+select.todo option[value="done"]{
+  background-color:  lightblue;
+}
+
+select.todo option[value="info"]{
+  background-color:  orange;
+}
+
+select.todo option[value="idea"]{
+  background-color:  darkorange;
+}
+
+.description-page tr th{
+  width:30%;
+}
+
+.description-page tr td{
+  width:70%;
+}
+
+.description-page tr td input{
+  width:100%;
+}
+
+
+input[name=title]{
+  width:100%;
+  font-size: 40px;
+}
+
+
+.minutes thead tr th{
+  font-weight: bold;
+  font-size:12px;
+}
+.minutes .actions{
+  width:30px !important;
+}
+
+
+
+div[data-meeting] .minutes tbody td.type select {
+  -moz-appearance: none;
+  background-color: transparent;
+  border: medium none;
+  border-radius: 5em;
+  color: inherit !important;
+  cursor: pointer;
+  display: block;
+  font-family: inherit;
+  font-feature-settings: inherit;
+  font-kerning: inherit;
+  font-language-override: inherit;
+  font-size: 1em;
+  font-size-adjust: inherit;
+  font-stretch: inherit;
+  font-style: inherit;
+  font-synthesis: inherit;
+  font-variant: inherit;
+  font-weight: inherit;
+  height: 1.6em;
+  left: -7px;
+  line-height: 1em;
+  margin: 6px 0 0;
+  padding: 0.2em 1em 0.2em 0.5em;
+  position: relative;
+  text-indent: 0.01px;
+  text-overflow: "";
+  vertical-align: middle;
+}
+div[data-meeting] .minutes tbody td.type select option {
+  background: #fff none repeat scroll 0 0;
+  padding: 2px 2px 2px 8px;
+}
+div[data-meeting] .minutes tr:last-child td.type select {
+  opacity: 0.3;
+}
+div[data-meeting] .minutes tr:last-child:hover td.type select {
+  opacity: 1;
+}
+div[data-meeting] .minutes [data-type="todo"] select, div[data-meeting] .minutes [data-type="todo"] td.type, div[data-meeting] .minutes option.todo {
+  color: #0b5aad !important;
+}
+div[data-meeting] .minutes [data-type="done"] select, div[data-meeting] .minutes [data-type="done"] td.type, div[data-meeting] .minutes option.done {
+  color: #2c8df2 !important;
+}
+div[data-meeting] .minutes [data-type="idea"] select.idea, div[data-meeting] .minutes [data-type="idea"] td.type, div[data-meeting] .minutes option.idea {
+  color: #107c00 !important;
+}
+div[data-meeting] .minutes [data-type="info"] select.info, div[data-meeting] .minutes [data-type="info"] td.type, div[data-meeting] .minutes option.info {
+  color: gray !important;
+}
+div[data-meeting] .minutes [data-type="decision"] select.decision, div[data-meeting] .minutes [data-type="decision"] td.type, div[data-meeting] .minutes option.decision {
+  color: #c00 !important;
+}
+div[data-meeting] .minutes [data-type="agenda"] select.agenda, div[data-meeting] .minutes [data-type="agenda"] td.type, div[data-meeting] .minutes option.agenda {
+  color: #262d89 !important;
+}
+div[data-meeting][data-mode="edit"] .minutes tbody td.type:hover {
+  background: inherit;
+}
+div[data-meeting][data-mode="edit"] .minutes tbody select:focus, div[data-meeting][data-mode="edit"] .minutes tbody select:hover {
+  background: rgba(0, 0, 0, 0) url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAFCAYAAAB8ZH1oAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAK8AAACvABQqw0mAAAABh0RVh0Q3JlYXRpb24gVGltZQAzMC4wNC4yMDExpqwPZgAAABx0RVh0U29mdHdhcmUAQWRvYmUgRmlyZXdvcmtzIENTNAay06AAAABESURBVAiZbctBDcAwDATBtVQggRKIhRJIhhAG20f7sBqvdL851PQsVepQZwPnAQHUVdD6owqHur+NDl4AEZHq/d5Imh7atoaZRJtMOgAAAABJRU5ErkJggg==") no-repeat scroll 100% 50%;
+  color: #fff !important;
+  outline: 0 none;
+}
+div[data-meeting][data-mode="edit"] .minutes tbody [data-type="todo"] select:focus, div[data-meeting][data-mode="edit"] .minutes tbody [data-type="todo"] select:hover {
+  background-color: #0b5aad !important;
+}
+div[data-meeting][data-mode="edit"] .minutes tbody [data-type="done"] select:focus, div[data-meeting][data-mode="edit"] .minutes tbody [data-type="done"] select:hover {
+  background-color: #2c8df2 !important;
+}
+div[data-meeting][data-mode="edit"] .minutes tbody [data-type="idea"] select:focus, div[data-meeting][data-mode="edit"] .minutes tbody [data-type="idea"] select:hover {
+  background-color: #107c00 !important;
+}
+div[data-meeting][data-mode="edit"] .minutes tbody [data-type="info"] select:focus, div[data-meeting][data-mode="edit"] .minutes tbody [data-type="info"] select:hover {
+  background-color: gray !important;
+}
+div[data-meeting][data-mode="edit"] .minutes tbody [data-type="decision"] select:focus, div[data-meeting][data-mode="edit"] .minutes tbody [data-type="decision"] select:hover {
+  background-color: #c00 !important;
+}
+div[data-meeting][data-mode="edit"] .minutes tbody [data-type="agenda"] select:focus, div[data-meeting][data-mode="edit"] .minutes tbody [data-type="agenda"] select:hover {
+  background-color: #262d89 !important;
+}
+div[data-meeting] .minutes tbody td.due {
+  padding-right: 0;
+}
+div[data-meeting] .minutes tbody td.due > div {
+  position: relative;
+}
+div[data-meeting] .minutes tbody td.due [contenteditable] {
+  padding-right: 24px;
+}
+div[data-meeting] .minutes tbody td.due .calendar {
+  cursor: pointer;
+  display: none;
+  font-size: 12px;
+  line-height: 12px;
+  opacity: 0;
+  outline: 0 none;
+  padding: 4px;
+  position: absolute;
+  right: 0;
+  top: -5px;
+  transition: opacity 0.1s ease 0s;
+}
+
+div[data-meeting] .minutes tbody td.due .calendar:focus, div[data-meeting] .minutes tbody td.due .calendar:hover {
+  opacity: 1 !important;
+}
+div[data-meeting] .minutes tbody td.due [contenteditable] {
+  white-space: nowrap;
+}
+div[data-meeting][data-mode="edit"] .minutes tbody td.due .calendar {
+  display: block;
+}
+div[data-meeting][data-mode="edit"] .minutes tbody td.due .calendar:focus, div[data-meeting][data-mode="edit"] .minutes tbody td.due .calendar:hover {
+  color: #139c9b;
+  opacity: 0.5;
+  text-decoration: none;
+}
+div[data-meeting][data-mode="edit"] .minutes tbody [name="dueAt"]:focus + .calendar, div[data-meeting][data-mode="edit"] .minutes tbody tr:hover .calendar {
+  opacity: 0.5;
+}
+
+.calendar i{
+  font-size:25px
+}
+
+.content-disabled{
+  background:none !important;
+}
+/*
+.minutes tbody.disable-counters tr {
+  counter-increment: none;
+}
+.minutes tbody.disable-counters tr.has-new-topic {
+  counter-reset: none;
+}
+.minutes tbody tr {
+  counter-increment: topicsubnumber;
+}
+.minutes tbody tr.has-new-topic {
+  counter-increment: topicnumber;
+  counter-reset: topicsubnumber;
+}
+
+
+.minutes tbody tr.has-new-topic td.number [contenteditable]::before {
+
+  content: counter(topicnumber, decimal) "." counter(topicsubnumber, decimal) " ";
+  visibility: visible !important;
+}
+
+ */
+.minutes tbody tr{
+  counter-increment: topicsubnumber;
+
+}
+.minutes tbody tr.has-new-topic {
+  counter-increment: topicnumber;
+  counter-reset: topicsubnumber;
+}
+
+.minutes tbody tr td.number div:before {
+  content: counter(topicnumber, decimal) "." counter(topicsubnumber, decimal) " ";
+  counter-increment: item;
+}
+
+.minutes tbody tr.has-new-topic td.number div:before {
+  content: counter(topicnumber, decimal) ". " !important;
+}
+
+
+.minutes tbody tr td.topic, .minutes tr td.number{
+  border-top-color: transparent;
+}
+
+.minutes tr.has-new-topic td.topic, .minutes tr.has-new-topic td.number{
+  border-top-color: #ddd;
+}
+
+.twitter-typeahead,.tm-input-typeahead{
+  border:none !important;
+}
+
+.tagsinput{
+  border:none !important;
+  padding: 0px !important;
+}
+.tag{
+  background:#42B6D9 !important;
+  opacity: 0.7;
+  cursor:pointer;
+  -webkit-transition: opacity 200ms;
+  -moz-transition: opacity 200ms;
+  -ms-transition: opacity 200ms;
+  -o-transition: opacity 200ms;
+  transition: opacity 200ms;
+
+}
+.tag:hover{
+  background:#42B6D9 !important;
+  opacity: 1;
+
+}
+div.tagsinput span.tag,div.tagsinput a{
+  color:white !important;
+}
+
+div.tagsinput span.tag {
+  border:none !important;
+
+}
+
+.datetime{
+  width:230px;
+}
+.tags{
+  border:none !important;
+}
+
+.minutes select{
+  transition: none !important;
+}
+.widget-wrap.category{
+  padding:20px !important;
+}
+.widget-wrap.category{
+  -webkit-transition: box-shadow 200ms;
+  -moz-transition: box-shadow 200ms;
+  -ms-transition: box-shadow 200ms;
+  -o-transition: box-shadow 200ms;
+  transition: box-shadow 200ms;
+}
+
+
+.widget-wrap.category .widget-header.block-header {
+  border-bottom: 1px solid #eee !important;
+  margin-left: -20px !important;
+  margin-right: -20px !important;
+  padding-bottom: 20px !important;
+  padding-left: 20px !important;
+  padding-right: 20px !important;
+  min-height: 50px !important;
+}
+
+.widget-wrap.category .widget-header.block-header h3{
+  min-height: 40px;
+}
+.widget-wrap.category:hover {
+  -moz-box-shadow: 0 0 5px rgba(0,0,0,0.5);
+  -webkit-box-shadow: 0 0 5px rgba(0,0,0,0.5);
+  box-shadow: 0 0 5px rgba(0,0,0,0.5);
+
+}
+
+.widget-wrap.category .widget-content strong{
+  font-size:12px;
+  font-weight: bold;
+}

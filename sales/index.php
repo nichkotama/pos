@@ -41,12 +41,17 @@
             qty = value;
         }
         table.innerHTML = table.innerHTML 
-            + '<div class="col-md-1">' + number + '</div>' 
-            + '<div class="col-md-3">' + items +'</div>' 
-            + '<div class="col-md-2">' + qty +'</div>' 
-            + '<div class="col-md-3">Harga Satuan</div>' 
-            + '<div class="col-md-3">Sub-Total</div>';
+            + '<div class="col-sm-1"><button class="btn btn-danger"><i class="zmdi zmdi-close"></i></button></div>' 
+            + '<div class="col-sm-1 p-tb-9">' + number + '</div>' 
+            + '<div class="col-sm-3 p-tb-9">' + items +'</div>' 
+            + '<div class="col-sm-1"><input class="form-control" type="number" value="' + qty +'"/></div>' 
+            + '<div class="col-sm-3"><input class="form-control" type="number" value="' + qty +'" readonly=""/></div>' 
+            + '<div class="col-sm-3"><input class="form-control" type="number" value="' + qty +'" readonly=""/></div>' 
         number++;
+
+        document.getElementById("barcode").value = '';
+        document.getElementById("qty").value = 1;
+        document.getElementById("barcode").focus();
         // var row = table.insertRow(1);
         // var cell1 = row.insertCell(0);
         // var cell2 = row.insertCell(1);
@@ -62,6 +67,10 @@
             value = document.getElementById('qty').value;
         }
         return myFunction(src, value);
+        // var field_barcode = document.getElementById('barcode');
+        // var field_qty = document.getElementById('qty');
+        // field_barcode.innerHTML = "";
+        // field_qty.innerHTML = "";
     }
 }
 </script>
@@ -73,15 +82,19 @@
 <div class="container-fluid">
 <div class="page-header filled light">
     <div class="row widget-header block-header">
-        <div class="col-md-6 col-sm-6">
+        <div class="col-sm-6">
             <h2>Sales</h2>
             <p>Penjualan Hari Rabu, 14-Sep-2016</p>
         </div>
-        <div class="col-md-6 col-sm-6">
+        <div class="col-sm-6">
             <ul class="list-page-breadcrumb">
                 <li><a href="#">Sales <i class="zmdi zmdi-chevron-right"></i></a></li>
                 <li class="active-page"> Session</li>
             </ul>
+        </div>
+        <div class="col-sm-12 m-t-20">
+            <button class="btn btn-success active col-sm-6"><i class="zmdi zmdi-keyboard"> Keyboard Mode</i></button>
+            <button class="btn btn-success col-sm-6"><i class="zmdi zmdi-image"> Mouse Mode</i></button>
         </div>
     </div>
 
@@ -92,7 +105,7 @@
                             <!-- <form action="#" method="post" class="j-forms" id="order-forms-quantity" novalidate> -->
                             <div class="j-forms" id="order-forms-quantity" novalidate>
 
-                                <div class="form-content">
+                                <div class="form-group">
                                     <!-- start name -->
                                     <div class="col-md-8 unit">
                                         <div class="input">
@@ -107,7 +120,7 @@
                                             <label class="icon-left" for="name">
                                                 <i class="zmdi zmdi-shopping-basket"></i>
                                             </label>
-                                            <input class="form-control" type="number" id="qty" placeholder="Qty" onkeypress="return cek_enter(event, 'qty')"> 
+                                            <input class="form-control" type="number" id="qty" placeholder="Qty" value=1 min=1 onkeypress="return cek_enter(event, 'qty')"> 
                                         </div>
                                     </div>
                                     <div class="col-md-2 unit">
@@ -115,6 +128,7 @@
                                             <button type="submit" class="btn btn-success" onclick="myFunction()"><i class="zmdi zmdi-plus"> Add Item</i></button>
                                         </div>
                                     </div>
+                                </div>
                                     <!-- end name -->
                                     <!-- <div class="row fruits-calculation">
                                         <div class="col-md-12 unit">
@@ -127,13 +141,14 @@
                                             </table>
                                         </div>
                                     </div> -->
-                                    <div class="row fruits-calculation">
-                                        <div class="col-md-12 unit" id="myTable">
-                                            <div class="col-md-1 heading-tabel">#</div>
-                                            <div class="col-md-3 heading-tabel">Item</div>
-                                            <div class="col-md-2 heading-tabel">Qty</div>
-                                            <div class="col-md-3 heading-tabel">Harga Satuan</div>
-                                            <div class="col-md-3 heading-tabel">Sub-Total</div>
+                                    <div class="row">
+                                        <div class="col-md-12" id="myTable">
+                                            <div class="col-sm-1 heading-tabel">Remove</div>
+                                            <div class="col-sm-1 heading-tabel">#</div>
+                                            <div class="col-sm-3 heading-tabel">Item</div>
+                                            <div class="col-sm-1 heading-tabel">Qty</div>
+                                            <div class="col-sm-3 heading-tabel">Harga Satuan</div>
+                                            <div class="col-sm-3 heading-tabel">Sub-Total</div>
                                         </div>
                                     </div>
                                     <!-- start  fruit coconut -->
@@ -216,7 +231,7 @@
                                     <!-- end additional fruit -->
 
                                     <!-- start totals -->
-                                    <div class="row">
+                                    <div class="row m-t-20">
                                         <div class="col-md-offset-8 col-md-4 unit">
                                             <div class="input">
                                                 <input class="form-control" type="text" placeholder="Totals" id="field_totals" readonly="" name="field_totals">
@@ -229,7 +244,6 @@
                                     <div id="response"></div>
                                     <!-- end response from server -->
 
-                                </div>
                                 <!-- end /.content -->
 
                                 <div class="form-footer">

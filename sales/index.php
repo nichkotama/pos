@@ -25,13 +25,27 @@
 <body class="overlay-leftbar">
 <script type="text/javascript">
     var number = 1;
+    var items = '';
+    var qty = 1;
+    var value = '';
     window.onload = function() {
         var input = document.getElementById("barcode").focus();
     }
 
-    function myFunction() {
+    function myFunction(src, value) {
         var table = document.getElementById("myTable");
-        table.innerHTML = table.innerHTML + '<div class="col-md-1">' + number + '</div>' + '<div class="col-md-3">Item</div>' + '<div class="col-md-2">Qty</div>' + '<div class="col-md-3">Harga Satuan</div>' + '<div class="col-md-3">Sub-Total</div>';
+        if( src == 'barcode' ){
+            items = value;
+            qty = 1;
+        }else if( src == 'qty' ){
+            qty = value;
+        }
+        table.innerHTML = table.innerHTML 
+            + '<div class="col-md-1">' + number + '</div>' 
+            + '<div class="col-md-3">' + items +'</div>' 
+            + '<div class="col-md-2">' + qty +'</div>' 
+            + '<div class="col-md-3">Harga Satuan</div>' 
+            + '<div class="col-md-3">Sub-Total</div>';
         number++;
         // var row = table.insertRow(1);
         // var cell1 = row.insertCell(0);
@@ -39,6 +53,17 @@
         // cell1.innerHTML = "NEW CELL1";
         // cell2.innerHTML = "NEW CELL2";
     }
+    function cek_enter(e, src) {
+    if (e.keyCode == 13) {
+        if( src == 'barcode' ){
+            value = document.getElementById('barcode').value;
+            if (value == "") value = "item tidak diinput";
+        }else if( src == 'qty' ){
+            value = document.getElementById('qty').value;
+        }
+        return myFunction(src, value);
+    }
+}
 </script>
 <?php include('../php/modular/top-menu.php') ?>
 <?php include('../php/modular/side-menu.php') ?>
@@ -74,7 +99,7 @@
                                             <label class="icon-left" for="name">
                                                 <i class="fa fa-barcode"></i>
                                             </label>
-                                            <input class="form-control" type="text" id="barcode" name="barcode" placeholder="Scan or Type Barcode Here">
+                                            <input class="form-control" type="text" id="barcode" name="barcode" placeholder="Scan or Type Barcode Here" onkeypress="return cek_enter(event, 'barcode')">
                                         </div>
                                     </div>
                                     <div class="col-md-2 unit">
@@ -82,7 +107,7 @@
                                             <label class="icon-left" for="name">
                                                 <i class="zmdi zmdi-shopping-basket"></i>
                                             </label>
-                                            <input class="form-control" type="number" id="example-number-input" placeholder="Qty"> 
+                                            <input class="form-control" type="number" id="qty" placeholder="Qty" onkeypress="return cek_enter(event, 'qty')"> 
                                         </div>
                                     </div>
                                     <div class="col-md-2 unit">
@@ -104,15 +129,15 @@
                                     </div> -->
                                     <div class="row fruits-calculation">
                                         <div class="col-md-12 unit" id="myTable">
-                                            <div class="col-md-1">#</div>
-                                            <div class="col-md-3">Item</div>
-                                            <div class="col-md-2">Qty</div>
-                                            <div class="col-md-3">Harga Satuan</div>
-                                            <div class="col-md-3">Sub-Total</div>
+                                            <div class="col-md-1 heading-tabel">#</div>
+                                            <div class="col-md-3 heading-tabel">Item</div>
+                                            <div class="col-md-2 heading-tabel">Qty</div>
+                                            <div class="col-md-3 heading-tabel">Harga Satuan</div>
+                                            <div class="col-md-3 heading-tabel">Sub-Total</div>
                                         </div>
                                     </div>
                                     <!-- start  fruit coconut -->
-                                    <div class="row fruits-calculation">
+                                    <!-- <div class="row fruits-calculation">
                                         <div class="col-md-5 unit">
                                             <label class="label">Available fruits</label>
                                             <div class="input">
@@ -140,7 +165,7 @@
                                     </div>
                                     <!-- end fruit coconut -->
 
-                                    <!-- start fruit watermelon -->
+                                    <!-- start fruit watermelon --
                                     <div class="row fruits-calculation">
                                         <div class="col-md-5 unit">
                                             <div class="input">
@@ -163,9 +188,9 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <!-- end fruit watermelon -->
+                                    <!-- end fruit watermelon --
 
-                                    <!-- start additional fruit -->
+                                    <!-- start additional fruit --
                                     <div class="row fruits-calculation">
                                         <div class="col-md-5 unit">
                                             <div class="input">
@@ -187,7 +212,7 @@
                                                 <input class="form-control" type="text" id="third_field_total" readonly="" name="third_field_total">
                                             </div>
                                         </div>
-                                    </div>
+                                    </div> -->
                                     <!-- end additional fruit -->
 
                                     <!-- start totals -->

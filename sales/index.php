@@ -23,7 +23,23 @@
 </head>
 
 <body class="overlay-leftbar">
+<script type="text/javascript">
+    var number = 1;
+    window.onload = function() {
+        var input = document.getElementById("barcode").focus();
+    }
 
+    function myFunction() {
+        var table = document.getElementById("myTable");
+        table.innerHTML = table.innerHTML + '<div class="col-md-1">' + number + '</div>' + '<div class="col-md-3">Item</div>' + '<div class="col-md-2">Qty</div>' + '<div class="col-md-3">Harga Satuan</div>' + '<div class="col-md-3">Sub-Total</div>';
+        number++;
+        // var row = table.insertRow(1);
+        // var cell1 = row.insertCell(0);
+        // var cell2 = row.insertCell(1);
+        // cell1.innerHTML = "NEW CELL1";
+        // cell2.innerHTML = "NEW CELL2";
+    }
+</script>
 <?php include('../php/modular/top-menu.php') ?>
 <?php include('../php/modular/side-menu.php') ?>
 
@@ -48,7 +64,8 @@
             <div class="col-md-12">
                     <div class="widget-container">
                         <div class="widget-content">
-                            <form action="php/demo.php" method="post" class="j-forms" id="order-forms-quantity" novalidate>
+                            <!-- <form action="#" method="post" class="j-forms" id="order-forms-quantity" novalidate> -->
+                            <div class="j-forms" id="order-forms-quantity" novalidate>
 
                                 <div class="form-content">
                                     <!-- start name -->
@@ -57,7 +74,7 @@
                                             <label class="icon-left" for="name">
                                                 <i class="fa fa-barcode"></i>
                                             </label>
-                                            <input class="form-control" type="text" id="name" name="name" placeholder="Scan or Type Barcode Here">
+                                            <input class="form-control" type="text" id="barcode" name="barcode" placeholder="Scan or Type Barcode Here">
                                         </div>
                                     </div>
                                     <div class="col-md-2 unit">
@@ -70,11 +87,30 @@
                                     </div>
                                     <div class="col-md-2 unit">
                                         <div class="input">
-                                            <button type="submit" class="btn btn-success"><i class="zmdi zmdi-plus"> Add Item</i></button>
+                                            <button type="submit" class="btn btn-success" onclick="myFunction()"><i class="zmdi zmdi-plus"> Add Item</i></button>
                                         </div>
                                     </div>
                                     <!-- end name -->
-
+                                    <!-- <div class="row fruits-calculation">
+                                        <div class="col-md-12 unit">
+                                            <table id="myTable">
+                                                <th class="col-md-1">#</th>
+                                                <th class="col-md-3">Item</th>
+                                                <th class="col-md-2">Qty</th>
+                                                <th class="col-md-3">Harga Satuan</th>
+                                                <th class="col-md-3">Sub-Total</th>
+                                            </table>
+                                        </div>
+                                    </div> -->
+                                    <div class="row fruits-calculation">
+                                        <div class="col-md-12 unit" id="myTable">
+                                            <div class="col-md-1">#</div>
+                                            <div class="col-md-3">Item</div>
+                                            <div class="col-md-2">Qty</div>
+                                            <div class="col-md-3">Harga Satuan</div>
+                                            <div class="col-md-3">Sub-Total</div>
+                                        </div>
+                                    </div>
                                     <!-- start  fruit coconut -->
                                     <div class="row fruits-calculation">
                                         <div class="col-md-5 unit">
@@ -176,7 +212,7 @@
                                 </div>
                                 <!-- end /.footer -->
 
-                            </form>
+                            </div>
                         </div>
                 </div>
             </div>

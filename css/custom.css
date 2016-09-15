@@ -38,3 +38,9 @@
 .p-l-0{
 	padding-left: 0 !important;
 }
+
+
+/*CUSTOM CSS untuk sales/index.php, ukuran table*/
+#myTable{
+	width: 100%;
+}

@@ -107,15 +107,15 @@
 
                                 <div class="form-group">
                                     <!-- start name -->
-                                    <div class="col-md-8 unit">
+                                    <div class="col-sm-7 unit">
                                         <div class="input">
                                             <label class="icon-left" for="name">
                                                 <i class="fa fa-barcode"></i>
                                             </label>
-                                            <input class="form-control" type="text" id="barcode" name="barcode" placeholder="Scan or Type Barcode Here" onkeypress="return cek_enter(event, 'barcode')">
+                                            <input class="form-control" type="text" id="barcode" name="barcode" placeholder="Scan Barcode or Type Item Here" onkeypress="return cek_enter(event, 'barcode')">
                                         </div>
                                     </div>
-                                    <div class="col-md-2 unit">
+                                    <div class="col-sm-3 unit">
                                         <div class="input">
                                             <label class="icon-left" for="name">
                                                 <i class="zmdi zmdi-shopping-basket"></i>
@@ -123,7 +123,7 @@
                                             <input class="form-control" type="number" id="qty" placeholder="Qty" value=1 min=1 onkeypress="return cek_enter(event, 'qty')"> 
                                         </div>
                                     </div>
-                                    <div class="col-md-2 unit">
+                                    <div class="col-sm-2 unit">
                                         <div class="input">
                                             <button type="submit" class="btn btn-success" onclick="myFunction()"><i class="zmdi zmdi-plus"> Add Item</i></button>
                                         </div>
@@ -142,7 +142,7 @@
                                         </div>
                                     </div> -->
                                     <div class="row">
-                                        <div class="col-md-12" id="myTable">
+                                        <div class="col-sm-12" id="myTable">
                                             <div class="col-sm-1 heading-tabel">Remove</div>
                                             <div class="col-sm-1 heading-tabel">#</div>
                                             <div class="col-sm-3 heading-tabel">Item</div>

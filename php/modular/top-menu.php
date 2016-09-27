@@ -89,7 +89,7 @@
                                         <h4>You have 15 new messages</h4>
                                         <ul class="clearfix">
                                             <li class="clearfix">
-                                                <a href="#" class="message-thumb"><img src="images/avatar/robertoortiz.jpg" alt="image">
+                                                <a href="#" class="message-thumb"><img src="<?php echo $url_web ?>images/avatar/robertoortiz.jpg" alt="image">
                                                 </a><a href="#" class="message-intro"><span class="message-meta">Robertoortiz </span>Nunc aliquam dolor... <span class="message-time">today at 10:20 pm</span></a>
                                             </li>
                                             <li class="clearfix">
@@ -97,7 +97,7 @@
                                                 </a><a href="#" class="message-intro"><span class="message-meta">Allisongrayce </span>In hac habitasse ... <span class="message-time">today at 8:29 pm</span></a>
                                             </li>
                                             <li class="clearfix">
-                                                <a href="#" class="message-thumb"><img src="images/avatar/michael-owens.jpg" alt="image">
+                                                <a href="#" class="message-thumb"><img src="<?php echo $url_web ?>images/avatar/michael-owens.jpg" alt="image">
                                                 </a><a href="#" class="message-intro"><span class="message-meta">Michael </span>Suspendisse ac mauris ... <span class="message-time">yesterday at 12:29 pm</span></a>
                                             </li>
                                             <li class="clearfix">
@@ -105,7 +105,7 @@
                                                 </a><a href="#" class="message-intro"><span class="message-meta">Bobbyjkane </span>Vivamus lacinia facilisis... <span class="message-time">yesterday at 11:48 pm</span></a>
                                             </li>
                                             <li class="clearfix">
-                                                <a href="#" class="message-thumb"><img src="images/avatar/bobbyjkane.jpg" alt="image">
+                                                <a href="#" class="message-thumb"><img src="<?php echo $url_web ?>images/avatar/bobbyjkane.jpg" alt="image">
                                                 </a><a href="#" class="message-intro"><span class="message-meta">Bobbyjkane </span>Donec vel iaculis ... <span class="message-time">1 month ago</span></a>
                                             </li>
                                             <li class="clearfix">
@@ -113,7 +113,7 @@
                                                 </a><a href="#" class="message-intro"><span class="message-meta">Chexee </span> Curabitur eget blandit...<span class="message-time">3 months ago</span></a>
                                             </li>
                                             <li class="clearfix">
-                                                <a href="#" class="message-thumb"><img src="images/avatar/coreyweb.jpg" alt="image">
+                                                <a href="#" class="message-thumb"><img src="<?php echo $url_web ?>images/avatar/coreyweb.jpg" alt="image">
                                                 </a><a href="#" class="message-intro"><span class="message-meta">Coreyweb </span>Etiam molestie nulla... <span class="message-time">1 year ago</span></a>
                                             </li>
                                         </ul>

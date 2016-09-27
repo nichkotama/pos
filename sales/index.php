@@ -19,15 +19,16 @@
     <link type="text/css" rel="stylesheet" href="../css/common.css">
     <link type="text/css" rel="stylesheet" href="../css/responsive.css">
     <link type="text/css" rel="stylesheet" href="../css/custom.css">
-    <link type="text/css" id="themes" rel="stylesheet" href="">
 </head>
 
 <body class="overlay-leftbar">
 <script type="text/javascript">
-    var number = 1;
-    var items = '';
-    var qty = 1;
+    var number = 0;
+    var items = [];
+    var qty = [];
     var value = '';
+    var barang = [];
+    var banyak = [];
     window.onload = function() {
         var input = document.getElementById("barcode").focus();
     }
@@ -35,44 +36,66 @@
     function myFunction(src, value) {
         var table = document.getElementById("myTable");
         if( src == 'barcode' ){
-            items = value;
-            qty = 1;
+            items[number] = value;
+            qty[number] = 1;
         }else if( src == 'qty' ){
-            qty = value;
+            qty[number] = value;
         }
-        table.innerHTML = table.innerHTML 
-            + '<div class="col-sm-1"><button class="btn btn-danger"><i class="zmdi zmdi-close"></i></button></div>' 
+        table.innerHTML = table.innerHTML +
+            '<div id = "baris-' + number + '">'  
+            + '<div class="col-sm-1"><button class="btn btn-danger" onclick="deleteRow(' + number + ')"><i class="zmdi zmdi-close"></i></button></div>' 
             + '<div class="col-sm-1 p-tb-9">' + number + '</div>' 
-            + '<div class="col-sm-3 p-tb-9">' + items +'</div>' 
-            + '<div class="col-sm-1"><input class="form-control" type="number" value="' + qty +'"/></div>' 
-            + '<div class="col-sm-3"><input class="form-control" type="number" value="' + qty +'" readonly=""/></div>' 
-            + '<div class="col-sm-3"><input class="form-control" type="number" value="' + qty +'" readonly=""/></div>' 
-        number++;
-
+            + '<div class="col-sm-3 p-tb-9">' + items[number] +'</div>' 
+            + '<div class="col-sm-1"><input class="form-control" type="number" value="' + qty[number] +'"/></div>' 
+            + '<div class="col-sm-3"><input class="form-control" type="number" value="' + qty[number] +'" readonly=""/></div>' 
+            + '<div class="col-sm-3"><input class="form-control" type="number" value="' + qty[number] +'" readonly=""/></div>' 
+            + '</div>'
         document.getElementById("barcode").value = '';
         document.getElementById("qty").value = 1;
         document.getElementById("barcode").focus();
+        barang[number] = items[number];
+        number++;
         // var row = table.insertRow(1);
         // var cell1 = row.insertCell(0);
         // var cell2 = row.insertCell(1);
         // cell1.innerHTML = "NEW CELL1";
         // cell2.innerHTML = "NEW CELL2";
     }
-    function cek_enter(e, src) {
-    if (e.keyCode == 13) {
-        if( src == 'barcode' ){
-            value = document.getElementById('barcode').value;
-            if (value == "") value = "item tidak diinput";
-        }else if( src == 'qty' ){
-            value = document.getElementById('qty').value;
+    
+    function deleteRow( number ){
+        // document.getElementById('baris-'+number).remove();
+        document.getElementById('baris-'+number).innerHTML =  
+            '<div id = "baris-' + number + '">'  
+            + '<div class="col-sm-1 barang-cancel"><button class="btn btn-danger" onclick="deleteRow(' + number + ')"><i class="zmdi zmdi-close"></i></button></div>' 
+            + '<div class="col-sm-1 p-tb-9 barang-cancel">' + number + '</div>' 
+            + '<div class="col-sm-3 p-tb-9 barang-cancel">' + items[number] +'</div>' 
+            + '<div class="col-sm-1"><input class="form-control" type="number" value="' + qty[number] +'" readonly=""/></div>' 
+            + '<div class="col-sm-3"><input class="form-control" type="number" value="' + qty[number] +'" readonly=""/></div>' 
+            + '<div class="col-sm-3"><input class="form-control" type="number" value="' + qty[number] +'" readonly=""/></div>' 
+            + '</div>';
+        delete barang[number];
+        delete items[number];
+        delete qty[number];
         }
-        return myFunction(src, value);
-        // var field_barcode = document.getElementById('barcode');
-        // var field_qty = document.getElementById('qty');
-        // field_barcode.innerHTML = "";
-        // field_qty.innerHTML = "";
+
+    function cek_enter(e, src) {
+        if (e.keyCode == 13) {
+            if( src == 'barcode' ){
+                value = document.getElementById('barcode').value;
+                if (value == "") value = "item tidak diinput";
+            }else if( src == 'qty' ){
+                value = document.getElementById('qty').value;
+            }
+            return myFunction(src, value);
+            // var field_barcode = document.getElementById('barcode');
+            // var field_qty = document.getElementById('qty');
+            // field_barcode.innerHTML = "";
+            // field_qty.innerHTML = "";
+        }
     }
-}
+    function printData(){
+        document.getElementById('cumateksbung').innerHTML = 'barang >> ' + barang + '<br/>items >> ' + items + '<br/>qty >> ' + qty;
+    }
 </script>
 <?php include('../php/modular/top-menu.php') ?>
 <?php include('../php/modular/side-menu.php') ?>
@@ -269,7 +292,8 @@
                                 <button type="submit" class="btn btn-success primary-btn">Order Now</button>
                             </div>
                             <!-- end /.footer -->
-
+                            <button class="btn btn-danger" onclick="printData()">TEST Data</button>
+                            <div id="cumateksbung"></div>
                         </div>
                     </div>
             </div>

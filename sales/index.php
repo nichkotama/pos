@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
-    <title><?php echo $judul ?> - Homepage</title>
+    <title><?php echo $judul ?> - POS Session</title>
     <link type="text/css" rel="stylesheet" href="../css/font-awesome.css">
     <link type="text/css" rel="stylesheet" href="../css/material-design-iconic-font.css">
     <link type="text/css" rel="stylesheet" href="../css/bootstrap.css">
@@ -19,6 +19,8 @@
     <link type="text/css" rel="stylesheet" href="../css/common.css">
     <link type="text/css" rel="stylesheet" href="../css/responsive.css">
     <link type="text/css" rel="stylesheet" href="../css/custom.css">
+    <script src="../js/jquery.js"></script>
+    <script src="../js/jquery-ui.js"></script>
 </head>
 
 <body class="overlay-leftbar">
@@ -97,6 +99,18 @@
         document.getElementById('cumateksbung').innerHTML = 'barang >> ' + barang + '<br/>items >> ' + items + '<br/>qty >> ' + qty;
     }
 </script>
+<script>
+    $(function() {  
+        $( "#barcode" ).autocomplete({
+         source: "../php/modular/autocomplete.php?src=barcode_barang",  
+            minLength:2, 
+            autoFocus:true,
+            select: function( event, ui ) {
+              document.getElementById('tampilan').innerHTML = ui.item.value;
+            },
+        });
+    });
+</script>
 <?php include('../php/modular/top-menu.php') ?>
 <?php include('../php/modular/side-menu.php') ?>
 
@@ -154,7 +168,7 @@
                                         <label class="icon-left" for="name">
                                             <i class="fa fa-barcode"></i>
                                         </label>
-                                        <input class="form-control" type="text" id="barcode" name="barcode" placeholder="Scan Barcode or Type Item Here" onkeypress="return cek_enter(event, 'barcode')">
+                                        <input class="form-control" type="text" id="barcode" name="barcode" placeholder="Scan or Type Barcode Item Here" onkeypress="return cek_enter(event, 'barcode')">
                                     </div>
                                 </div>
                                 <div class="col-sm-3 unit">
@@ -294,6 +308,7 @@
                             <!-- end /.footer -->
                             <button class="btn btn-danger" onclick="printData()">TEST Data</button>
                             <div id="cumateksbung"></div>
+                            <div id="tampilan"></div>
                         </div>
                     </div>
             </div>

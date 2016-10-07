@@ -329,7 +329,7 @@
             <div class="row">
 				<div class="widget-header block-header clearfix">
 					<div class="col-md-6">
-						<h2>Form Pembuatan PO</h2>
+						<h2>Edit Profil</h2>
 						<p>Hari....</p>
 					</div>
 					<div class="col-md-6">
@@ -339,140 +339,69 @@
 							<li class="active-page"> Form Validation</li>
 						</ul>
 					</div>
-					</div>
+				</div>
 				<div class="col-md-12">
 					<div class="widget-container">
 						<div class="widget-content">
 							<!--form action="php/demo.php" method="post" class="j-forms" id="j-forms-captcha" novalidate-->
 							<div class="j-forms" id="order-forms-quantity" novalidate>
 								<div class="form-content">
-
-									<div class="row">
-										<div class="col-md-6 unit">
-											<label class="label">Nomor PO</label>
-											<div class="input">
-												<label class="icon-right" for="name">
-													<i class="fa fa-user"></i>
-												</label>
-												<input class="form-control" type="text" placeholder="e.g. John Doe" id="name" name="name">
+									<div class="col-md-10 unit">
+										<div class="row">
+											<div class="col-md-2 unit">
+												<label class="label">Nama</label>										
 											</div>
+											<div class="col-md-1 unit">
+												<label class="label">:</label>										
+											</div>
+											<div class="col-md-6 unit">
+												<label class="label">Alvin</label>										
+											</div>												
 										</div>
-										<div class="col-md-6 unit">
-											<label class="label">Nama Supplier</label>
-											<div class="input">
-												<label class="icon-right" for="name">
-													<i class="fa fa-user"></i>
-												</label>
-												<input class="form-control" type="text" placeholder="e.g. John Doe" id="name" name="name">
+										<div class="row">
+											<div class="col-md-2 unit">
+												<label class="label">Id Karyawan</label>										
 											</div>
+											<div class="col-md-1 unit">
+												<label class="label">:</label>										
+											</div>
+											<div class="col-md-6 unit">
+												<label class="label">414124141</label>										
+											</div>										
 										</div>
-									</div>
-									
-									
-									<div class="col-md-12">			
-										<div class="widget-container">
-											<div class="widget-content">
-												<table class="table data-tbl">
-												<thead>
-												<tr>
-													<th>
-														No.
-													</th>
-													<th>
-														Nama Barang
-													</th>
-													<th>
-														Kode Barang
-													</th>
-													<th>
-														Jumlah
-													</th>
-													<th>
-														Harga Satuan
-													</th>
-													<th>
-														Total Harga
-													</th>												
-												</tr>
-												</thead>
-												<tbody>
-												<tr>
-													<td>
-														1
-													</td>
-													<td>
-														<div class="input">
-															<input class="form-control" type="text" id="name" name="name">
-														</div>
-													</td>
-													<td>
-														<div class="input">
-															<input class="form-control" type="text" id="name" name="name">
-														</div>
-													</td>
-													<td>
-														<div class="input">
-															<input class="form-control" type="number" id="qty" placeholder="Qty" onkeypress="return cek_enter(event, 'qty')"> 
-														</div>
-													</td>
-													<td>
-														<div class="input">
-															<input class="form-control" type="text" id="name" name="name">
-														</div>
-													</td>
-													<td>
-														<div class="input">
-															<input class="form-control" type="text" id="name" name="name">
-														</div>
-													</td>
-												</tr>
-												<tr>
-													<td>
-														2
-													</td>
-													<td>
-														<div class="input">
-															<input class="form-control" type="text" id="name" name="name">
-														</div>
-													</td>
-													<td>
-														<div class="input">
-															<input class="form-control" type="text" id="name" name="name">
-														</div>
-													</td>
-													<td>
-														<div class="input">
-															<input class="form-control" type="number" id="qty" placeholder="Qty" onkeypress="return cek_enter(event, 'qty')"> 
-														</div>
-													</td>
-													<td>
-														<div class="input">
-															<input class="form-control" type="text" id="name" name="name">
-														</div>
-													</td>
-													<td>
-														<div class="input">
-															<input class="form-control" type="text" id="name" name="name">
-														</div>
-													</td>
-												</tr>
-												</tbody>
-												<tfoot>
-													
-												</tfoot>
-												</table>
+										<div class="row">
+											<div class="col-md-2 unit">
+												<label class="label">Bagian</label>										
 											</div>
-										</div>			
+											<div class="col-md-1 unit">
+												<label class="label">:</label>										
+											</div>
+											<div class="col-md-6 unit">
+												<label class="label">Kasir</label>										
+											</div>										
+										</div>
+										<div class="row">
+											<div class="col-md-2 unit">
+												<label class="label">Nomor Telepon</label>										
+											</div>
+											<div class="col-md-1 unit">
+												<label class="label">:</label>										
+											</div>
+											<div class="col-md-6 unit">
+												<label class="label">0813232145235</label>										
+											</div>										
+										</div>
+										<!-- start response from server -->
+										<div id="response"></div>
+										<!-- end response from server -->
+
 									</div>
-
-									<!-- start response from server -->
-									<div id="response"></div>
-									<!-- end response from server -->
-
+									<!-- end /.content -->
+									<div align="right">
+										<img src="afasafa" width="130 px" height="150 px"/>										
+									</div>
 								</div>
-								<!-- end /.content -->
-
-								<div class="form-footer">
+								<div class="form-footer" align="left">
 									<button type="submit" class="btn btn-success primary-btn">Submit</button>
 								</div>
 								<!-- end /.footer -->

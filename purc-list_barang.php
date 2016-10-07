@@ -32,6 +32,7 @@
 <div class="container">
     <div class="page-header filled light">
     <div class="row">
+		<div class="widget-header block-header clearfix">
         <div class="col-md-6">
             <h2>Data Barang Yang Perlu Dipesan</h2>
             <p>Hari.......</p>
@@ -43,62 +44,54 @@
                 <li class="active-page"> Data Tables</li>
             </ul>
         </div>
-    </div>
-</div>
-
-<div class="row">
-    <div class="col-md-12">
-        <div class="widget-wrap">
-            <div class="widget-header block-header clearfix">
-                <h3>Data Barang</h3>
-                
-            </div>
-            <div class="widget-container">
-                <div class="widget-content">
-                    <table class="table data-tbl">
-                    <thead>
-                    <tr>
-                        <th>
-                            Kode barang
-                        </th>
-                        <th>
-                            Nama Barang
-                        </th>
-                        <th>
-                            Jumlah Stock
-                        </th>
-                        <th>
-                            Nama Supplier
-                        </th>
-                        <th>
-                            Harga Beli
-                        </th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr>
-                        <td>
-                            235522332
-                        </td>
-                        <td>
-                            System Architect
-                        </td>
+		</div>
+		<div class="col-md-12">			
+			<div class="widget-container">
+				<div class="widget-content">
+					<table class="table data-tbl">
+					<thead>
+					<tr>
+						<th>
+							Kode barang
+						</th>
+						<th>
+							Nama Barang
+						</th>
+						<th>
+							Jumlah Stock
+						</th>
+						<th>
+							Nama Supplier
+						</th>
+						<th>
+							Harga Beli
+						</th>
+					</tr>
+					</thead>
+					<tbody>
+					<tr>
 						<td>
-                            61
-                        </td>
-                        <td>
-                            Edinburgh
-                        </td>
-                        <td>
-                            $320,800
-                        </td>
-                    </tr>
-                
-                    </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
+							235522332
+						</td>
+						<td>
+							System Architect
+						</td>
+						<td>
+							61
+						</td>
+						<td>
+							Edinburgh
+						</td>
+						<td>
+							$320,800
+						</td>
+					</tr>
+				
+					</tbody>
+					</table>
+				</div>
+			</div>			
+		</div>
     </div>
 </div>
 

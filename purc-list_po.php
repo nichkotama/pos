@@ -31,168 +31,78 @@
 <section class="main-container">
 <div class="container">
     <div class="page-header filled light">
-            <div class="row">
-                <div class="col-md-6">
-                    <h2>Form Pembuatan PO</h2>
-                    <p>Hari.... </p>
-                </div>
-                <div class="col-md-6">
-                    <ul class="list-page-breadcrumb">
-                        <li><a href="#">Home <i class="zmdi zmdi-chevron-right"></i></a></li>
-                        <li><a href="#">Forms <i class="zmdi zmdi-chevron-right"></i></a></li>
-                        <li class="active-page"> Form Elements</li>
-                    </ul>
-                </div>
-            </div>
+    <div class="row">
+		<div class="widget-header block-header clearfix">
+        <div class="col-md-6">
+            <h2>List PO</h2>
+            <p>Hari.......</p>
         </div>
+        <div class="col-md-6">
+            <ul class="list-page-breadcrumb">
+                <li><a href="#">Home <i class="zmdi zmdi-chevron-right"></i></a></li>
+                <li><a href="#">Layout <i class="zmdi zmdi-chevron-right"></i></a></li>
+                <li class="active-page"> Data Tables</li>
+            </ul>
+        </div>
+		</div>
+		<div class="col-md-12">			
+			<div class="widget-container">
+				<div class="widget-content">
+					<table class="table foo-data-table" data-page-size="5" data-limit-navigation="3">
+                        <thead>
+                        <tr>
+                            <th data-sort-ignore="true">
+                                Nomor PO
+                            </th>
+                            <th  data-hide="all">
+                                Tanggal PO
+                            </th>
+                            <th  data-hide="phone">
+                                Nama Supplier
+                            </th>
+                            <th>
+                                Status
+                            </th>
+                            <!--th  data-sort-ignore="true" data-hide="phone"></th-->
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>PO/IX/001/2016</td>
+							<td>28 September 2016</td>
+                            <td>Mayora</td>                   
+                            <td data-value="1"><span class="label label-success"  title="Active">Accepted</span></td>
+                            <td class="td-right"><a class="row-edit" href="#"><span class="zmdi zmdi-edit"></span></a> <a class="row-print" href="#"><span class="zmdi zmdi-close"></span></a> <a class="row-delete" href="#"><span class="zmdi zmdi-close"></span></a> </td>
+                        </tr>
+                        <tr>
+                            <td>PO/IX/002/2016</td>
+							<td>27 September 2016</td>
+                            <td>Nestle</td>                   
+                            <td data-value="2"><span class="label label-default" title="Disabled">Rejected</span></td>
+                            <td class="td-right"><a class="row-edit" href="#"><span class="zmdi zmdi-edit"></span></a> <a class="row-print" href="#"><span class="zmdi zmdi-close"></span></a> <a class="row-delete" href="#"><span class="zmdi zmdi-close"></span></a> </td>
+                        </tr>
+                        <tr>
+                            <td>PO/IX/003/2016</td>
+							<td>27 September 2016</td>
+                            <td>Danone</td>
+                            <td data-value="3"><span class="label label-danger"  title="Suspended">Pending</span></td>
+                             <td class="td-right"><a class="row-edit" href="#"><span class="zmdi zmdi-edit"></span></a> <a class="row-print" href="#"><span class="zmdi zmdi-close"></span></a> <a class="row-delete" href="#"><span class="zmdi zmdi-close"></span></a> </td>
+                        </tr>
+                        </tbody>
+                        <tfoot class="hide-if-no-paging">
+                        <tr>
+                            <td colspan="6" class="footable-visible">
+                                <div class="pagination pagination-centered"></div>
+                            </td>
+                        </tr>
+                        </tfoot>
+                    </table>
+				</div>
+			</div>			
+		</div>
+    </div>
+</div>
 
-        <div class="row">
-            <div class="col-md-12">
-                <div class="widget-wrap">
-                   
-                    <div class="widget-container">
-                        <div class="widget-content">
-                            <div class="row">
-                                <div class="col-md-12">
-                                <form action="#" class="j-forms" novalidate>
-
-                                <div class="form-content">
-
-                                <div class="row">
-                                    <div class="col-md-6 unit">
-                                        <label class="label">Nomor PO</label>
-                                        <div class="input">
-                                            <label class="icon-left" for="text">
-                                                <i class="fa fa-edit"></i>
-                                            </label>
-                                            <input class="form-control" type="text" placeholder="some text" id="no_po">
-                                        </div>
-                                    </div>                               
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-md-6 unit">
-                                        <label class="label">Nama Supplier</label>
-                                        <div class="input">
-                                            <label class="icon-left" for="email">
-                                                <i class="fa fa-envelope-o"></i>
-                                            </label>
-                                            <input class="form-control" type="text" placeholder="some text" id="supplier">
-                                        </div>
-                                    </div>
-                                </div>
-								
-								<div class="row"> 
-									<div class="col-md-12"> 
-										<div class="widget-content"> 
-											<table class="table data-tbl"> 
-											<thead> 
-											<tr> 
-												<th> 
-													No.
-												</th>
-												<th> 
-													Nama barang 
-												</th> 
-												<th> 
-													Kode Barang 
-												</th> 
-												<th> 
-													Jumlah
-												</th> 
-												<th> 
-													Harga Satuan
-												</th> 
-												<th> 
-													Harga Total
-												</th> 
-											</tr> 
-											</thead> 
-											<tbody> 
-											<tr> 
-												<th> 
-													1
-												</th>
-												<td> 
-													<div class="input">
-														<input class="form-control" type="text" placeholder="some text" id="supplier">
-													</div>												
-												</td> 
-												<td> 
-													<div class="input">
-														<input class="form-control" type="text" placeholder="some text" id="supplier">
-													</div>
-												</td> 
-												<td> 
-													<div class="input">
-														<input class="form-control" type="text" placeholder="some text" id="supplier">
-													</div> 
-												</td> 
-												<td> 
-													<div class="input">
-														<input class="form-control" type="text" placeholder="some text" id="supplier">
-													</div>
-												</td> 
-												<td> 
-													<div class="input">
-														<input class="form-control" type="text" placeholder="some text" id="supplier">
-													</div> 
-												</td> 
-											</tr> 		
-											<tr> 
-												<th> 
-													2
-												</th>
-												<td> 
-													<div class="input">
-														<input class="form-control" type="text" placeholder="some text" id="supplier">
-													</div>												
-												</td> 
-												<td> 
-													<div class="input">
-														<input class="form-control" type="text" placeholder="some text" id="supplier">
-													</div>
-												</td> 
-												<td> 
-													<div class="input">
-														<input class="form-control" type="text" placeholder="some text" id="supplier">
-													</div> 
-												</td> 
-												<td> 
-													<div class="input">
-														<input class="form-control" type="text" placeholder="some text" id="supplier">
-													</div>
-												</td> 
-												<td> 
-													<div class="input">
-														<input class="form-control" type="text" placeholder="some text" id="supplier">
-													</div> 
-												</td> 
-											</tr>
-											</tbody> 
-											</table> 
-										</div> 
-											
-									</div> 
-								</div> 
-                              
-                                </div>
-                                <!-- end /.content -->
-
-                                <div class="form-footer">
-                                    <button type="submit" class="btn btn-success primary-btn processing">Processing...</button>
-                                    <button type="reset" class="btn btn-danger secondary-btn">Reset</button>
-                                    <button type="submit" class="btn btn-info primary-btn">Submit</button>
-                                </div>
-                                <!-- end /.footer -->
-
-                                </form>
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
-                </div>
 <!--Page Container End Here-->
 <!--Rightbar Start Here-->
 <aside class="rightbar">

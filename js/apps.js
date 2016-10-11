@@ -343,13 +343,11 @@ jQuery(document).ready(function ($) {
     }
 
 
-    var SyntaxHighlight = $.SyntaxHighlighter;
-    if (SyntaxHighlight) {
-        SyntaxHighlight.init({
-            'theme': 'balupton',
-            'themes': ['balupton']
-        });
-    }
+    // var SyntaxHighlight = $.SyntaxHighlighter;
+    // if (SyntaxHighlight) {
+    //     SyntaxHighlight.init({
+    //     });
+    // }
 
     // **---------------------
     // Initialize both sidebar

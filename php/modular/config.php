@@ -7,6 +7,6 @@
   	// database
   	$db_server 	= 'localhost';
   	$db_user	= 'root';
-  	$db_pass	= 'nicholaskotama';
+  	$db_pass	= '';
   	$db_name	= 'supermarket';
 ?>

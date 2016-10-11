@@ -39,6 +39,14 @@
 	padding-left: 0 !important;
 }
 
+.p-tb-9{
+	padding: 9px 0 !important;
+}
+
+.borderless td, .borderless th {
+    border: none;
+}
+
 .heading-tabel{
 	padding-top: 10px;
 	padding-bottom: 10px;
@@ -46,7 +54,7 @@
 	background-color: #669966;
 	color: #ffffff;
 }
-/*CUSTOM CSS untuk sales/index.php, ukuran table*/
-#myTable{
-	width: 100%;
+
+.barang-cancel{
+	background-color: #ccc;
 }

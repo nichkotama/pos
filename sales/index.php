@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
-    <title><?php echo $judul ?> - Homepage</title>
+    <title><?php echo $judul ?> - POS Session</title>
     <link type="text/css" rel="stylesheet" href="../css/font-awesome.css">
     <link type="text/css" rel="stylesheet" href="../css/material-design-iconic-font.css">
     <link type="text/css" rel="stylesheet" href="../css/bootstrap.css">
@@ -19,15 +19,18 @@
     <link type="text/css" rel="stylesheet" href="../css/common.css">
     <link type="text/css" rel="stylesheet" href="../css/responsive.css">
     <link type="text/css" rel="stylesheet" href="../css/custom.css">
-    <link type="text/css" id="themes" rel="stylesheet" href="">
+    <script src="../js/jquery.js"></script>
+    <script src="../js/jquery-ui.js"></script>
 </head>
 
 <body class="overlay-leftbar">
 <script type="text/javascript">
-    var number = 1;
-    var items = '';
-    var qty = 1;
+    var number = 0;
+    var items = [];
+    var qty = [];
     var value = '';
+    var barang = [];
+    var banyak = [];
     window.onload = function() {
         var input = document.getElementById("barcode").focus();
     }
@@ -35,17 +38,24 @@
     function myFunction(src, value) {
         var table = document.getElementById("myTable");
         if( src == 'barcode' ){
-            items = value;
-            qty = 1;
+            items[number] = value;
+            qty[number] = 1;
         }else if( src == 'qty' ){
-            qty = value;
+            qty[number] = value;
         }
-        table.innerHTML = table.innerHTML 
-            + '<div class="col-md-1">' + number + '</div>' 
-            + '<div class="col-md-3">' + items +'</div>' 
-            + '<div class="col-md-2">' + qty +'</div>' 
-            + '<div class="col-md-3">Harga Satuan</div>' 
-            + '<div class="col-md-3">Sub-Total</div>';
+        table.innerHTML = table.innerHTML +
+            '<div id = "baris-' + number + '">'  
+            + '<div class="col-sm-1"><button class="btn btn-danger" onclick="deleteRow(' + number + ')"><i class="zmdi zmdi-close"></i></button></div>' 
+            + '<div class="col-sm-1 p-tb-9">' + number + '</div>' 
+            + '<div class="col-sm-3 p-tb-9">' + items[number] +'</div>' 
+            + '<div class="col-sm-1"><input class="form-control" type="number" value="' + qty[number] +'"/></div>' 
+            + '<div class="col-sm-3"><input class="form-control" type="number" value="' + qty[number] +'" readonly=""/></div>' 
+            + '<div class="col-sm-3"><input class="form-control" type="number" value="' + qty[number] +'" readonly=""/></div>' 
+            + '</div>'
+        document.getElementById("barcode").value = '';
+        document.getElementById("qty").value = 1;
+        document.getElementById("barcode").focus();
+        barang[number] = items[number];
         number++;
         // var row = table.insertRow(1);
         // var cell1 = row.insertCell(0);
@@ -53,17 +63,53 @@
         // cell1.innerHTML = "NEW CELL1";
         // cell2.innerHTML = "NEW CELL2";
     }
-    function cek_enter(e, src) {
-    if (e.keyCode == 13) {
-        if( src == 'barcode' ){
-            value = document.getElementById('barcode').value;
-            if (value == "") value = "item tidak diinput";
-        }else if( src == 'qty' ){
-            value = document.getElementById('qty').value;
+    
+    function deleteRow( number ){
+        // document.getElementById('baris-'+number).remove();
+        document.getElementById('baris-'+number).innerHTML =  
+            '<div id = "baris-' + number + '">'  
+            + '<div class="col-sm-1 barang-cancel"><button class="btn btn-danger" onclick="deleteRow(' + number + ')"><i class="zmdi zmdi-close"></i></button></div>' 
+            + '<div class="col-sm-1 p-tb-9 barang-cancel">' + number + '</div>' 
+            + '<div class="col-sm-3 p-tb-9 barang-cancel">' + items[number] +'</div>' 
+            + '<div class="col-sm-1"><input class="form-control" type="number" value="' + qty[number] +'" readonly=""/></div>' 
+            + '<div class="col-sm-3"><input class="form-control" type="number" value="' + qty[number] +'" readonly=""/></div>' 
+            + '<div class="col-sm-3"><input class="form-control" type="number" value="' + qty[number] +'" readonly=""/></div>' 
+            + '</div>';
+        delete barang[number];
+        delete items[number];
+        delete qty[number];
         }
-        return myFunction(src, value);
+
+    function cek_enter(e, src) {
+        if (e.keyCode == 13) {
+            if( src == 'barcode' ){
+                value = document.getElementById('barcode').value;
+                if (value == "") value = "item tidak diinput";
+            }else if( src == 'qty' ){
+                value = document.getElementById('qty').value;
+            }
+            return myFunction(src, value);
+            // var field_barcode = document.getElementById('barcode');
+            // var field_qty = document.getElementById('qty');
+            // field_barcode.innerHTML = "";
+            // field_qty.innerHTML = "";
+        }
     }
-}
+    function printData(){
+        document.getElementById('cumateksbung').innerHTML = 'barang >> ' + barang + '<br/>items >> ' + items + '<br/>qty >> ' + qty;
+    }
+</script>
+<script>
+    $(function() {  
+        $( "#barcode" ).autocomplete({
+         source: "../php/modular/autocomplete.php?src=barcode_barang",  
+            minLength:2, 
+            autoFocus:true,
+            select: function( event, ui ) {
+              document.getElementById('tampilan').innerHTML = ui.item.value;
+            },
+        });
+    });
 </script>
 <?php include('../php/modular/top-menu.php') ?>
 <?php include('../php/modular/side-menu.php') ?>
@@ -73,175 +119,201 @@
 <div class="container-fluid">
 <div class="page-header filled light">
     <div class="row widget-header block-header">
-        <div class="col-md-6 col-sm-6">
-            <h2>Sales</h2>
+        <div class="col-sm-6">
+            <h2>Sales - Keyboard Mode</h2>
             <p>Penjualan Hari Rabu, 14-Sep-2016</p>
         </div>
-        <div class="col-md-6 col-sm-6">
+        <div class="col-sm-6">
             <ul class="list-page-breadcrumb">
                 <li><a href="#">Sales <i class="zmdi zmdi-chevron-right"></i></a></li>
                 <li class="active-page"> Session</li>
             </ul>
         </div>
-    </div>
+        <div class="col-sm-12 m-t-20">
+            <button class="btn btn-success active col-sm-6"><i class="zmdi zmdi-keyboard"> Keyboard Mode</i></button>
+            <button type="button"  data-toggle="modal" data-target="#myModal" class="btn btn-success col-sm-6"><i class="zmdi zmdi-image"> Mouse Mode</i></button>
 
-        <div class="row">
-            <div class="col-md-12">
-                    <div class="widget-container">
-                        <div class="widget-content">
-                            <!-- <form action="#" method="post" class="j-forms" id="order-forms-quantity" novalidate> -->
-                            <div class="j-forms" id="order-forms-quantity" novalidate>
-
-                                <div class="form-content">
-                                    <!-- start name -->
-                                    <div class="col-md-8 unit">
-                                        <div class="input">
-                                            <label class="icon-left" for="name">
-                                                <i class="fa fa-barcode"></i>
-                                            </label>
-                                            <input class="form-control" type="text" id="barcode" name="barcode" placeholder="Scan or Type Barcode Here" onkeypress="return cek_enter(event, 'barcode')">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-2 unit">
-                                        <div class="input">
-                                            <label class="icon-left" for="name">
-                                                <i class="zmdi zmdi-shopping-basket"></i>
-                                            </label>
-                                            <input class="form-control" type="number" id="qty" placeholder="Qty" onkeypress="return cek_enter(event, 'qty')"> 
-                                        </div>
-                                    </div>
-                                    <div class="col-md-2 unit">
-                                        <div class="input">
-                                            <button type="submit" class="btn btn-success" onclick="myFunction()"><i class="zmdi zmdi-plus"> Add Item</i></button>
-                                        </div>
-                                    </div>
-                                    <!-- end name -->
-                                    <!-- <div class="row fruits-calculation">
-                                        <div class="col-md-12 unit">
-                                            <table id="myTable">
-                                                <th class="col-md-1">#</th>
-                                                <th class="col-md-3">Item</th>
-                                                <th class="col-md-2">Qty</th>
-                                                <th class="col-md-3">Harga Satuan</th>
-                                                <th class="col-md-3">Sub-Total</th>
-                                            </table>
-                                        </div>
-                                    </div> -->
-                                    <div class="row fruits-calculation">
-                                        <div class="col-md-12 unit" id="myTable">
-                                            <div class="col-md-1 heading-tabel">#</div>
-                                            <div class="col-md-3 heading-tabel">Item</div>
-                                            <div class="col-md-2 heading-tabel">Qty</div>
-                                            <div class="col-md-3 heading-tabel">Harga Satuan</div>
-                                            <div class="col-md-3 heading-tabel">Sub-Total</div>
-                                        </div>
-                                    </div>
-                                    <!-- start  fruit coconut -->
-                                    <!-- <div class="row fruits-calculation">
-                                        <div class="col-md-5 unit">
-                                            <label class="label">Available fruits</label>
-                                            <div class="input">
-                                                <input class="form-control" type="text" id="first_field" value="Coconut" readonly="" name="first_field">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3 unit">
-                                            <label class="label">Quantity</label>
-                                            <div class="input quantity-events">
-                                                <input class="form-control" type="text" id="first_field_quantity" name="first_field_quantity">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-2 unit">
-                                            <label class="label">Price</label>
-                                            <div class="input">
-                                                <input class="form-control" type="text" id="first_field_price" value="$ 1.30" readonly="" name="first_field_price">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-2 unit">
-                                            <label class="label">Total</label>
-                                            <div class="input">
-                                                <input class="form-control" type="text" id="first_field_total" readonly="" name="first_field_total">
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!-- end fruit coconut -->
-
-                                    <!-- start fruit watermelon --
-                                    <div class="row fruits-calculation">
-                                        <div class="col-md-5 unit">
-                                            <div class="input">
-                                                <input class="form-control" type="text" id="second_field" value="Watermelon" readonly="" name="second_field">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3 unit">
-                                            <div class="input quantity-events">
-                                                <input class="form-control" type="text" id="second_field_quantity" name="second_field_quantity">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-2 unit">
-                                            <div class="input">
-                                                <input class="form-control" type="text" id="second_field_price" value="$ 3.50" readonly="" name="second_field_price">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-2 unit">
-                                            <div class="input">
-                                                <input class="form-control" type="text" id="second_field_total" readonly="" name="second_field_total">
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!-- end fruit watermelon --
-
-                                    <!-- start additional fruit --
-                                    <div class="row fruits-calculation">
-                                        <div class="col-md-5 unit">
-                                            <div class="input">
-                                                <input class="form-control" type="text" id="third_field" placeholder="add your fruit" name="third_field">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3 unit">
-                                            <div class="input quantity-events">
-                                                <input class="form-control" type="text" id="third_field_quantity" name="third_field_quantity">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-2 unit">
-                                            <div class="input">
-                                                <input class="form-control" type="text" id="third_field_price" data-a-sign="$ " name="third_field_price">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-2 unit">
-                                            <div class="input">
-                                                <input class="form-control" type="text" id="third_field_total" readonly="" name="third_field_total">
-                                            </div>
-                                        </div>
-                                    </div> -->
-                                    <!-- end additional fruit -->
-
-                                    <!-- start totals -->
-                                    <div class="row">
-                                        <div class="col-md-offset-8 col-md-4 unit">
-                                            <div class="input">
-                                                <input class="form-control" type="text" placeholder="Totals" id="field_totals" readonly="" name="field_totals">
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!-- end totals -->
-
-                                    <!-- start response from server -->
-                                    <div id="response"></div>
-                                    <!-- end response from server -->
-
-                                </div>
-                                <!-- end /.content -->
-
-                                <div class="form-footer">
-                                    <button type="submit" class="btn btn-success primary-btn">Order Now</button>
-                                </div>
-                                <!-- end /.footer -->
-
-                            </div>
-                        </div>
+            <!-- Modal -->
+            <div class="modal fade" id="myModal" role="dialog">
+            <div class="modal-dialog">
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Validasi</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p class="text-center"><i class="zmdi zmdi-alert-circle-o zmdi-hc-5x"></i><br/><br/>Apakah anda yakin ingin beralih ke mode mouse?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Batal</button>
+                        <button type="button" class="btn btn-danger"  onclick="window.location.href='https://fb.com'"">Yakin</button>
+                    </div>
                 </div>
             </div>
+            </div>
         </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+                <div class="widget-container">
+                    <div class="widget-content">
+                        <!-- <form action="#" method="post" class="j-forms" id="order-forms-quantity" novalidate> -->
+                        <div class="j-forms" id="order-forms-quantity" novalidate>
+
+                            <div class="form-group">
+                                <!-- start name -->
+                                <div class="col-sm-7 unit">
+                                    <div class="input">
+                                        <label class="icon-left" for="name">
+                                            <i class="fa fa-barcode"></i>
+                                        </label>
+                                        <input class="form-control" type="text" id="barcode" name="barcode" placeholder="Scan or Type Barcode Item Here" onkeypress="return cek_enter(event, 'barcode')">
+                                    </div>
+                                </div>
+                                <div class="col-sm-3 unit">
+                                    <div class="input">
+                                        <label class="icon-left" for="name">
+                                            <i class="zmdi zmdi-shopping-basket"></i>
+                                        </label>
+                                        <input class="form-control" type="number" id="qty" placeholder="Qty" value=1 min=1 onkeypress="return cek_enter(event, 'qty')"> 
+                                    </div>
+                                </div>
+                                <div class="col-sm-2 unit">
+                                    <div class="input">
+                                        <button type="submit" class="btn btn-success" onclick="myFunction()"><i class="zmdi zmdi-plus"> Add Item</i></button>
+                                    </div>
+                                </div>
+                            </div>
+                                <!-- end name -->
+                                <!-- <div class="row fruits-calculation">
+                                    <div class="col-md-12 unit">
+                                        <table id="myTable">
+                                            <th class="col-md-1">#</th>
+                                            <th class="col-md-3">Item</th>
+                                            <th class="col-md-2">Qty</th>
+                                            <th class="col-md-3">Harga Satuan</th>
+                                            <th class="col-md-3">Sub-Total</th>
+                                        </table>
+                                    </div>
+                                </div> -->
+                                <div class="row">
+                                    <div class="col-sm-12" id="myTable">
+                                        <div class="col-sm-1 heading-tabel">Remove</div>
+                                        <div class="col-sm-1 heading-tabel">#</div>
+                                        <div class="col-sm-3 heading-tabel">Item</div>
+                                        <div class="col-sm-1 heading-tabel">Qty</div>
+                                        <div class="col-sm-3 heading-tabel">Harga Satuan</div>
+                                        <div class="col-sm-3 heading-tabel">Sub-Total</div>
+                                    </div>
+                                </div>
+                                <!-- start  fruit coconut -->
+                                <!-- <div class="row fruits-calculation">
+                                    <div class="col-md-5 unit">
+                                        <label class="label">Available fruits</label>
+                                        <div class="input">
+                                            <input class="form-control" type="text" id="first_field" value="Coconut" readonly="" name="first_field">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 unit">
+                                        <label class="label">Quantity</label>
+                                        <div class="input quantity-events">
+                                            <input class="form-control" type="text" id="first_field_quantity" name="first_field_quantity">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2 unit">
+                                        <label class="label">Price</label>
+                                        <div class="input">
+                                            <input class="form-control" type="text" id="first_field_price" value="$ 1.30" readonly="" name="first_field_price">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2 unit">
+                                        <label class="label">Total</label>
+                                        <div class="input">
+                                            <input class="form-control" type="text" id="first_field_total" readonly="" name="first_field_total">
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- end fruit coconut -->
+
+                                <!-- start fruit watermelon --
+                                <div class="row fruits-calculation">
+                                    <div class="col-md-5 unit">
+                                        <div class="input">
+                                            <input class="form-control" type="text" id="second_field" value="Watermelon" readonly="" name="second_field">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 unit">
+                                        <div class="input quantity-events">
+                                            <input class="form-control" type="text" id="second_field_quantity" name="second_field_quantity">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2 unit">
+                                        <div class="input">
+                                            <input class="form-control" type="text" id="second_field_price" value="$ 3.50" readonly="" name="second_field_price">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2 unit">
+                                        <div class="input">
+                                            <input class="form-control" type="text" id="second_field_total" readonly="" name="second_field_total">
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- end fruit watermelon --
+
+                                <!-- start additional fruit --
+                                <div class="row fruits-calculation">
+                                    <div class="col-md-5 unit">
+                                        <div class="input">
+                                            <input class="form-control" type="text" id="third_field" placeholder="add your fruit" name="third_field">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 unit">
+                                        <div class="input quantity-events">
+                                            <input class="form-control" type="text" id="third_field_quantity" name="third_field_quantity">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2 unit">
+                                        <div class="input">
+                                            <input class="form-control" type="text" id="third_field_price" data-a-sign="$ " name="third_field_price">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2 unit">
+                                        <div class="input">
+                                            <input class="form-control" type="text" id="third_field_total" readonly="" name="third_field_total">
+                                        </div>
+                                    </div>
+                                </div> -->
+                                <!-- end additional fruit -->
+
+                                <!-- start totals -->
+                                <div class="row m-t-20">
+                                    <div class="col-md-offset-8 col-md-4 unit">
+                                        <div class="input">
+                                            <input class="form-control" type="text" placeholder="Totals" id="field_totals" readonly="" name="field_totals">
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- end totals -->
+
+                                <!-- start response from server -->
+                                <div id="response"></div>
+                                <!-- end response from server -->
+
+                            <!-- end /.content -->
+
+                            <div class="form-footer">
+                                <button type="submit" class="btn btn-success primary-btn">Order Now</button>
+                            </div>
+                            <!-- end /.footer -->
+                            <button class="btn btn-danger" onclick="printData()">TEST Data</button>
+                            <div id="cumateksbung"></div>
+                            <div id="tampilan"></div>
+                        </div>
+                    </div>
+            </div>
+        </div>
+    </div>
 </div>
 </div>
 

@@ -126,7 +126,7 @@
 }
 .error-message {
   margin-bottom: 40px;
-  text-align: right;
+  text-align: left;
 }
 .error-message h4 {
   font-size: 32px;

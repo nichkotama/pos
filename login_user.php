@@ -1,11 +1,44 @@
-<?php require_once('php/modular/config.php') ?>
+<?php 
+require_once('php/modular/koneksi.php'); 
+if(isset($_POST['submit'])){
+    session_start();
+    $user = $_POST['login'];
+    $pass = $_POST['password'];
+    $newpass    = crypt($pass, salt);
+
+    $sql = "SELECT id_karyawan, password FROM karyawan WHERE id_karyawan = '$user' AND password = '$newpass'";
+    
+    $hasil = mysqli_query($koneksi, $sql);
+    $baris = mysqli_fetch_assoc($hasil);
+    if(mysqli_num_rows($hasil) == 0) 
+    {
+        echo "<div class='row'>
+            <div class='col-md-12'>
+                <div class='j-forms'>
+                    <div class='form-content'>
+                        <div class='unit'> 
+                            <div class='error-message text-center'>
+                                <i class='fa fa-close'></i>ID Karyawan atau Password salah.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </div>";
+    }
+    else
+    {
+        $_SESSION['login'] = 1;
+        header("Location: index.php");
+    }}
+?>
 <!doctype html>
 <html>
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
-    <title>Westilo - Bootstrap Responsive Admin Template</title>
+    <title>Login - <?php echo $judul ?></title>
     <link type="text/css" rel="stylesheet" href="css/font-awesome.css">
     <link type="text/css" rel="stylesheet" href="css/material-design-iconic-font.css">
     <link type="text/css" rel="stylesheet" href="css/bootstrap.css">
@@ -25,7 +58,7 @@
 <div class="container">
 <div class="col-md-4 col-md-offset-4 col-sm-4 col-sm-offset-4">
 <div class="login-form-container">
-    <form action="php/demo.php" method="post" class="j-forms" id="forms-login" novalidate>
+    <form action="login_user.php" method="post" class="j-forms">
 
         <div class="login-form-header">
             <div class="logo">
@@ -42,7 +75,7 @@
                     <label class="icon-left" for="login">
                         <i class="zmdi zmdi-account"></i>
                     </label>
-                    <input class="form-control login-frm-input"  type="text" id="login" name="login" placeholder="ID">
+                    <input class="form-control login-frm-input"  type="text" id="login" name="login" placeholder="Masukkan ID Karyawan" value="<?php echo $user?>">
                 </div>
             </div>
             <!-- end login -->
@@ -53,7 +86,7 @@
                     <label class="icon-left" for="password">
                         <i class="zmdi zmdi-key"></i>
                     </label>
-                    <input class="form-control login-frm-input"  type="password" id="password" name="password" placeholder="Password">
+                    <input class="form-control login-frm-input"  type="password" id="password" name="password" placeholder="Masukkan Password">
 						<span class="hint">
 							<a href="#" class="link">Forgot password?</a>
 						</span>
@@ -72,15 +105,9 @@
             </div>
             <!-- end keep logged -->
 
-            <!-- start response from server -->
-            <div class="response"></div>
-            <!-- end response from server -->
-
-
-
         </div>
         <div class="login-form-footer">
-            <button type="submit" class="btn-block btn btn-primary">Sign in</button>
+            <button type="submit" class="btn-block btn btn-primary" name="submit" value="Submit">Sign in</button>
         </div>
 
     </form>
@@ -93,7 +120,7 @@
         <div class="row">
             <div class="col-md-4 col-md-offset-4 col-sm-4 col-sm-offset-4">
                 <div class="footer-content">
-                    <span class="footer-meta">Crafted with&nbsp;<i class="fa fa-heart"></i>&nbsp;by&nbsp;<a href="http://themeforest.net/user/westilian">westilian</a></span>
+                    <span class="footer-meta"><?php echo $judul . " created by " . $author ?></span>
                 </div>
             </div>
         </div>

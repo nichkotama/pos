@@ -33,15 +33,11 @@
         <ul class="list-accordion tree-style">
             <li class="list-title">Items</li>
                 <li>
-                    <a href="#"><i class="zmdi zmdi-view-dashboard"></i><span class="list-label">Manage Items</span></a>
-                    <ul>
-                        <li><a href="#">Input Barang</a></li>
-                        <li><a href="#">Edit Barang</a></li>
-                    </ul>
+                    <a href="<?php echo $url_web?>produk"><i class="zmdi zmdi-view-dashboard"></i><span class="list-label">Manage Produk</span></a>
                 </li>
             <li class="list-title">Transaksi</li>
                 <li><a href="#"><i class="zmdi zmdi-view-dashboard"></i><span class="list-label">Beli Barang (?)</span></a></li>
-                <li><a href="sales/"><i class="zmdi zmdi-time-restore"></i><span class="list-label">Sesi Penjualan</span></a></li>
+                <li><a href="<?php echo $url_web?>sales/"><i class="zmdi zmdi-time-restore"></i><span class="list-label">Sesi Penjualan</span></a></li>
             <li class="list-title">Laporan (?)</li>
                 <li><a href="#"><i class="zmdi zmdi-receipt"></i><span class="list-label">Laporan Pembelian</span></a></li>
                 <li><a href="#"><i class="zmdi zmdi-receipt"></i><span class="list-label">Laporan Stok</span></a></li>

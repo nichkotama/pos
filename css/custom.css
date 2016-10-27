@@ -29,6 +29,10 @@
 	margin-bottom: 20px;
 }
 
+.m-tb-10{
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
 .m-lr-10{
 	margin-left: 10px;
 	margin-right: 10px;
@@ -57,6 +61,11 @@
 
 .barang-cancel{
 	background-color: #ccc;
+}
+
+.modal-lg{
+	width:90%;
+	margin:2% auto;
 }
 
 input:-webkit-autofill {

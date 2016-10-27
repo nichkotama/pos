@@ -21,7 +21,7 @@
                 <li><span class="left-toggle-switch"><i class="zmdi zmdi-menu"></i></span></li>
                 <li>
                     <div class="logo">
-                        <a href="index.html" title="Admin Template"><img src="<?php echo $url_web ?>images/logo.png" alt="logo" style="max-height:52px"></a>
+                        <a href="index.html" title="Home Page"><img src="<?php echo $url_web ?>images/logo.png" alt="logo" style="max-height:52px"></a>
                     </div>
                 </li>
             </ul>

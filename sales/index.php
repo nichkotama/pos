@@ -1,4 +1,4 @@
-<?php require_once('../php/modular/config.php') ?>
+<?php require_once('../php/modular/koneksi.php') ?>
 <!doctype html>
 <html>
 <head>
@@ -61,7 +61,7 @@
         // var cell1 = row.insertCell(0);
         // var cell2 = row.insertCell(1);
         // cell1.innerHTML = "NEW CELL1";
-        // cell2.innerHTML = "NEW CELL2";
+        // cell2.innerHTML = "NEW CELL2"; 
     }
     
     function deleteRow( number ){
@@ -120,8 +120,8 @@
 <div class="page-header filled light">
     <div class="row widget-header block-header">
         <div class="col-sm-6">
-            <h2>Sales - Keyboard Mode</h2>
-            <p>Penjualan Hari Rabu, 14-Sep-2016</p>
+            <h2>Sales</h2>
+            <p>Penjualan Hari <?php echo $hari_ini ?></p>
         </div>
         <div class="col-sm-6">
             <ul class="list-page-breadcrumb">
@@ -129,14 +129,14 @@
                 <li class="active-page"> Session</li>
             </ul>
         </div>
-        <div class="col-sm-12 m-t-20">
+        <!-- <div class="col-sm-12 m-t-20">
             <button class="btn btn-success active col-sm-6"><i class="zmdi zmdi-keyboard"> Keyboard Mode</i></button>
             <button type="button"  data-toggle="modal" data-target="#myModal" class="btn btn-success col-sm-6"><i class="zmdi zmdi-image"> Mouse Mode</i></button>
 
-            <!-- Modal -->
+            <!-- Modal --
             <div class="modal fade" id="myModal" role="dialog">
             <div class="modal-dialog">
-                <!-- Modal content-->
+                <!-- Modal content--
                 <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
@@ -152,7 +152,7 @@
                 </div>
             </div>
             </div>
-        </div>
+        </div> -->
     </div>
     <div class="row">
         <div class="col-md-12">
@@ -185,18 +185,6 @@
                                     </div>
                                 </div>
                             </div>
-                                <!-- end name -->
-                                <!-- <div class="row fruits-calculation">
-                                    <div class="col-md-12 unit">
-                                        <table id="myTable">
-                                            <th class="col-md-1">#</th>
-                                            <th class="col-md-3">Item</th>
-                                            <th class="col-md-2">Qty</th>
-                                            <th class="col-md-3">Harga Satuan</th>
-                                            <th class="col-md-3">Sub-Total</th>
-                                        </table>
-                                    </div>
-                                </div> -->
                                 <div class="row">
                                     <div class="col-sm-12" id="myTable">
                                         <div class="col-sm-1 heading-tabel">Remove</div>
@@ -207,84 +195,6 @@
                                         <div class="col-sm-3 heading-tabel">Sub-Total</div>
                                     </div>
                                 </div>
-                                <!-- start  fruit coconut -->
-                                <!-- <div class="row fruits-calculation">
-                                    <div class="col-md-5 unit">
-                                        <label class="label">Available fruits</label>
-                                        <div class="input">
-                                            <input class="form-control" type="text" id="first_field" value="Coconut" readonly="" name="first_field">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3 unit">
-                                        <label class="label">Quantity</label>
-                                        <div class="input quantity-events">
-                                            <input class="form-control" type="text" id="first_field_quantity" name="first_field_quantity">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-2 unit">
-                                        <label class="label">Price</label>
-                                        <div class="input">
-                                            <input class="form-control" type="text" id="first_field_price" value="$ 1.30" readonly="" name="first_field_price">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-2 unit">
-                                        <label class="label">Total</label>
-                                        <div class="input">
-                                            <input class="form-control" type="text" id="first_field_total" readonly="" name="first_field_total">
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- end fruit coconut -->
-
-                                <!-- start fruit watermelon --
-                                <div class="row fruits-calculation">
-                                    <div class="col-md-5 unit">
-                                        <div class="input">
-                                            <input class="form-control" type="text" id="second_field" value="Watermelon" readonly="" name="second_field">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3 unit">
-                                        <div class="input quantity-events">
-                                            <input class="form-control" type="text" id="second_field_quantity" name="second_field_quantity">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-2 unit">
-                                        <div class="input">
-                                            <input class="form-control" type="text" id="second_field_price" value="$ 3.50" readonly="" name="second_field_price">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-2 unit">
-                                        <div class="input">
-                                            <input class="form-control" type="text" id="second_field_total" readonly="" name="second_field_total">
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- end fruit watermelon --
-
-                                <!-- start additional fruit --
-                                <div class="row fruits-calculation">
-                                    <div class="col-md-5 unit">
-                                        <div class="input">
-                                            <input class="form-control" type="text" id="third_field" placeholder="add your fruit" name="third_field">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3 unit">
-                                        <div class="input quantity-events">
-                                            <input class="form-control" type="text" id="third_field_quantity" name="third_field_quantity">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-2 unit">
-                                        <div class="input">
-                                            <input class="form-control" type="text" id="third_field_price" data-a-sign="$ " name="third_field_price">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-2 unit">
-                                        <div class="input">
-                                            <input class="form-control" type="text" id="third_field_total" readonly="" name="third_field_total">
-                                        </div>
-                                    </div>
-                                </div> -->
-                                <!-- end additional fruit -->
 
                                 <!-- start totals -->
                                 <div class="row m-t-20">

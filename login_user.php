@@ -6,12 +6,13 @@ if(isset($_POST['submit'])){
     $pass = $_POST['password'];
     $newpass    = crypt($pass, salt);
 
-    $sql = "SELECT id_karyawan, password FROM karyawan WHERE id_karyawan = '$user' AND password = '$newpass'";
+    $sql = "SELECT id_karyawan, password 
+            FROM karyawan 
+            WHERE id_karyawan LIKE binary '$user' AND password = '$newpass'";
     
     $hasil = mysqli_query($koneksi, $sql);
     $baris = mysqli_fetch_assoc($hasil);
-    if(mysqli_num_rows($hasil) == 0) 
-    {
+    if(mysqli_num_rows($hasil) == 0){
         echo "<div class='row'>
             <div class='col-md-12'>
                 <div class='j-forms'>
@@ -25,12 +26,11 @@ if(isset($_POST['submit'])){
                 </div>
             </div>
             </div>";
-    }
-    else
-    {
+    } else{
         $_SESSION['login'] = 1;
         header("Location: index.php");
-    }}
+    }
+}
 ?>
 <!doctype html>
 <html>

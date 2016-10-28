@@ -1,7 +1,7 @@
 <?php 
 require_once('../php/modular/koneksi.php');
 require_once('../php/modular/otentifikasi.php'); 
-$result = $db->prepare("SELECT * FROM barang");
+$result = $db->prepare("SELECT * FROM barang ORDER BY nama_barang");
 $result->execute(); 
 ?>
 <!doctype html>
@@ -108,12 +108,17 @@ $result->execute();
                         <?php
                             for ($i = 0; $row = $result->fetch(); $i++) {
                                 echo "<tr>";
+                                # kolom nama barang
                                 echo "<td>" . $row['nama_barang'] . "</td>";
-                                echo "<td>" . $row['barcode_barang'] . "</td>";
+                                # kolom barcode barang
+                                echo "<td>" . addslashes($row['barcode_barang']) . "</td>";
+                                # kolom image, tentatif
                                 echo "<td class='td-center'>
                                 <a href='#' class='td-profile-thumb'><img src='../images/avatar/amarkdalen.jpg' alt='user'></a>
                                 </td>";
+                                # kolom status barang, kalau stok minimal
                                 echo "<td>Lajang</td>";
+                                # kolom aksi
                                 echo "<td class='td-center'>
                                 <div class='btn-toolbar' role='toolbar'>
                                     <div class='btn-group' role='group'>

@@ -24,6 +24,12 @@ $result->execute();
     <link type="text/css" rel="stylesheet" href="../css/common.css">
     <link type="text/css" rel="stylesheet" href="../css/responsive.css">
     <link type="text/css" rel="stylesheet" href="../css/custom.css">
+
+<script>
+function fokus_teks() {
+    document.getElementById("nama_barang").focus();
+}
+</script>
 </head>
 <body class="overlay-leftbar">
 <?php include('../php/modular/top-menu.php') ?>
@@ -47,7 +53,7 @@ $result->execute();
     <div class="row widget-header block-header">
         <div class="col-sm-2 unit">
             <div class="input">
-                <button type="submit" class="btn btn-success" onclick=""  data-toggle="modal" data-target="#myModal" onclick="fokus(login)"><i class="zmdi zmdi-plus"> Tambah Produk</i></button>
+                <button type="submit" class="btn btn-success" onclick=""  data-toggle="modal" data-target="#myModal" onclick="fokus_teks()"><i class="zmdi zmdi-plus"> Tambah Produk</i></button>
 
                 <!-- Modal -->
                 <div class="modal fade" id="myModal" role="dialog">
@@ -61,30 +67,68 @@ $result->execute();
                             <div class="modal-body">
                                 <form action="produk_tambah.php" method="post" class="j-forms">
                                         <div class="unit">
-                                            <div class="input login-input">
-                                                <label class="icon-left" for="login">
-                                                    <i class="zmdi zmdi-account"></i>
+                                            <div class="input">
+                                                <label class="icon-left" for="nama_barang">
+                                                    <i class="fa fa-book"></i>
                                                 </label>
-                                                <input class="form-control login-frm-input"  type="text" id="login" name="login" placeholder="Masukkan ID Karyawan" value="<?php echo $user?>">
+                                                <input class="form-control login-frm-input"  type="text" id="nama" name="nama" placeholder="Masukkan Nama Barang">
                                             </div>
                                         </div>
                                         <div class="unit">
-                                            <div class="input login-input">
-                                                <label class="icon-left" for="password">
-                                                    <i class="zmdi zmdi-key"></i>
+                                            <div class="input">
+                                                <label class="icon-left" for="barcode">
+                                                    <i class="fa fa-barcode"></i>
                                                 </label>
-                                                <input class="form-control login-frm-input"  type="password" id="password" name="password" placeholder="Masukkan Password">
-                                                    <span class="hint">
-                                                        <a href="#" class="link">Forgot password?</a>
-                                                    </span>
+                                                <input class="form-control login-frm-input"  type="text" id="barcode" name="barcode" placeholder="Masukkan Barcode">
+                                            </div>
+                                        </div>
+                                        <div class="unit">
+                                            <div class="input">
+                                                <label class="icon-left" for="banyak">
+                                                    <i class="fa fa-cubes"></i>
+                                                </label>
+                                                <input class="form-control login-frm-input"  type="text" id="banyak" name="banyak" placeholder="Masukkan Banyak Unit Awal (Kuantitas)">
+                                            </div>
+                                        </div>
+                                        <div class="unit">
+                                            <div class="input">
+                                                <label class="icon-left" for="banyak">
+                                                    <i class="fa fa-money"></i>
+                                                </label>
+                                                <input class="form-control login-frm-input"  type="text" id="banyak" name="banyak" placeholder="Masukkan Harga Beli">
+                                            </div>
+                                        </div>
+                                        <div class="unit">
+                                            <div class="input">
+                                                <label class="icon-left" for="banyak">
+                                                    <i class="fa fa-money"></i>
+                                                </label>
+                                                <input class="form-control login-frm-input"  type="text" id="banyak" name="banyak" placeholder="Masukkan Harga Jual">
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6 unit">
+                                                <div class="input">
+                                                    <label class="icon-left" for="text">
+                                                        <i class="fa fa-percent"></i>
+                                                    </label>
+                                                    <input class="form-control" type="text" placeholder="Jumlah Diskon" id="text">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 unit">
+                                                <div class="input">
+                                                    <label class="icon-left" for="text">
+                                                        <i class="fa fa-calendar-times-o"></i>
+                                                    </label>
+                                                    <input class="form-control" type="text" placeholder="Diskon Sampai" id="text">
+                                                </div>
                                             </div>
                                         </div>
                                 </form>
-                                <p class="text-center"><i class="zmdi zmdi-alert-circle-o zmdi-hc-5x"></i><br/><br/>Apakah anda yakin ingin beralih ke mode mouse?</p>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-default" data-dismiss="modal">Batal</button>
-                                <button type="button" class="btn btn-success"  onclick="window.location.href='https://fb.com'"">Simpan</button>
+                                <button type="button" class="btn btn-success"  onclick="window.location.href='#'"">Simpan</button>
                             </div>
                         </div>
                     </div>

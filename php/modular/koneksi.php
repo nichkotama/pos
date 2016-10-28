@@ -2,6 +2,9 @@
 require_once 'config.php';
 // koneksi ke database
 $koneksi = mysqli_connect(db_server, db_user, db_pass, db_name);
+
+$db = new PDO('mysql:host='.db_server.';dbname='.db_name, db_user, db_pass);
+$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 if(mysqli_connect_errno()) {
 	if($mode_debug == true){
 		echo "<div class='row'>

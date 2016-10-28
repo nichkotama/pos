@@ -5,7 +5,7 @@ try{
 	    //username and password sent from Form
 	    $username = trim($_POST['login']);
 	    $password = trim($_POST['password']);
-		$result = $conn->prepare("SELECT * FROM karyawan WHERE id_karyawan BINARY = :user AND password= :pass");
+		$result = $db->prepare("SELECT * FROM karyawan WHERE id_karyawan BINARY = :user AND password= :pass");
 		$result->bindParam(':user', $username);
 		$result->bindParam(':pass', $password);
 		$result->execute();

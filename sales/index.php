@@ -1,4 +1,7 @@
-<?php require_once('../php/modular/koneksi.php') ?>
+<?php
+require_once('../php/modular/koneksi.php');
+require_once('../php/modular/otentifikasi.php');  
+?>
 <!doctype html>
 <html>
 <head>

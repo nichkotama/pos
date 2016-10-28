@@ -1,7 +1,6 @@
 <?php 
 require_once('php/modular/koneksi.php'); 
-session_start();
-if(!isset($_SESSION['login']) OR $_SESSION['login'] != 1) header("Location: login_user.php");
+require_once('php/modular/otentifikasi.php'); 
 ?>
 <!doctype html>
 <html>

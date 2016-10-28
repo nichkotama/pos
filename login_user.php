@@ -51,8 +51,20 @@ if(isset($_POST['submit'])){
     <link type="text/css" rel="stylesheet" href="css/bootstrap-extend.css">
     <link type="text/css" rel="stylesheet" href="css/common.css">
     <link type="text/css" rel="stylesheet" href="css/responsive.css">
+    
 </head>
 <body class="login-page">
+
+<script type="text/javascript">
+    window.onload = function() {
+        var SetFokus = $('#login');
+        SetFokus.val(SetFokus.val());
+        var strLength= SetFokus.val().length;
+        SetFokus.focus();
+        SetFokus[0].setSelectionRange(strLength, strLength);
+    }
+</script>
+
 <!--Page Container Start Here-->
 <section class="login-container boxed-login">
 <div class="container">
@@ -62,7 +74,7 @@ if(isset($_POST['submit'])){
 
         <div class="login-form-header">
             <div class="logo">
-                <a href="index.html" title="Admin Template"><img src="images/logo-dark.png" alt="logo"></a>
+                <a href="index.html" title="Homepage"><img src="images/logo-dark.png" alt="logo" style="max-width:150px"></a>
             </div>
         </div>
         <div class="login-form-content">
@@ -95,7 +107,7 @@ if(isset($_POST['submit'])){
             <!-- end password -->
 
 
-            <!-- start keep logged -->
+            <!-- start keep logged --
             <div class="unit">
                 <label class="checkbox">
                     <input type="checkbox" name="logged" value="true" checked="">
@@ -103,7 +115,7 @@ if(isset($_POST['submit'])){
                     Keep me logged in
                 </label>
             </div>
-            <!-- end keep logged -->
+            !-- end keep logged -->
 
         </div>
         <div class="login-form-footer">

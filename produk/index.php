@@ -1,11 +1,16 @@
-<?php require_once('../php/modular/koneksi.php') ?>
+<?php 
+require_once('../php/modular/koneksi.php');
+require_once('../php/modular/otentifikasi.php'); 
+$result = $db->prepare("SELECT * FROM barang");
+$result->execute(); 
+?>
 <!doctype html>
 <html>
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
-    <title>Westilo - Bootstrap Responsive Admin Template</title>
+    <title><?php echo $judul;?> - Produk</title>
     <link type="text/css" rel="stylesheet" href="../css/font-awesome.css">
     <link type="text/css" rel="stylesheet" href="../css/material-design-iconic-font.css">
     <link type="text/css" rel="stylesheet" href="../css/bootstrap.css">
@@ -39,10 +44,10 @@
         </div>
     </div>
 
-    <div class="row m-b-20">
+    <div class="row widget-header block-header">
         <div class="col-sm-2 unit">
             <div class="input">
-                <button type="submit" class="btn btn-success" onclick=""  data-toggle="modal" data-target="#myModal" ><i class="zmdi zmdi-plus"> Add Product</i></button>
+                <button type="submit" class="btn btn-success" onclick=""  data-toggle="modal" data-target="#myModal" onclick="fokus(login)"><i class="zmdi zmdi-plus"> Tambah Produk</i></button>
 
                 <!-- Modal -->
                 <div class="modal fade" id="myModal" role="dialog">
@@ -54,6 +59,27 @@
                                 <h4 class="modal-title">Tambah Produk</h4>
                             </div>
                             <div class="modal-body">
+                                <form action="produk_tambah.php" method="post" class="j-forms">
+                                        <div class="unit">
+                                            <div class="input login-input">
+                                                <label class="icon-left" for="login">
+                                                    <i class="zmdi zmdi-account"></i>
+                                                </label>
+                                                <input class="form-control login-frm-input"  type="text" id="login" name="login" placeholder="Masukkan ID Karyawan" value="<?php echo $user?>">
+                                            </div>
+                                        </div>
+                                        <div class="unit">
+                                            <div class="input login-input">
+                                                <label class="icon-left" for="password">
+                                                    <i class="zmdi zmdi-key"></i>
+                                                </label>
+                                                <input class="form-control login-frm-input"  type="password" id="password" name="password" placeholder="Masukkan Password">
+                                                    <span class="hint">
+                                                        <a href="#" class="link">Forgot password?</a>
+                                                    </span>
+                                            </div>
+                                        </div>
+                                </form>
                                 <p class="text-center"><i class="zmdi zmdi-alert-circle-o zmdi-hc-5x"></i><br/><br/>Apakah anda yakin ingin beralih ke mode mouse?</p>
                             </div>
                             <div class="modal-footer">
@@ -71,15 +97,33 @@
                     <table class="table table-striped data-tbl">
                         <thead>
                         <tr>
-                            <th>Name</th>
-                            <th>Position</th>
+                            <th>Nama Barang</th>
+                            <th>Barcode</th>
                             <th class="td-center">Image</th>
                             <th>Status</th>
                             <th class="td-center">Action</th>
                         </tr>
                         </thead>
                         <tbody>
-                        <tr>
+                        <?php
+                            for ($i = 0; $row = $result->fetch(); $i++) {
+                                echo "<tr>";
+                                echo "<td>" . $row['nama_barang'] . "</td>";
+                                echo "<td>" . $row['barcode_barang'] . "</td>";
+                                echo "<td class='td-center'>
+                                <a href='#' class='td-profile-thumb'><img src='../images/avatar/amarkdalen.jpg' alt='user'></a>
+                                </td>";
+                                echo "<td>Lajang</td>";
+                                echo "<td class='td-center'>
+                                <div class='btn-toolbar' role='toolbar'>
+                                    <div class='btn-group' role='group'>
+                                        <a href='" . $url_web . "edit.php?method=barcode&key=" . $row['barcode_barang'] . "' class='btn btn-default btn-sm m-user-edit'><i class='zmdi zmdi-edit'></i></a>
+                                    </div>
+                                </div>
+                                </td>";
+                            }
+                        ?>
+                        <!-- <tr>
                             <td>Garrett Winters</td>
                             <td>Chief Executive Officer (CEO)</td>
                             <td class="td-center">
@@ -111,13 +155,13 @@
                                 </div>
                             </td>
                         </tr>
-                        <tr>
+                        <tr class="danger">
                             <td>Randall Martinez</td>
                             <td>Senior Javascript Developer</td>
                             <td class="td-center">
                                 <a href="#" class="td-profile-thumb"><img src="../images/avatar/bobbyjkane.jpg" alt="user"></a>
                             </td>
-                            <td class="danger"><label class="label label-danger">Suspended</label></td>
+                            <td><label class="label label-danger">Suspended</label></td>
                             <td  class="td-center">
                                 <div class="btn-toolbar" role="toolbar">
                                     <div class="btn-group" role="group">
@@ -174,7 +218,7 @@
                                     </div>
                                 </div>
                             </td>
-                        </tr>
+                        </tr> -->
 
                         </tbody>
 

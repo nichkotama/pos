@@ -1,6 +1,6 @@
 <?php
 	// general
-	$url_web = 'http://belajar.abc/tugas_bps/';
+	$url_web = 'http://localhost/tugas_bps/';
   	$judul = 'BM Mart POS';
   	$author = 'Kelompok 2';
 

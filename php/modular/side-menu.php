@@ -46,7 +46,8 @@
                 <li><a href="#"><i class="zmdi zmdi-receipt"></i><span class="list-label">Laporan Pembelian</span></a></li>
                 <li><a href="#"><i class="zmdi zmdi-receipt"></i><span class="list-label">Laporan Stok</span></a></li>
                 <li><a href="#"><i class="zmdi zmdi-receipt"></i><span class="list-label">Laporan Penjualan</span></a></li>
-            
+            <li class="list-title">Setting</li>
+				<li><a href="<?php echo $url_web ?>karyawan/list_karyawan.php"><i class="zmdi zmdi-receipt"></i><span class="list-label">Manage User</span></a></li>
             <li class="list-title">Layouts</li>
             <li>
                 <a href="#"><i class="zmdi zmdi-view-dashboard"></i><span class="list-label">Layouts Variations</span></a>

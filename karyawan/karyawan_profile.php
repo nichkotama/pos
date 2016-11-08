@@ -93,7 +93,7 @@ require_once('../includes/koneksi.php');
         <section class="content-header">
           <h1>
             Profil Karyawan
-            <small>Menampilkan Informasi Dosen</small>
+            <small>Menampilkan Informasi Karyawan</small>
           </h1>
           <ol class="breadcrumb">
             <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>

@@ -29,6 +29,10 @@
 	margin-bottom: 20px;
 }
 
+.m-tb-10{
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
 .m-lr-10{
 	margin-left: 10px;
 	margin-right: 10px;
@@ -51,10 +55,21 @@
 	padding-top: 10px;
 	padding-bottom: 10px;
 	margin-bottom: 10px;
-	background-color: #669966;
+	background-color: #17bab8;
 	color: #ffffff;
 }
 
 .barang-cancel{
 	background-color: #ccc;
+}
+
+.modal-lg{
+	width:90%;
+	margin:2% auto;
+}
+
+input:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0 100px #17BAB8 inset;
+    -moz-box-shadow: 0 0 0 100px #17BAB8 inset;
+    box-shadow: 0 0 0 100px #17BAB8 inset;
 }

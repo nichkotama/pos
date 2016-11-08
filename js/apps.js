@@ -1445,7 +1445,7 @@ jQuery(document).ready(function ($) {
     if ($.fn.dataTable) {
         $('.data-tbl').DataTable({
             responsive: true,
-            "columnDefs": [{"targets": [1, 2], "orderable": false}],
+            "columnDefs": [{"targets": [2, 3, 4], "orderable": false}],
             "oLanguage": {
                 "sLengthMenu": '<select class="tbl-data-select">' +
                 '<option value="10">10</option>' +

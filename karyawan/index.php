@@ -1,11 +1,19 @@
-<?php require_once('../php/modular/config.php') ?>
+<?php 
+require_once('../php/modular/koneksi.php');
+require_once('../php/modular/otentifikasi.php'); 
+$result = $db->prepare("SELECT `kary`.`*`, `dept`.`departemen` AS nama_departemen FROM `karyawan` kary LEFT JOIN `departemen` dept ON `kary`.`departemen` = `dept`.`kode_awal` ORDER BY nama_karyawan");
+$result->execute(); 
+
+$departemen = $db->prepare("SELECT * FROM departemen ORDER BY kode_awal");
+$departemen->execute();
+?>
 <!doctype html>
 <html>
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
-    <title><?php echo $judul ?> - Karyawan</title>
+    <title><?php echo $judul;?> - Karyawan</title>
     <link type="text/css" rel="stylesheet" href="../css/font-awesome.css">
     <link type="text/css" rel="stylesheet" href="../css/material-design-iconic-font.css">
     <link type="text/css" rel="stylesheet" href="../css/bootstrap.css">
@@ -19,123 +27,357 @@
     <link type="text/css" rel="stylesheet" href="../css/common.css">
     <link type="text/css" rel="stylesheet" href="../css/responsive.css">
     <link type="text/css" rel="stylesheet" href="../css/custom.css">
-    <link type="text/css" id="themes" rel="stylesheet" href="">
-</head>
 
-<body class="overlay-leftbar">
-<script type="text/javascript">
-    var number = 1;
-    var items = '';
-    var qty = 1;
-    var value = '';
-    window.onload = function() {
-        var input = document.getElementById("barcode").focus();
-    }
-
-    function myFunction(src, value) {
-        var table = document.getElementById("myTable");
-        if( src == 'barcode' ){
-            items = value;
-            qty = 1;
-        }else if( src == 'qty' ){
-            qty = value;
-        }
-        table.innerHTML = table.innerHTML 
-            + '<div class="col-sm-1"><button class="btn btn-danger"><i class="zmdi zmdi-close"></i></button></div>' 
-            + '<div class="col-sm-1 p-tb-9">' + number + '</div>' 
-            + '<div class="col-sm-3 p-tb-9">' + items +'</div>' 
-            + '<div class="col-sm-1"><input class="form-control" type="number" value="' + qty +'"/></div>' 
-            + '<div class="col-sm-3"><input class="form-control" type="number" value="' + qty +'" readonly=""/></div>' 
-            + '<div class="col-sm-3"><input class="form-control" type="number" value="' + qty +'" readonly=""/></div>' 
-        number++;
-
-        document.getElementById("barcode").value = '';
-        document.getElementById("qty").value = 1;
-        document.getElementById("barcode").focus();
-        // var row = table.insertRow(1);
-        // var cell1 = row.insertCell(0);
-        // var cell2 = row.insertCell(1);
-        // cell1.innerHTML = "NEW CELL1";
-        // cell2.innerHTML = "NEW CELL2";
-    }
-    function cek_enter(e, src) {
-    if (e.keyCode == 13) {
-        if( src == 'barcode' ){
-            value = document.getElementById('barcode').value;
-            if (value == "") value = "item tidak diinput";
-        }else if( src == 'qty' ){
-            value = document.getElementById('qty').value;
-        }
-        return myFunction(src, value);
-        // var field_barcode = document.getElementById('barcode');
-        // var field_qty = document.getElementById('qty');
-        // field_barcode.innerHTML = "";
-        // field_qty.innerHTML = "";
-    }
+<script>
+function fokus_teks() {
+    document.getElementById("nama").focus();
 }
 </script>
+</head>
+<body class="overlay-leftbar">
 <?php include('../php/modular/top-menu.php') ?>
 <?php include('../php/modular/side-menu.php') ?>
-
 <!--Page Container Start Here-->
 <section class="main-container">
 <div class="container-fluid">
-<div class="page-header filled light">
+<div class="page-header filled light single-line">
     <div class="row widget-header block-header">
         <div class="col-sm-6">
-            <h2>List Karyawan</h2>
+            <h2>Karyawan</h2>
         </div>
         <div class="col-sm-6">
             <ul class="list-page-breadcrumb">
                 <li><a href="#">Karyawan <i class="zmdi zmdi-chevron-right"></i></a></li>
-                <li class="active-page"> List Karyawan</li>
+                <li class="active-page"> Manage</li>
             </ul>
         </div>
-		<!-- Main content -->
-        <section class="content">
-	
-          <!-- Default box -->
-          <div class="box">
-            <div class="box-body">
-				<table class="table table-striped">
-					<tr>
-						<th style="width: 10px">NIK</th>
-						<th>Foto</th>
-						<th>Nama Karyawan</th>
-						<th>Bagian</th>
-						<th>Telepon</th>
-						<th>Alamat</th>
-						<th>Email</th>
-					</tr>
-					<tr>
-						<td>K001</td>
-						<td><img src="..\images\avatar\person.png" class="img-circle" alt="User Image" style="max-width:50px;" /></td>
-						<td><a href="karyawan_profile.php">Budi</a></td>
-						<td>Kasir</td>
-						<td>08135678490</td>
-						<td>Jakarta</td>
-						<td>budi.keren@gmail.com</td>
-					</tr>
-					<tr>
-						<td>K002</td>
-						<td><img src="..\images\avatar\nicholaskotama.png" class="img-circle" alt="User Image" style="max-width:50px;" /></td>
-						<td><a>Max</a></td>
-						<td>Manager</td>
-						<td>08129045783</td>
-						<td>Bandung</td>
-						<td>max.oke@gmail.com</td>
-					</tr>
-				
-				</table>
-            </div><!-- /.box-body -->
-			
-          </div><!-- /.box -->
-			
-        </section><!-- /.content -->
-                      
+    </div>
+
+    <div class="row widget-header block-header">
+        <div class="col-sm-2 unit">
+            <div class="input">
+                <button type="button" class="btn btn-success" data-toggle="modal" data-target="#modalAdd" onclick="fokus_teks()"><i class="zmdi zmdi-plus"> Tambah Karyawan</i></button>
+
+                <!-- Modal -->
+                <div class="modal fade" id="modalAdd" role="dialog">
+                    <div class="modal-dialog modal-lg">
+                    <!-- Modal content-->
+                        <form action="tambah.php" method="post" class="j-forms">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                <h4 class="modal-title">Tambah Karyawan</h4>
+                            </div>
+                            <div class="modal-body">
+                                <div class="unit">
+                                    <div class="input">
+                                        <label class="icon-left" for="nama_karyawan">
+                                            <i class="zmdi zmdi-account"></i>
+                                        </label>
+                                        <input class="form-control login-frm-input"  type="text" id="nama" name="nama" placeholder="Masukkan Nama Karyawan" required="true">
+                                    </div>
+                                </div>
+                                <div class="unit">
+                                    <div class="input">
+                                        <label>
+                                            Departemen
+                                        </label>
+                                            
+                                        <label class="input select">
+                                            <select class="form-control" name="departemen" onchange="if (this.value === 'add'){ 
+                                                    $('#modalAdd').modal('toggle');
+                                                    $('#modalAddDept').modal('toggle');
+                                                }
+                                            ">
+                                                <option disabled selected style="display:none;">-- Pilih departemen --</option>
+                                                <?php
+                                                for ($i = 0; $data = $departemen->fetch(); $i++) {
+                                                    echo "<option value = '" . $data['kode_awal'] . "'>" . $data['departemen'] . "</option>";
+                                                }
+                                                ?>
+                                                <option value="add" style="color:#ccc">Tambah Departemen...</option>
+                                            </select>
+                                            <i></i>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="unit">
+                                    <div class="input">
+                                        <label class="icon-left" for="email">
+                                            <i class="zmdi zmdi-email"></i>
+                                        </label>
+                                        <input class="form-control login-frm-input"  type="email" id="email" name="email" placeholder="Masukkan Email Karyawan" required="true">
+                                    </div>
+                                </div>
+                                <div class="unit">
+                                    <div class="input">
+                                        <label class="icon-left" for="telp">
+                                            <i class="zmdi zmdi-phone"></i>
+                                        </label>
+                                        <input class="form-control login-frm-input"  type="text" id="telp" name="telp" placeholder="Masukkan Nomor Telepon Karyawan" required="true">
+                                    </div>
+                                </div>
+                                <div class="unit">
+                                    <div class="input">
+                                        <label class="icon-left" for="password">
+                                            <i class="zmdi zmdi-key"></i>
+                                        </label>
+                                        <input class="form-control login-frm-input"  type="password" id="password" name="password" placeholder="Masukkan Password Awal Karyawan" required="true">
+                                    </div>
+                                </div>
+                                <div class="unit">
+                                    <div class="input">
+                                        <label class="icon-left" for="alamat">
+                                            <i class="zmdi zmdi-home"></i>
+                                        </label>
+                                        <textarea class="form-control login-frm-input"  type="text" id="alamat" name="alamat" placeholder="Masukkan Alamat Lengkap Karyawan" required="true"></textarea> 
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <label class="col-md-1 control-label">Foto</label>
+                                    <div class="col-md-11">
+                                        <input type="file" class="filestyle bootstrap-file" data-buttonbefore="true">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Batal</button>
+                                <button type="submit" class="btn btn-success" name="submit">Simpan</button>
+                            </div>
+                        </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+                    <table class="table table-striped data-tbl">
+                        <thead>
+                        <tr>
+                            <th>ID Karyawan</th>
+                            <th>Nama Karyawan</th>
+                            <th>Departemen</th>
+                            <th>Email</th>
+                            <th>Foto</th>
+                            <th class="td-center">Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <?php
+                            for ($i = 0; $row = $result->fetch(); $i++) {
+                                echo "<tr>";
+                                # kolom id karyawan
+                                echo "<td>" . $row['id_karyawan'] . "</td>";
+                                # kolom nama karyawan
+                                echo "<td>" . $row['nama_karyawan'] . "</td>";
+                                # kolom barcode barang
+                                echo "<td>" . $row['nama_departemen'] . "</td>";
+                                # kolom barcode barang
+                                echo "<td>" . $row['email'] . "</td>";
+                                # kolom barcode barang
+                                echo "<td><i class='td-profile-thumb'><img src='". $url_web . "images/karyawan/" . $row['id_karyawan'] . ".jpg'></i></td>";
+                                # kolom aksi
+                                echo "<td class='td-center'>
+                                <div class='btn-toolbar' role='toolbar'>
+                                    <div class='btn-group' role='group'>
+                                        <a href='edit.php?method=karyawan&key=" . $row['id_karyawan'] . "' class='btn btn-default btn-sm m-user-edit'><i class='zmdi zmdi-edit'></i></a>
+                                    </div>
+                                </div>
+                                </td>";
+                            }
+                        ?>
+                        <!-- JANGAN DIHAPUS DULU BUAT SAMPEL WARNING STOCK
+                        <tr>
+                            <td>Garrett Winters</td>
+                            <td>Chief Executive Officer (CEO)</td>
+                            <td class="td-center">
+                                <a href="#" class="td-profile-thumb"><img src="../images/avatar/amarkdalen.jpg" alt="user"></a>
+                            </td>
+                            <td><label class="label label-warning">Pending</label></td>
+                            <td class="td-center">
+                                <div class="btn-toolbar" role="toolbar">
+                                    <div class="btn-group" role="group">
+                                        <a href="#" class="btn btn-default btn-sm m-user-edit"><i class="zmdi zmdi-edit"></i></a>
+                                        <a href="#" class="btn btn-default btn-sm m-user-delete"><i class="zmdi zmdi-close"></i></a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Wyatt Ruiz</td>
+                            <td>Software Engineer</td>
+                            <td class="td-center">
+                                <a href="#" class="td-profile-thumb"><img src="../images/avatar/michael-owens.jpg" alt="user"></a>
+                            </td>
+                            <td class="success"><label class="label label-success">Approved</label></td>
+                            <td class="td-center">
+                                <div class="btn-toolbar" role="toolbar">
+                                    <div class="btn-group" role="group">
+                                        <a href="#" class="btn btn-default btn-sm m-user-edit"><i class="zmdi zmdi-edit"></i></a>
+                                        <a href="#" class="btn btn-default btn-sm m-user-delete"><i class="zmdi zmdi-close"></i></a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr class="danger">
+                            <td>Randall Martinez</td>
+                            <td>Senior Javascript Developer</td>
+                            <td class="td-center">
+                                <a href="#" class="td-profile-thumb"><img src="../images/avatar/bobbyjkane.jpg" alt="user"></a>
+                            </td>
+                            <td><label class="label label-danger">Suspended</label></td>
+                            <td  class="td-center">
+                                <div class="btn-toolbar" role="toolbar">
+                                    <div class="btn-group" role="group">
+                                        <a href="#" class="btn btn-default btn-sm m-user-edit"><i class="zmdi zmdi-edit"></i></a>
+                                        <a href="#" class="btn btn-default btn-sm m-user-delete"><i class="zmdi zmdi-close"></i></a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Orlando Mullen</td>
+                            <td>Integration Specialist</td>
+                            <td class="td-center">
+                                <a href="#" class="td-profile-thumb"><img src="../images/avatar/coreyweb.jpg" alt="user"></a>
+                            </td>
+                            <td><label class="label label-default">Waiting for Review</label></td>
+                            <td  class="td-center">
+                                <div class="btn-toolbar" role="toolbar">
+                                    <div class="btn-group" role="group">
+                                        <a href="#" class="btn btn-default btn-sm m-user-edit"><i class="zmdi zmdi-edit"></i></a>
+                                        <a href="#" class="btn btn-default btn-sm m-user-delete"><i class="zmdi zmdi-close"></i></a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Leonard Hodge</td>
+                            <td>Senior Marketing Designer</td>
+                            <td class="td-center">
+                                <a href="#" class="td-profile-thumb"><img src="../images/avatar/kurafire.jpg" alt="user"></a>
+                            </td>
+                            <td class="success"> <label class="label label-success">Approved</label></td>
+                            <td  class="td-center">
+                                <div class="btn-toolbar" role="toolbar">
+                                    <div class="btn-group" role="group">
+                                        <a href="#" class="btn btn-default btn-sm m-user-edit"><i class="zmdi zmdi-edit"></i></a>
+                                        <a href="#" class="btn btn-default btn-sm m-user-delete"><i class="zmdi zmdi-close"></i></a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Yardley Bond</td>
+                            <td>Office Manager</td>
+                            <td class="td-center">
+                                <a href="#" class="td-profile-thumb"><img src="../images/avatar/joostvanderree.jpg" alt="user"></a>
+                            </td>
+                            <td> <label class="label label-warning">Pending</label></td>
+                            <td  class="td-center">
+                                <div class="btn-toolbar" role="toolbar">
+                                    <div class="btn-group" role="group">
+                                        <a href="#" class="btn btn-default btn-sm m-user-edit"><i class="zmdi zmdi-edit"></i></a>
+                                        <a href="#" class="btn btn-default btn-sm m-user-delete"><i class="zmdi zmdi-close"></i></a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr> -->
+
+                        </tbody>
+
+
+                    </table>
+    </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="modalAddDept" role="dialog">
+    <div class="modal-dialog modal-lg">
+    <!-- Modal content-->
+        <form action="tambah.php" method="post" class="j-forms">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Tambah Departemen</h4>
+            </div>
+            <div class="modal-body">
+                <div class="unit">
+                    <div class="input">
+                        <label class="icon-left" for="nama_karyawan">
+                            <i class="zmdi zmdi-account"></i>
+                        </label>
+                        <input class="form-control login-frm-input"  type="text" id="nama" name="nama" placeholder="Masukkan Nama Karyawan" required="true">
+                    </div>
+                </div>
+                <div class="unit">
+                    <div class="input">
+                        <label>
+                            Departemen
+                        </label>
+                            
+                        <label class="input select">
+                            <select class="form-control" name="departemen" onchange="if (this.selectedIndex = 'add'){ 
+                                    $('#modalAdd').modal('toggle');
+                                    $('#modalAddDept').modal('toggle');
+                                }
+                            ";>
+                                <option>-- Pilih departemen --</option>
+                                <?php
+                                for ($i = 0; $data = $departemen->fetch(); $i++) {
+                                    echo "<option value = '" . $data['kode_awal'] . "'>" . $data['departemen'] . "</option>";
+                                }
+                                ?>
+                                <option value="add" style="color:#ccc;">Tambah Departemen...</option>
+                            </select>
+                            <i></i>
+                        </label>
+                    </div>
+                </div>
+                <div class="unit">
+                    <div class="input">
+                        <label class="icon-left" for="email">
+                            <i class="zmdi zmdi-email"></i>
+                        </label>
+                        <input class="form-control login-frm-input"  type="email" id="email" name="email" placeholder="Masukkan Email Karyawan" required="true">
+                    </div>
+                </div>
+                <div class="unit">
+                    <div class="input">
+                        <label class="icon-left" for="telp">
+                            <i class="zmdi zmdi-phone"></i>
+                        </label>
+                        <input class="form-control login-frm-input"  type="text" id="telp" name="telp" placeholder="Masukkan Nomor Telepon Karyawan" required="true">
+                    </div>
+                </div>
+                <div class="unit">
+                    <div class="input">
+                        <label class="icon-left" for="alamat">
+                            <i class="zmdi zmdi-home"></i>
+                        </label>
+                        <textarea class="form-control login-frm-input"  type="text" id="alamat" name="alamat" placeholder="Masukkan Alamat Lengkap Karyawan" required="true"></textarea> 
+                    </div>
+                </div>
+                <div class="row">
+                    <label class="col-md-1 control-label">Foto</label>
+                    <div class="col-md-11">
+                        <input type="file" class="filestyle bootstrap-file" data-buttonbefore="true">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Batal</button>
+                <button type="submit" class="btn btn-success" name="submit">Simpan</button>
+            </div>
+        </div>
+        </form>
+    </div>
+</div>
 </section>
 <section class="main-container m-t-min-20"><?php include('../php/modular/footer.php') ?></section>
-
 <!--Page Container End Here-->
 <!--Rightbar Start Here-->
 <aside class="rightbar">
@@ -169,6 +411,52 @@
                 </li>
             </ul>
         </div>
+    </div>
+    <div class="conversation-container">
+        <div class="conversation-row even">
+            <ul class="conversation-list">
+                <li>
+                    <p>
+                        Hi! this is mike how can I help you?
+                    </p>
+                </li>
+                <li>
+                    <p>
+                        Hello Sir!
+                    </p>
+                </li>
+            </ul>
+        </div>
+        <div class="conversation-row odd">
+            <ul class="conversation-list">
+                <li>
+                    <p>
+                        Hi! Mike I need a support my account is suspended but I don't know why?
+                    </p>
+                </li>
+            </ul>
+        </div>
+        <div class="conversation-row even">
+            <ul class="conversation-list">
+                <li>
+                    <p>
+                        Ok Sir! Let me check this issue please wait a min
+                    </p>
+                </li>
+            </ul>
+        </div>
+        <div class="conversation-row odd">
+            <ul class="conversation-list">
+                <li>
+                    <p>
+                        Ok sure :)
+                    </p>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="chat-text-input">
+        <input type="text" class="form-control">
     </div>
 </div>
 <ul class="nav nav-tabs material-tabs rightbar-tab" role="tablist">
@@ -486,8 +774,6 @@
 </div>
 </aside>
 <!--Rightbar End Here-->
-
-
 <script src="../js/lib/jquery.js"></script>
 <script src="../js/lib/jquery-migrate.js"></script>
 <script src="../js/lib/bootstrap.js"></script>
@@ -503,34 +789,21 @@
 <script src="../js/lib/jquery.slimscroll.js"></script>
 <script src="../js/lib/jquery.syntaxhighlighter.js"></script>
 <script src="../js/lib/velocity.js"></script>
-<script src="../js/lib/jquery-jvectormap.js"></script>
-<script src="../js/lib/jquery-jvectormap-world-mill.js"></script>
-<script src="../js/lib/jquery-jvectormap-us-aea.js"></script>
 <script src="../js/lib/smart-resize.js"></script>
-<!--iCheck-->
-<script src="../js/lib/icheck.js"></script>
-<script src="../js/lib/jquery.switch.button.js"></script>
-<!--CHARTS-->
-<script src="../js/lib/chart/sparkline/jquery.sparkline.js"></script>
-<script src="../js/lib/chart/easypie/jquery.easypiechart.min.js"></script>
-<script src="../js/lib/chart/flot/excanvas.min.js"></script>
-<script src="../js/lib/chart/flot/jquery.flot.min.js"></script>
-<script src="../js/lib/chart/flot/curvedLines.js"></script>
-<script src="../js/lib/chart/flot/jquery.flot.time.min.js"></script>
-<script src="../js/lib/chart/flot/jquery.flot.stack.min.js"></script>
-<script src="../js/lib/chart/flot/jquery.flot.axislabels.js"></script>
-<script src="../js/lib/chart/flot/jquery.flot.resize.min.js"></script>
-<script src="../js/lib/chart/flot/jquery.flot.tooltip.min.js"></script>
-<script src="../js/lib/chart/flot/jquery.flot.spline.js"></script>
-<script src="../js/lib/chart/flot/jquery.flot.pie.min.js"></script>
+
+<!--Data Tables-->
+<script src="../js/lib/jquery.dataTables.js"></script>
+<script src="../js/lib/dataTables.responsive.js"></script>
+<script src="../js/lib/dataTables.tableTools.js"></script>
+<script src="../js/lib/dataTables.bootstrap.js"></script>
+
 <!--Forms-->
 <script src="../js/lib/jquery.maskedinput.js"></script>
 <script src="../js/lib/jquery.validate.js"></script>
 <script src="../js/lib/jquery.form.js"></script>
+<!--Select2-->
+<script src="../js/lib/select2.full.js"></script>
 <script src="../js/lib/j-forms.js"></script>
-<script src="../js/lib/jquery.loadmask.js"></script>
-<script src="../js/lib/vmap.init.js"></script>
-<script src="../js/lib/theme-switcher.js"></script>
 <script src="../js/apps.js"></script>
 </body>
 </html>

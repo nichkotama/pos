@@ -1,6 +1,8 @@
-<?php
+<?php 
 require_once('../php/modular/koneksi.php');
-require_once('../php/modular/otentifikasi.php');  
+require_once('../php/modular/otentifikasi.php'); 
+$result = $db->prepare("SELECT * FROM barang ORDER BY nama_barang");
+$result->execute(); 
 ?>
 <!doctype html>
 <html>
@@ -8,7 +10,7 @@ require_once('../php/modular/otentifikasi.php');
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
-    <title><?php echo $judul ?> - POS Session</title>
+    <title><?php echo $judul;?> - Produk</title>
     <link type="text/css" rel="stylesheet" href="../css/font-awesome.css">
     <link type="text/css" rel="stylesheet" href="../css/material-design-iconic-font.css">
     <link type="text/css" rel="stylesheet" href="../css/bootstrap.css">
@@ -22,217 +24,245 @@ require_once('../php/modular/otentifikasi.php');
     <link type="text/css" rel="stylesheet" href="../css/common.css">
     <link type="text/css" rel="stylesheet" href="../css/responsive.css">
     <link type="text/css" rel="stylesheet" href="../css/custom.css">
-    <script src="../js/jquery.js"></script>
-    <script src="../js/jquery-ui.js"></script>
-</head>
 
-<body class="overlay-leftbar">
-<script type="text/javascript">
-    var number = 0;
-    var items = [];
-    var qty = [];
-    var value = '';
-    var barang = [];
-    var banyak = [];
-    window.onload = function() {
-        var input = document.getElementById("barcode").focus();
-    }
-
-    function myFunction(src, value) {
-        var table = document.getElementById("myTable");
-        if( src == 'barcode' ){
-            items[number] = value;
-            qty[number] = 1;
-        }else if( src == 'qty' ){
-            qty[number] = value;
-        }
-        table.innerHTML = table.innerHTML +
-            '<div id = "baris-' + number + '">'  
-            + '<div class="col-sm-1"><button class="btn btn-danger" onclick="deleteRow(' + number + ')"><i class="zmdi zmdi-close"></i></button></div>' 
-            + '<div class="col-sm-1 p-tb-9">' + number + '</div>' 
-            + '<div class="col-sm-3 p-tb-9">' + items[number] +'</div>' 
-            + '<div class="col-sm-1"><input class="form-control" type="number" value="' + qty[number] +'"/></div>' 
-            + '<div class="col-sm-3"><input class="form-control" type="number" value="' + qty[number] +'" readonly=""/></div>' 
-            + '<div class="col-sm-3"><input class="form-control" type="number" value="' + qty[number] +'" readonly=""/></div>' 
-            + '</div>'
-        document.getElementById("barcode").value = '';
-        document.getElementById("qty").value = 1;
-        document.getElementById("barcode").focus();
-        barang[number] = items[number];
-        number++;
-        // var row = table.insertRow(1);
-        // var cell1 = row.insertCell(0);
-        // var cell2 = row.insertCell(1);
-        // cell1.innerHTML = "NEW CELL1";
-        // cell2.innerHTML = "NEW CELL2"; 
-    }
-    
-    function deleteRow( number ){
-        // document.getElementById('baris-'+number).remove();
-        document.getElementById('baris-'+number).innerHTML =  
-            '<div id = "baris-' + number + '">'  
-            + '<div class="col-sm-1 barang-cancel"><button class="btn btn-danger" onclick="deleteRow(' + number + ')"><i class="zmdi zmdi-close"></i></button></div>' 
-            + '<div class="col-sm-1 p-tb-9 barang-cancel">' + number + '</div>' 
-            + '<div class="col-sm-3 p-tb-9 barang-cancel">' + items[number] +'</div>' 
-            + '<div class="col-sm-1"><input class="form-control" type="number" value="' + qty[number] +'" readonly=""/></div>' 
-            + '<div class="col-sm-3"><input class="form-control" type="number" value="' + qty[number] +'" readonly=""/></div>' 
-            + '<div class="col-sm-3"><input class="form-control" type="number" value="' + qty[number] +'" readonly=""/></div>' 
-            + '</div>';
-        delete barang[number];
-        delete items[number];
-        delete qty[number];
-        }
-
-    function cek_enter(e, src) {
-        if (e.keyCode == 13) {
-            if( src == 'barcode' ){
-                value = document.getElementById('barcode').value;
-                if (value == "") value = "item tidak diinput";
-            }else if( src == 'qty' ){
-                value = document.getElementById('qty').value;
-            }
-            return myFunction(src, value);
-            // var field_barcode = document.getElementById('barcode');
-            // var field_qty = document.getElementById('qty');
-            // field_barcode.innerHTML = "";
-            // field_qty.innerHTML = "";
-        }
-    }
-    function printData(){
-        document.getElementById('cumateksbung').innerHTML = 'barang >> ' + barang + '<br/>items >> ' + items + '<br/>qty >> ' + qty;
-    }
-</script>
 <script>
-    $(function() {  
-        $( "#barcode" ).autocomplete({
-         source: "../php/modular/autocomplete.php?src=barcode_barang",  
-            minLength:2, 
-            autoFocus:true,
-            select: function( event, ui ) {
-              document.getElementById('tampilan').innerHTML = ui.item.value;
-            },
-        });
-    });
+function fokus_teks() {
+    document.getElementById("nama").focus();
+}
 </script>
+</head>
+<body class="overlay-leftbar">
 <?php include('../php/modular/top-menu.php') ?>
 <?php include('../php/modular/side-menu.php') ?>
-
 <!--Page Container Start Here-->
 <section class="main-container">
 <div class="container-fluid">
-<div class="page-header filled light">
+<div class="page-header filled light single-line">
     <div class="row widget-header block-header">
         <div class="col-sm-6">
-            <h2>Sales</h2>
-            <p>Penjualan Hari <?php echo $hari_ini ?></p>
+            <h2>Produk</h2>
         </div>
         <div class="col-sm-6">
             <ul class="list-page-breadcrumb">
-                <li><a href="#">Sales <i class="zmdi zmdi-chevron-right"></i></a></li>
-                <li class="active-page"> Session</li>
+                <li><a href="#">Product <i class="zmdi zmdi-chevron-right"></i></a></li>
+                <li class="active-page"> Manage</li>
             </ul>
         </div>
-        <!-- <div class="col-sm-12 m-t-20">
-            <button class="btn btn-success active col-sm-6"><i class="zmdi zmdi-keyboard"> Keyboard Mode</i></button>
-            <button type="button"  data-toggle="modal" data-target="#myModal" class="btn btn-success col-sm-6"><i class="zmdi zmdi-image"> Mouse Mode</i></button>
+    </div>
 
-            <!-- Modal --
-            <div class="modal fade" id="myModal" role="dialog">
-            <div class="modal-dialog">
-                <!-- Modal content--
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4 class="modal-title">Validasi</h4>
-                    </div>
-                    <div class="modal-body">
-                        <p class="text-center"><i class="zmdi zmdi-alert-circle-o zmdi-hc-5x"></i><br/><br/>Apakah anda yakin ingin beralih ke mode mouse?</p>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Batal</button>
-                        <button type="button" class="btn btn-danger"  onclick="window.location.href='https://fb.com'"">Yakin</button>
+    <div class="row widget-header block-header">
+        <div class="col-sm-2 unit">
+            <div class="input">
+                <button type="button" class="btn btn-success" onclick=""  data-toggle="modal" data-target="#myModal" onclick="fokus_teks()"><i class="zmdi zmdi-plus"> Tambah Produk</i></button>
+
+                <!-- Modal -->
+                <div class="modal fade" id="myModal" role="dialog">
+                    <div class="modal-dialog modal-lg">
+                    <!-- Modal content-->
+                        <form action="tambah.php" method="post" class="j-forms">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                <h4 class="modal-title">Tambah Produk</h4>
+                            </div>
+                            <div class="modal-body">
+                                <div class="unit">
+                                    <div class="input">
+                                        <label class="icon-left" for="nama_barang">
+                                            <i class="fa fa-book"></i>
+                                        </label>
+                                        <input class="form-control login-frm-input"  type="text" id="nama" name="nama" placeholder="Masukkan Nama Barang" required="true">
+                                    </div>
+                                </div>
+                                <div class="unit">
+                                    <div class="input">
+                                        <label class="icon-left" for="barcode">
+                                            <i class="fa fa-barcode"></i>
+                                        </label>
+                                        <input class="form-control login-frm-input"  type="text" id="barcode" name="barcode" placeholder="Masukkan Barcode" required="true">
+                                    </div>
+                                </div>
+                                <div class="unit">
+                                    <div class="input">
+                                        <label>
+                                            Stok Awal Produk
+                                        </label>
+                                        <input class="form-control login-frm-input"  type="number" id="banyak" name="banyak" placeholder="Masukkan Banyak Unit Awal (Kuantitas)" value="1" min="1" required="true">
+                                    </div>
+                                </div>
+                                <div class="unit">
+                                    <div class="input">
+                                        <label class="icon-left" for="hargabeli">
+                                            <i class="fa fa-money"></i>
+                                        </label>
+                                        
+                                        <!-- <input type="text" id="period" class="currency form-control" data-a-dec="," data-a-sep="."> -->
+                                        
+                                        <input class="form-control login-frm-input"  type="text" id="hargabeli" name="hargabeli" placeholder="Masukkan Harga Beli">
+                                    </div>
+                                </div>
+                                <div class="unit">
+                                    <div class="input">
+                                        <label class="icon-left" for="hargajual">
+                                            <i class="fa fa-money"></i>
+                                        </label>
+                                        <input class="form-control login-frm-input"  type="text" id="hargajual" name="hargajual" placeholder="Masukkan Harga Jual">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Batal</button>
+                                <button type="submit" class="btn btn-success" name="submit">Simpan</button>
+                            </div>
+                        </div>
+                        </form>
                     </div>
                 </div>
             </div>
-            </div>
-        </div> -->
-    </div>
-    <div class="row">
-        <div class="col-md-12">
-                <div class="widget-container">
-                    <div class="widget-content">
-                        <!-- <form action="#" method="post" class="j-forms" id="order-forms-quantity" novalidate> -->
-                        <div class="j-forms" id="order-forms-quantity" novalidate>
-
-                            <div class="form-group">
-                                <!-- start name -->
-                                <div class="col-sm-7 unit">
-                                    <div class="input">
-                                        <label class="icon-left" for="name">
-                                            <i class="fa fa-barcode"></i>
-                                        </label>
-                                        <input class="form-control" type="text" id="barcode" name="barcode" placeholder="Scan or Type Barcode Item Here" onkeypress="return cek_enter(event, 'barcode')">
-                                    </div>
-                                </div>
-                                <div class="col-sm-3 unit">
-                                    <div class="input">
-                                        <label class="icon-left" for="name">
-                                            <i class="zmdi zmdi-shopping-basket"></i>
-                                        </label>
-                                        <input class="form-control" type="number" id="qty" placeholder="Qty" value=1 min=1 onkeypress="return cek_enter(event, 'qty')"> 
-                                    </div>
-                                </div>
-                                <div class="col-sm-2 unit">
-                                    <div class="input">
-                                        <button type="submit" class="btn btn-success" onclick="myFunction()"><i class="zmdi zmdi-plus"> Add Item</i></button>
-                                    </div>
-                                </div>
-                            </div>
-                                <div class="row">
-                                    <div class="col-sm-12" id="myTable">
-                                        <div class="col-sm-1 heading-tabel">Remove</div>
-                                        <div class="col-sm-1 heading-tabel">#</div>
-                                        <div class="col-sm-3 heading-tabel">Item</div>
-                                        <div class="col-sm-1 heading-tabel">Qty</div>
-                                        <div class="col-sm-3 heading-tabel">Harga Satuan</div>
-                                        <div class="col-sm-3 heading-tabel">Sub-Total</div>
-                                    </div>
-                                </div>
-
-                                <!-- start totals -->
-                                <div class="row m-t-20">
-                                    <div class="col-md-offset-8 col-md-4 unit">
-                                        <div class="input">
-                                            <input class="form-control" type="text" placeholder="Totals" id="field_totals" readonly="" name="field_totals">
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- end totals -->
-
-                                <!-- start response from server -->
-                                <div id="response"></div>
-                                <!-- end response from server -->
-
-                            <!-- end /.content -->
-
-                            <div class="form-footer">
-                                <button type="submit" class="btn btn-success primary-btn">Order Now</button>
-                            </div>
-                            <!-- end /.footer -->
-                            <button class="btn btn-danger" onclick="printData()">TEST Data</button>
-                            <div id="cumateksbung"></div>
-                            <div id="tampilan"></div>
-                        </div>
-                    </div>
-            </div>
         </div>
     </div>
-</div>
+    <div class="row">
+        <div class="col-sm-12">
+                    <table class="table table-striped data-tbl">
+                        <thead>
+                        <tr>
+                            <th>Nama Barang</th>
+                            <th>Barcode</th>
+                            <th>Stok</th>
+                            <th>Status</th>
+                            <th class="td-center">Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <?php
+                            for ($i = 0; $row = $result->fetch(); $i++) {
+                                echo "<tr>";
+                                # kolom nama barang
+                                echo "<td>" . $row['nama_barang'] . "</td>";
+                                # kolom barcode barang
+                                echo "<td>" . $row['barcode_barang'] . "</td>";
+                                # kolom stok
+                                echo "<td>" . ($row['jml_stok'] ? $row['jml_stok'] : "0") . "</td>";
+                                # kolom status barang, aktif apa tidak
+                                echo "<td>" . ($row['status_aktif'] == '1' ? "Active" : "Inactive") . "</td>";
+                                # kolom aksi
+                                echo "<td class='td-center'>
+                                <div class='btn-toolbar' role='toolbar'>
+                                    <div class='btn-group' role='group'>
+                                        <a href='edit.php?method=barcode&key=" . $row['barcode_barang'] . "' class='btn btn-default btn-sm m-user-edit'><i class='zmdi zmdi-edit'></i></a>
+                                    </div>
+                                </div>
+                                </td>";
+                            }
+                        ?>
+                        <!-- JANGAN DIHAPUS DULU BUAT SAMPEL WARNING STOCK
+                        <tr>
+                            <td>Garrett Winters</td>
+                            <td>Chief Executive Officer (CEO)</td>
+                            <td class="td-center">
+                                <a href="#" class="td-profile-thumb"><img src="../images/avatar/amarkdalen.jpg" alt="user"></a>
+                            </td>
+                            <td><label class="label label-warning">Pending</label></td>
+                            <td class="td-center">
+                                <div class="btn-toolbar" role="toolbar">
+                                    <div class="btn-group" role="group">
+                                        <a href="#" class="btn btn-default btn-sm m-user-edit"><i class="zmdi zmdi-edit"></i></a>
+                                        <a href="#" class="btn btn-default btn-sm m-user-delete"><i class="zmdi zmdi-close"></i></a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Wyatt Ruiz</td>
+                            <td>Software Engineer</td>
+                            <td class="td-center">
+                                <a href="#" class="td-profile-thumb"><img src="../images/avatar/michael-owens.jpg" alt="user"></a>
+                            </td>
+                            <td class="success"><label class="label label-success">Approved</label></td>
+                            <td class="td-center">
+                                <div class="btn-toolbar" role="toolbar">
+                                    <div class="btn-group" role="group">
+                                        <a href="#" class="btn btn-default btn-sm m-user-edit"><i class="zmdi zmdi-edit"></i></a>
+                                        <a href="#" class="btn btn-default btn-sm m-user-delete"><i class="zmdi zmdi-close"></i></a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr class="danger">
+                            <td>Randall Martinez</td>
+                            <td>Senior Javascript Developer</td>
+                            <td class="td-center">
+                                <a href="#" class="td-profile-thumb"><img src="../images/avatar/bobbyjkane.jpg" alt="user"></a>
+                            </td>
+                            <td><label class="label label-danger">Suspended</label></td>
+                            <td  class="td-center">
+                                <div class="btn-toolbar" role="toolbar">
+                                    <div class="btn-group" role="group">
+                                        <a href="#" class="btn btn-default btn-sm m-user-edit"><i class="zmdi zmdi-edit"></i></a>
+                                        <a href="#" class="btn btn-default btn-sm m-user-delete"><i class="zmdi zmdi-close"></i></a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Orlando Mullen</td>
+                            <td>Integration Specialist</td>
+                            <td class="td-center">
+                                <a href="#" class="td-profile-thumb"><img src="../images/avatar/coreyweb.jpg" alt="user"></a>
+                            </td>
+                            <td><label class="label label-default">Waiting for Review</label></td>
+                            <td  class="td-center">
+                                <div class="btn-toolbar" role="toolbar">
+                                    <div class="btn-group" role="group">
+                                        <a href="#" class="btn btn-default btn-sm m-user-edit"><i class="zmdi zmdi-edit"></i></a>
+                                        <a href="#" class="btn btn-default btn-sm m-user-delete"><i class="zmdi zmdi-close"></i></a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Leonard Hodge</td>
+                            <td>Senior Marketing Designer</td>
+                            <td class="td-center">
+                                <a href="#" class="td-profile-thumb"><img src="../images/avatar/kurafire.jpg" alt="user"></a>
+                            </td>
+                            <td class="success"> <label class="label label-success">Approved</label></td>
+                            <td  class="td-center">
+                                <div class="btn-toolbar" role="toolbar">
+                                    <div class="btn-group" role="group">
+                                        <a href="#" class="btn btn-default btn-sm m-user-edit"><i class="zmdi zmdi-edit"></i></a>
+                                        <a href="#" class="btn btn-default btn-sm m-user-delete"><i class="zmdi zmdi-close"></i></a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Yardley Bond</td>
+                            <td>Office Manager</td>
+                            <td class="td-center">
+                                <a href="#" class="td-profile-thumb"><img src="../images/avatar/joostvanderree.jpg" alt="user"></a>
+                            </td>
+                            <td> <label class="label label-warning">Pending</label></td>
+                            <td  class="td-center">
+                                <div class="btn-toolbar" role="toolbar">
+                                    <div class="btn-group" role="group">
+                                        <a href="#" class="btn btn-default btn-sm m-user-edit"><i class="zmdi zmdi-edit"></i></a>
+                                        <a href="#" class="btn btn-default btn-sm m-user-delete"><i class="zmdi zmdi-close"></i></a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr> -->
+
+                        </tbody>
+
+
+                    </table>
+    </div>
+    </div>
 </div>
 
 </section>
 <section class="main-container m-t-min-20"><?php include('../php/modular/footer.php') ?></section>
-
 <!--Page Container End Here-->
 <!--Rightbar Start Here-->
 <aside class="rightbar">
@@ -629,8 +659,6 @@ require_once('../php/modular/otentifikasi.php');
 </div>
 </aside>
 <!--Rightbar End Here-->
-
-
 <script src="../js/lib/jquery.js"></script>
 <script src="../js/lib/jquery-migrate.js"></script>
 <script src="../js/lib/bootstrap.js"></script>
@@ -646,34 +674,21 @@ require_once('../php/modular/otentifikasi.php');
 <script src="../js/lib/jquery.slimscroll.js"></script>
 <script src="../js/lib/jquery.syntaxhighlighter.js"></script>
 <script src="../js/lib/velocity.js"></script>
-<script src="../js/lib/jquery-jvectormap.js"></script>
-<script src="../js/lib/jquery-jvectormap-world-mill.js"></script>
-<script src="../js/lib/jquery-jvectormap-us-aea.js"></script>
 <script src="../js/lib/smart-resize.js"></script>
-<!--iCheck-->
-<script src="../js/lib/icheck.js"></script>
-<script src="../js/lib/jquery.switch.button.js"></script>
-<!--CHARTS-->
-<script src="../js/lib/chart/sparkline/jquery.sparkline.js"></script>
-<script src="../js/lib/chart/easypie/jquery.easypiechart.min.js"></script>
-<script src="../js/lib/chart/flot/excanvas.min.js"></script>
-<script src="../js/lib/chart/flot/jquery.flot.min.js"></script>
-<script src="../js/lib/chart/flot/curvedLines.js"></script>
-<script src="../js/lib/chart/flot/jquery.flot.time.min.js"></script>
-<script src="../js/lib/chart/flot/jquery.flot.stack.min.js"></script>
-<script src="../js/lib/chart/flot/jquery.flot.axislabels.js"></script>
-<script src="../js/lib/chart/flot/jquery.flot.resize.min.js"></script>
-<script src="../js/lib/chart/flot/jquery.flot.tooltip.min.js"></script>
-<script src="../js/lib/chart/flot/jquery.flot.spline.js"></script>
-<script src="../js/lib/chart/flot/jquery.flot.pie.min.js"></script>
+
+<!--Data Tables-->
+<script src="../js/lib/jquery.dataTables.js"></script>
+<script src="../js/lib/dataTables.responsive.js"></script>
+<script src="../js/lib/dataTables.tableTools.js"></script>
+<script src="../js/lib/dataTables.bootstrap.js"></script>
+
 <!--Forms-->
 <script src="../js/lib/jquery.maskedinput.js"></script>
 <script src="../js/lib/jquery.validate.js"></script>
 <script src="../js/lib/jquery.form.js"></script>
+<!--Select2-->
+<script src="../js/lib/select2.full.js"></script>
 <script src="../js/lib/j-forms.js"></script>
-<script src="../js/lib/jquery.loadmask.js"></script>
-<script src="../js/lib/vmap.init.js"></script>
-<script src="../js/lib/theme-switcher.js"></script>
 <script src="../js/apps.js"></script>
 </body>
 </html>

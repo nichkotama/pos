@@ -28,6 +28,7 @@ if(isset($_POST['submit'])){
             </div>";
     } else{
         $_SESSION['login'] = 1;
+        $_SESSION['uname'] = $user;
         header("Location: index.php");
     }
 }
@@ -99,9 +100,9 @@ if(isset($_POST['submit'])){
                         <i class="zmdi zmdi-key"></i>
                     </label>
                     <input class="form-control login-frm-input"  type="password" id="password" name="password" placeholder="Masukkan Password">
-						<span class="hint">
+						<!-- <span class="hint">
 							<a href="#" class="link">Forgot password?</a>
-						</span>
+						</span> -->
                 </div>
             </div>
             <!-- end password -->

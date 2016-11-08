@@ -1,3 +1,8 @@
+<?php
+$logged = $db->prepare("SELECT * FROM karyawan WHERE id_karyawan = '" . $_SESSION['uname'] ."'");
+$logged->execute(); 
+$hasil = $logged->fetch();
+?>
 <!--Leftbar Start Here-->
 <aside class="leftbar">
     <div class="left-aside-container">
@@ -8,8 +13,8 @@
                 </div>
                 <div class="admin-user-info">
                     <ul>
-                        <li><a href="#">Nama Kasir</a></li>
-                        <li><a href="#">NIK Kasir</a></li>
+                        <li><?php echo $hasil['id_karyawan'] ?></a></li>
+                        <li><?php echo $hasil['nama_karyawan'] ?></a></li>
                     </ul>
                 </div>
             </div>
@@ -31,9 +36,16 @@
             </div>
         </div>
         <ul class="list-accordion tree-style">
-            <li class="list-title">Items</li>
+            <li class="list-title">Manage</li>
                 <li>
-                    <a href="<?php echo $url_web?>produk"><i class="zmdi zmdi-view-dashboard"></i><span class="list-label">Manage Produk</span></a>
+                    <a href="<?php echo $url_web?>produk"><i class="zmdi zmdi-view-dashboard"></i><span class="list-label">Manage Product</span></a>
+                </li>
+                <li>
+                    <a href="<?php echo $url_web?>karyawan"><i class="zmdi zmdi-accounts-list"></i><span class="list-label">Manage Departemen</span></a>
+                    <a href="<?php echo $url_web?>karyawan"><i class="zmdi zmdi-accounts-alt"></i><span class="list-label">Manage Employee</span></a>
+                </li>
+                <li>
+                    <a href="<?php echo $url_web?>supplier"><i class="zmdi zmdi-account-box"></i><span class="list-label">Manage Supplier</span></a>
                 </li>
             <li class="list-title">Transaksi</li>
                 <li><a href="#"><i class="zmdi zmdi-view-dashboard"></i><span class="list-label">Beli Barang (?)</span></a></li>

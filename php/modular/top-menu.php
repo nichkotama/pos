@@ -21,7 +21,7 @@
                 <li><span class="left-toggle-switch"><i class="zmdi zmdi-menu"></i></span></li>
                 <li>
                     <div class="logo">
-                        <a href="index.html" title="Home Page"><img src="<?php echo $url_web ?>images/logo.png" alt="logo" style="max-height:60px; padding-left:60%;"></a>
+                        <a href="<?php echo $url_web ?>" title="Home Page"><img src="<?php echo $url_web ?>images/logo.png" alt="logo" style="max-height:60px; padding-left:60%;"></a>
                     </div>
                 </li>
             </ul>
@@ -41,7 +41,7 @@
                 <li><span class="left-toggle-switch"><i class="zmdi zmdi-menu"></i></span></li>
             </ul>
             <ul class="pull-right top-right-icons">
-                <li><a href="#" class="btn-top-search"><i class="zmdi zmdi-search"></i></a></li>
+                <!-- <li><a href="#" class="btn-top-search"><i class="zmdi zmdi-search"></i></a></li> -->
                 <li class="dropdown apps-dropdown">
                     <a href="#" class="btn-apps dropdown-toggle" data-toggle="dropdown"><i class="zmdi zmdi-apps"></i></a>
                     <div class="dropdown-menu">
@@ -76,48 +76,24 @@
                     </div>
                 </li>
                 <li class="dropdown notifications-dropdown">
-                    <a href="#" class="btn-notification dropdown-toggle" data-toggle="dropdown"><span class="noty-bubble">10</span><i class="zmdi zmdi-globe"></i></a>
+                    <a href="#" class="btn-notification dropdown-toggle" data-toggle="dropdown"><span class="noty-bubble">1</span><i class="zmdi zmdi-globe"></i></a>
                     <div class="dropdown-menu notifications-tabs">
                         <div>
                             <ul class="nav material-tabs nav-tabs" role="tablist">
-                                <li class="active"><a href="#message" aria-controls="message" role="tab" data-toggle="tab">Message</a></li>
-                                <li><a href="#notifications" aria-controls="notifications" role="tab" data-toggle="tab">Notifications</a></li>
+                                <li class="active"><a href="#message" aria-controls="message" role="tab" data-toggle="tab">Stok</a></li>
+                                <!-- <li><a href="#notifications" aria-controls="notifications" role="tab" data-toggle="tab">Notifications</a></li> -->
                             </ul>
                             <div class="tab-content">
                                 <div role="tabpanel" class="tab-pane active" id="message">
                                     <div class="message-list-container">
-                                        <h4>You have 15 new messages</h4>
+                                        <h4>Peringatan Stok Minim</h4>
                                         <ul class="clearfix">
                                             <li class="clearfix">
-                                                <a href="#" class="message-thumb"><img src="<?php echo $url_web ?>images/avatar/robertoortiz.jpg" alt="image">
-                                                </a><a href="#" class="message-intro"><span class="message-meta">Robertoortiz </span>Nunc aliquam dolor... <span class="message-time">today at 10:20 pm</span></a>
-                                            </li>
-                                            <li class="clearfix">
                                                 <a href="#" class="message-thumb"><span class="message-letter w_bg_purple">A</span>
-                                                </a><a href="#" class="message-intro"><span class="message-meta">Allisongrayce </span>In hac habitasse ... <span class="message-time">today at 8:29 pm</span></a>
-                                            </li>
-                                            <li class="clearfix">
-                                                <a href="#" class="message-thumb"><img src="<?php echo $url_web ?>images/avatar/michael-owens.jpg" alt="image">
-                                                </a><a href="#" class="message-intro"><span class="message-meta">Michael </span>Suspendisse ac mauris ... <span class="message-time">yesterday at 12:29 pm</span></a>
-                                            </li>
-                                            <li class="clearfix">
-                                                <a href="#" class="message-thumb"><span class="message-letter w_bg_blue">B</span>
-                                                </a><a href="#" class="message-intro"><span class="message-meta">Bobbyjkane </span>Vivamus lacinia facilisis... <span class="message-time">yesterday at 11:48 pm</span></a>
-                                            </li>
-                                            <li class="clearfix">
-                                                <a href="#" class="message-thumb"><img src="<?php echo $url_web ?>images/avatar/bobbyjkane.jpg" alt="image">
-                                                </a><a href="#" class="message-intro"><span class="message-meta">Bobbyjkane </span>Donec vel iaculis ... <span class="message-time">1 month ago</span></a>
-                                            </li>
-                                            <li class="clearfix">
-                                                <a href="#" class="message-thumb"><span class="message-letter w_bg_teal">C</span>
-                                                </a><a href="#" class="message-intro"><span class="message-meta">Chexee </span> Curabitur eget blandit...<span class="message-time">3 months ago</span></a>
-                                            </li>
-                                            <li class="clearfix">
-                                                <a href="#" class="message-thumb"><img src="<?php echo $url_web ?>images/avatar/coreyweb.jpg" alt="image">
-                                                </a><a href="#" class="message-intro"><span class="message-meta">Coreyweb </span>Etiam molestie nulla... <span class="message-time">1 year ago</span></a>
+                                                </a><a href="#" class="message-intro"><span class="message-meta">ABC AYM PEDAS CUP 80g  </span><span class="message-time">Sisa : 1 item(s)</span></a>
                                             </li>
                                         </ul>
-                                        <a class="btn btn-link btn-block btn-view-all" href="#"><span>View All</span></a>
+                                        <!-- <a class="btn btn-link btn-block btn-view-all" href="#"><span>View All</span></a> -->
                                     </div>
                                 </div>
                                 <div role="tabpanel" class="tab-pane" id="notifications">

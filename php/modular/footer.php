@@ -5,7 +5,7 @@
         <div class="row">
             <div class="col-md-6 col-sm-6">
                 <div class="footer-left">
-                    <span>© <?php echo date("Y") ?> <a href="http://themeforest.net/user/westilian"><?php echo $author ?></a></span>
+                    <span>© <?php echo date("Y") ?><?php echo $author ?></span>
                 </div>
             </div>
             <div class="col-md-6 col-sm-6">

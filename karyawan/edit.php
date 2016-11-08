@@ -1,16 +1,54 @@
 <?php 
 require_once('../php/modular/koneksi.php');
-require_once('../php/modular/otentifikasi.php'); 
-$result = $db->prepare("SELECT * FROM barang ORDER BY nama_barang");
-$result->execute(); 
+require_once('../php/modular/otentifikasi.php');
+
+// Kalo disubmit (edit) maka menjalankan script dibawah ini
+if(isset($_POST['submit'])){
+    try{
+        // new data
+        $barcode = $_POST['barcode'];
+        $barcode_lama = $_POST['barcode_lama'];
+        $nama = $_POST['nama'];
+        $hbeli = $_POST['harga_beli'];
+        $hjual = $_POST['harga_jual'];
+        $aktif = ($_POST['status_aktif'] == 'on' ? 1:0);
+        // query
+        $sql = "UPDATE barang 
+                SET nama_barang=?, harga_beli=?, harga_jual=?, barcode_barang=?, status_aktif=?
+                WHERE barcode_barang=?";
+        $q = $db->prepare($sql);
+        $q->execute(array($nama, $hbeli, $hjual, $barcode, $aktif, $barcode_lama));
+        header("location: index.php");
+    }catch(Exception $e){
+        echo "<div class='col-md-12'>
+                <div class='j-forms'>
+                    <div class='form-content'>
+                        <div class='unit'> 
+                            <div class='error-message text-center'>
+                                <i class='fa fa-close'></i>Data yang anda masukan sudah ada atau salah.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>";
+    }
+}
+
+// Pas load data
+if(isset($_GET['key']) AND $_GET['method'] == 'karyawan'){
+    $nik=$_GET['key'];
+    $result = $db->prepare("SELECT * FROM karyawan WHERE id_karyawan = :nik");
+    $result->bindParam(':nik', $nik);
+    $result->execute();
+    for($i=0; $row = $result->fetch(); $i++){
 ?>
-<!doctype html>
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
-    <title><?php echo $judul;?> - Produk</title>
+    <title><?php echo $judul;?> - Karyawan</title>
     <link type="text/css" rel="stylesheet" href="../css/font-awesome.css">
     <link type="text/css" rel="stylesheet" href="../css/material-design-iconic-font.css">
     <link type="text/css" rel="stylesheet" href="../css/bootstrap.css">
@@ -26,11 +64,16 @@ $result->execute();
     <link type="text/css" rel="stylesheet" href="../css/custom.css">
 
 <script>
-function fokus_teks() {
-    document.getElementById("nama").focus();
+window.onload = function() {
+        var SetFokus = $('#nama');
+        SetFokus.val(SetFokus.val());
+        var strLength= SetFokus.val().length;
+        SetFokus.focus();
+        SetFokus[0].setSelectionRange(strLength, strLength);
 }
 </script>
 </head>
+
 <body class="overlay-leftbar">
 <?php include('../php/modular/top-menu.php') ?>
 <?php include('../php/modular/side-menu.php') ?>
@@ -40,227 +83,110 @@ function fokus_teks() {
 <div class="page-header filled light single-line">
     <div class="row widget-header block-header">
         <div class="col-sm-6">
-            <h2>Produk</h2>
+            <h2>Edit Karyawan</h2>
         </div>
         <div class="col-sm-6">
             <ul class="list-page-breadcrumb">
-                <li><a href="#">Product <i class="zmdi zmdi-chevron-right"></i></a></li>
-                <li class="active-page"> Manage</li>
+                <li><a href="#">Karyawan <i class="zmdi zmdi-chevron-right"></i></a></li>
+                <li class="active-page"> Sunting</li>
             </ul>
         </div>
     </div>
 
-    <div class="row widget-header block-header">
-        <div class="col-sm-2 unit">
-            <div class="input">
-                <button type="button" class="btn btn-success" onclick=""  data-toggle="modal" data-target="#myModal" onclick="fokus_teks()"><i class="zmdi zmdi-plus"> Tambah Produk</i></button>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="widget-container">
+                <div class="widget-content">
+                    <form class="j-forms" method="post" id="order-forms-quantity" novalidate>
+                        <div class="form-group">
+                            <div class="unit">
+                                <div class="input">
+                                    <label class="icon-left" for="nama_barang">
+                                        <i class="zmdi zmdi-account"></i>
+                                    </label>
+                                    <input class="form-control login-frm-input"  type="text" id="nama" name="nama" placeholder="Masukkan Nama Karyawan" required="true" value="<?php echo $row['nama_karyawan']; ?>">
+                                </div>
+                            </div>
+                            <div class="unit">
+                                <div class="input">
+                                    <label class="icon-left" for="barcode">
+                                        <i class="fa fa-barcode"></i>
+                                    </label>
+                                    <input class="form-control login-frm-input"  type="text" id="barcode" name="barcode" placeholder="Masukkan Barcode" required="true" value="<?php echo $row['barcode_barang'];?>">
+                                    <input type="hidden" name="barcode_lama" value="<?php echo $row['barcode_barang'];?>">
+                                </div>
+                            </div>
+                            <div class="unit">
+                                <div class="input">
+                                    <label class="icon-left" for="hargabeli">
+                                        <i class="fa fa-money"></i>
+                                    </label>
+                                    <input class="form-control login-frm-input"  type="text" id="hargabeli" name="hargabeli" placeholder="Masukkan Harga Beli" value="<?php echo $row['harga_beli'];?>">
+                                </div>
+                            </div>
+                            <div class="unit">
+                                <div class="input">
+                                    <label class="icon-left" for="hargajual">
+                                        <i class="fa fa-money"></i>
+                                    </label>
+                                    <input class="form-control login-frm-input"  type="text" id="hargajual" name="hargajual" placeholder="Masukkan Harga Jual" value="<?php echo $row['harga_jual'];?>">
+                                </div>
+                            </div>
+                            <div class="unit">
+                                <div class="input">
+                                    <label class="label">Aktif</label>
+                                    <label class="radio-toggle">
+                                        <input type="checkbox" name="status_aktif" <?php if ($row['status_aktif'] == 1){?> checked="checked" <?php } ?> >
+                                        <i></i>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="unit">
+                                <div class="input">
+                                    <button type="submit" class="btn btn-success col-md-4" name="submit">Simpan</button>
+                                    <button type="button" class="btn btn-default col-md-4" onclick="window.location.href='<?php echo $url_web?>produk'">Batal</button>
+                                    <button type="button" class="btn btn-danger col-md-4" data-toggle="modal" data-target="#modalHapus" name="hapus">Hapus Permanen</button>
 
-                <!-- Modal -->
-                <div class="modal fade" id="myModal" role="dialog">
-                    <div class="modal-dialog modal-lg">
-                    <!-- Modal content-->
-                        <form action="tambah.php" method="post" class="j-forms">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                <h4 class="modal-title">Tambah Produk</h4>
-                            </div>
-                            <div class="modal-body">
-                                <div class="unit">
-                                    <div class="input">
-                                        <label class="icon-left" for="nama_barang">
-                                            <i class="fa fa-book"></i>
-                                        </label>
-                                        <input class="form-control login-frm-input"  type="text" id="nama" name="nama" placeholder="Masukkan Nama Barang" required="true">
-                                    </div>
                                 </div>
-                                <div class="unit">
-                                    <div class="input">
-                                        <label class="icon-left" for="barcode">
-                                            <i class="fa fa-barcode"></i>
-                                        </label>
-                                        <input class="form-control login-frm-input"  type="text" id="barcode" name="barcode" placeholder="Masukkan Barcode" required="true">
-                                    </div>
-                                </div>
-                                <div class="unit">
-                                    <div class="input">
-                                        <label>
-                                            Stok Awal Produk
-                                        </label>
-                                        <input class="form-control login-frm-input"  type="number" id="banyak" name="banyak" placeholder="Masukkan Banyak Unit Awal (Kuantitas)" value="1" min="1" required="true">
-                                    </div>
-                                </div>
-                                <div class="unit">
-                                    <div class="input">
-                                        <label class="icon-left" for="hargabeli">
-                                            <i class="fa fa-money"></i>
-                                        </label>
-                                        
-                                        <!-- <input type="text" id="period" class="currency form-control" data-a-dec="," data-a-sep="."> -->
-                                        
-                                        <input class="form-control login-frm-input"  type="text" id="hargabeli" name="hargabeli" placeholder="Masukkan Harga Beli">
-                                    </div>
-                                </div>
-                                <div class="unit">
-                                    <div class="input">
-                                        <label class="icon-left" for="hargajual">
-                                            <i class="fa fa-money"></i>
-                                        </label>
-                                        <input class="form-control login-frm-input"  type="text" id="hargajual" name="hargajual" placeholder="Masukkan Harga Jual">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-default" data-dismiss="modal">Batal</button>
-                                <button type="submit" class="btn btn-success" name="submit">Simpan</button>
                             </div>
                         </div>
-                        </form>
-                    </div>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
-    <div class="row">
-        <div class="col-sm-12">
-                    <table class="table table-striped data-tbl">
-                        <thead>
-                        <tr>
-                            <th>Nama Barang</th>
-                            <th>Barcode</th>
-                            <th>Stok</th>
-                            <th>Status</th>
-                            <th class="td-center">Action</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <?php
-                            for ($i = 0; $row = $result->fetch(); $i++) {
-                                echo "<tr>";
-                                # kolom nama barang
-                                echo "<td>" . $row['nama_barang'] . "</td>";
-                                # kolom barcode barang
-                                echo "<td>" . $row['barcode_barang'] . "</td>";
-                                # kolom stok
-                                echo "<td>" . ($row['jml_stok'] ? $row['jml_stok'] : "0") . "</td>";
-                                # kolom status barang, aktif apa tidak
-                                echo "<td>" . ($row['status_aktif'] == '1' ? "Active" : "Inactive") . "</td>";
-                                # kolom aksi
-                                echo "<td class='td-center'>
-                                <div class='btn-toolbar' role='toolbar'>
-                                    <div class='btn-group' role='group'>
-                                        <a href='edit.php?method=barcode&key=" . $row['barcode_barang'] . "' class='btn btn-default btn-sm m-user-edit'><i class='zmdi zmdi-edit'></i></a>
-                                    </div>
-                                </div>
-                                </td>";
-                            }
-                        ?>
-                        <!-- JANGAN DIHAPUS DULU BUAT SAMPEL WARNING STOCK
-                        <tr>
-                            <td>Garrett Winters</td>
-                            <td>Chief Executive Officer (CEO)</td>
-                            <td class="td-center">
-                                <a href="#" class="td-profile-thumb"><img src="../images/avatar/amarkdalen.jpg" alt="user"></a>
-                            </td>
-                            <td><label class="label label-warning">Pending</label></td>
-                            <td class="td-center">
-                                <div class="btn-toolbar" role="toolbar">
-                                    <div class="btn-group" role="group">
-                                        <a href="#" class="btn btn-default btn-sm m-user-edit"><i class="zmdi zmdi-edit"></i></a>
-                                        <a href="#" class="btn btn-default btn-sm m-user-delete"><i class="zmdi zmdi-close"></i></a>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Wyatt Ruiz</td>
-                            <td>Software Engineer</td>
-                            <td class="td-center">
-                                <a href="#" class="td-profile-thumb"><img src="../images/avatar/michael-owens.jpg" alt="user"></a>
-                            </td>
-                            <td class="success"><label class="label label-success">Approved</label></td>
-                            <td class="td-center">
-                                <div class="btn-toolbar" role="toolbar">
-                                    <div class="btn-group" role="group">
-                                        <a href="#" class="btn btn-default btn-sm m-user-edit"><i class="zmdi zmdi-edit"></i></a>
-                                        <a href="#" class="btn btn-default btn-sm m-user-delete"><i class="zmdi zmdi-close"></i></a>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr class="danger">
-                            <td>Randall Martinez</td>
-                            <td>Senior Javascript Developer</td>
-                            <td class="td-center">
-                                <a href="#" class="td-profile-thumb"><img src="../images/avatar/bobbyjkane.jpg" alt="user"></a>
-                            </td>
-                            <td><label class="label label-danger">Suspended</label></td>
-                            <td  class="td-center">
-                                <div class="btn-toolbar" role="toolbar">
-                                    <div class="btn-group" role="group">
-                                        <a href="#" class="btn btn-default btn-sm m-user-edit"><i class="zmdi zmdi-edit"></i></a>
-                                        <a href="#" class="btn btn-default btn-sm m-user-delete"><i class="zmdi zmdi-close"></i></a>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Orlando Mullen</td>
-                            <td>Integration Specialist</td>
-                            <td class="td-center">
-                                <a href="#" class="td-profile-thumb"><img src="../images/avatar/coreyweb.jpg" alt="user"></a>
-                            </td>
-                            <td><label class="label label-default">Waiting for Review</label></td>
-                            <td  class="td-center">
-                                <div class="btn-toolbar" role="toolbar">
-                                    <div class="btn-group" role="group">
-                                        <a href="#" class="btn btn-default btn-sm m-user-edit"><i class="zmdi zmdi-edit"></i></a>
-                                        <a href="#" class="btn btn-default btn-sm m-user-delete"><i class="zmdi zmdi-close"></i></a>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Leonard Hodge</td>
-                            <td>Senior Marketing Designer</td>
-                            <td class="td-center">
-                                <a href="#" class="td-profile-thumb"><img src="../images/avatar/kurafire.jpg" alt="user"></a>
-                            </td>
-                            <td class="success"> <label class="label label-success">Approved</label></td>
-                            <td  class="td-center">
-                                <div class="btn-toolbar" role="toolbar">
-                                    <div class="btn-group" role="group">
-                                        <a href="#" class="btn btn-default btn-sm m-user-edit"><i class="zmdi zmdi-edit"></i></a>
-                                        <a href="#" class="btn btn-default btn-sm m-user-delete"><i class="zmdi zmdi-close"></i></a>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Yardley Bond</td>
-                            <td>Office Manager</td>
-                            <td class="td-center">
-                                <a href="#" class="td-profile-thumb"><img src="../images/avatar/joostvanderree.jpg" alt="user"></a>
-                            </td>
-                            <td> <label class="label label-warning">Pending</label></td>
-                            <td  class="td-center">
-                                <div class="btn-toolbar" role="toolbar">
-                                    <div class="btn-group" role="group">
-                                        <a href="#" class="btn btn-default btn-sm m-user-edit"><i class="zmdi zmdi-edit"></i></a>
-                                        <a href="#" class="btn btn-default btn-sm m-user-delete"><i class="zmdi zmdi-close"></i></a>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr> -->
-
-                        </tbody>
-
-
-                    </table>
-    </div>
+</div>
+</div>
+<!-- KETIKA KLIK HAPUS, doc by Nicholas -->
+<div class="modal fade" id="modalHapus" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <form action="hapus.php" method="post">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Hapus Produk</h4>
+                </div>
+                <div class="modal-body">
+                    <p class="text-center">
+                    <i class="zmdi zmdi-alert-circle-o zmdi-hc-5x"></i>
+                    <br/>
+                    <br/>
+                    Apakah anda yakin akan menghapus <?php echo $row['nama_barang'] . " (Barcode: " . $row['barcode_barang'] . ")" ?>?
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <input type="hidden" name="barcode" value="<?php echo $row['barcode_barang'] ?>"/>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-success" name="submit">Yakin</button>
+                </div>
+            </div>
+        </form>
     </div>
 </div>
-
+<!-- End of KETIKA KLIK HAPUS -->
+<?php
+}}
+?>
 </section>
 <section class="main-container m-t-min-20"><?php include('../php/modular/footer.php') ?></section>
 <!--Page Container End Here-->
@@ -658,7 +584,7 @@ function fokus_teks() {
 </div>
 </div>
 </aside>
-<!--Rightbar End Here-->
+
 <script src="../js/lib/jquery.js"></script>
 <script src="../js/lib/jquery-migrate.js"></script>
 <script src="../js/lib/bootstrap.js"></script>

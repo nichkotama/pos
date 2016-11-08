@@ -6,6 +6,49 @@ $result->execute();
 
 $departemen = $db->prepare("SELECT * FROM departemen ORDER BY kode_awal");
 $departemen->execute();
+
+try{
+    if(isset($_POST['submit-tambah'])){
+        $a = $_POST['nama'];
+        $b = $_POST['email'];
+        $c = $_POST['telp'];
+        $d = $_POST['alamat'];
+        $e = $_POST['password'];
+        $f = $_POST['departemen'];
+        // $dept = $db->prepare("SELECT departemen FROM departemen WHERE kode_awal = '" . $f . "'");
+        // $dept->execute();
+        // $res = $dept->fetch();
+        $file_name = $_FILES['foto']['name'];
+        $file_tmp  = $_FILES['foto']['tmp_name'];
+        $file_size = $_FILES['foto']['size'];
+        $file_ext = strtolower(end(explode(".", $file_name)));
+        $ext_boleh = array("jpg", "png");
+        if(in_array($file_ext, $ext_boleh) || $_FILES['foto']['size'] == 0 ){
+            if($file_size <= 2*1024*1024)
+            {
+                if($_FILES['foto']['size'] != 0 ){
+                    $sumber = $file_tmp;
+                    $tujuan = $url_web . "images/karyawan/" . $nik . $file_ext;
+                    move_uploaded_file($sumber, $tujuan);
+                }
+            }
+            else{
+                echo "Ukuran file maximal adalah 2MB, file anda terlalu besar.";
+            }
+        // echo "EXT FILE BOLEH DI UPLOAD.";
+        }else{
+            echo "Jenis/extensi file tidak diizinkan.";
+        }
+        $sql = "INSERT INTO karyawan (nama_karyawan,email,telp_karyawan,alamat_karyawan,password,id_karyawan,departemen) 
+        VALUES (:a,:b,:c,:d,:e,:f,:g)";
+        $q = $db->prepare($sql);
+        $q->execute(array(':a'=>$a,':b'=>$b,':c'=>$c,':d'=>$d,':e'=>$e,':f'=>$f,':g'=>$f));
+        header("location: index.php");
+    }
+}catch(Exception $e){
+    if($mode_debug = true) echo $e->getMessage();
+}
+
 ?>
 <!doctype html>
 <html>
@@ -31,6 +74,19 @@ $departemen->execute();
 <script>
 function fokus_teks() {
     document.getElementById("nama").focus();
+}
+function cek_terakhir(kode_awal){
+    $.ajax({
+        type: 'GET',
+        url: '../php/modular/autocomplete.php?kode_awal='+kode_awal,
+        success: function(response) {
+                var result = $.parseJSON( response ) ;
+                document.getElementById("sementara").innerHTML = result.urutan_terakhir[0];
+                // $("#sementara").html(result.urutan_terakhir[0]);
+            }
+        });
+
+    }
 }
 </script>
 </head>
@@ -62,11 +118,12 @@ function fokus_teks() {
                 <div class="modal fade" id="modalAdd" role="dialog">
                     <div class="modal-dialog modal-lg">
                     <!-- Modal content-->
-                        <form action="tambah.php" method="post" class="j-forms">
+                        <form action="index.php" method="post" class="j-forms">
                         <div class="modal-content">
                             <div class="modal-header">
                                 <button type="button" class="close" data-dismiss="modal">&times;</button>
                                 <h4 class="modal-title">Tambah Karyawan</h4>
+                                <h4 class="modal-title" id="sementara">Tambah Karyawan</h4>
                             </div>
                             <div class="modal-body">
                                 <div class="unit">
@@ -87,6 +144,8 @@ function fokus_teks() {
                                             <select class="form-control" name="departemen" onchange="if (this.value === 'add'){ 
                                                     $('#modalAdd').modal('toggle');
                                                     $('#modalAddDept').modal('toggle');
+                                                }else{
+                                                    cek_terakhir(this.value);
                                                 }
                                             ">
                                                 <option disabled selected style="display:none;">-- Pilih departemen --</option>
@@ -99,6 +158,14 @@ function fokus_teks() {
                                             </select>
                                             <i></i>
                                         </label>
+                                    </div>
+                                </div>
+                                <div class="unit">
+                                    <div class="input">
+                                        <label class="icon-left" for="nik">
+                                            <i class="zmdi zmdi-assignment-account"></i>
+                                        </label>
+                                        <input class="form-control login-frm-input"  type="text" id="nik" name="nik" placeholder="Pilih Departemen" disabled="true">
                                     </div>
                                 </div>
                                 <div class="unit">
@@ -136,13 +203,13 @@ function fokus_teks() {
                                 <div class="row">
                                     <label class="col-md-1 control-label">Foto</label>
                                     <div class="col-md-11">
-                                        <input type="file" class="filestyle bootstrap-file" data-buttonbefore="true">
+                                        <input type="file" name="foto" class="filestyle bootstrap-file" data-buttonbefore="true">
                                     </div>
                                 </div>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-default" data-dismiss="modal">Batal</button>
-                                <button type="submit" class="btn btn-success" name="submit">Simpan</button>
+                                <button type="submit" class="btn btn-success" name="submit-tambah">Simpan</button>
                             </div>
                         </div>
                         </form>

@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Nov 08, 2016 at 02:50 PM
+-- Generation Time: Nov 08, 2016 at 08:18 PM
 -- Server version: 5.7.13-0ubuntu0.16.04.2
 -- PHP Version: 5.6.23-2+deb.sury.org~xenial+1
 
@@ -870,8 +870,8 @@ CREATE TABLE `karyawan` (
 --
 
 INSERT INTO `karyawan` (`id_karyawan`, `nama_karyawan`, `departemen`, `password`, `email`, `telp_karyawan`, `alamat_karyawan`) VALUES
-('MGR', 'Novia Irlanda', 'MGR', 'novia', 'novia@gmail.com', '081234567890', 'Jl. Jembatan Gambang 1 No. 3\r\nPejagalan'),
-('MGR001', 'Nicholas Kotama', 'MGR', '$2y$10$Kelompok2SuPERmarketIOO3P572WpOOk7pVJiPUEwCMe4U6o.ql2', 'nichkotama@gmail.com', '082374451441', 'Jl. Lodan Raya No.2 Jakarta Utara');
+('MGR-001', 'Nicholas Kotama', 'MGR', '$2y$10$Kelompok2SuPERmarketIOO3P572WpOOk7pVJiPUEwCMe4U6o.ql2', 'nichkotama@gmail.com', '082374451441', 'Jl. Lodan Raya No.2 Jakarta Utara'),
+('MGR-002', 'Novia Irlanda', 'MGR', 'novia', 'novia@gmail.com', '081234567891', 'Jl. Jembatan Gambang 1 No. 3\r\nPejagalan');
 
 -- --------------------------------------------------------
 

@@ -16,6 +16,6 @@ try{
 	$q->execute(array(':a'=>$a,':b'=>$b,':c'=>$c,':d'=>$d,':e'=>$e,':f'=>$f,':g'=>$f));
 	header("location: index.php");
 }catch(Exception $e){
-	echo $e->getMessage();
+    if($mode_debug = true) echo $e->getMessage();
 }
 ?>

@@ -1,9 +1,9 @@
 <?php
 	require_once('koneksi.php');
 	//connect to your database
+	if(isset($_GET['src'])){
   	mysql_connect(db_server,db_user,db_pass);
   	mysql_select_db(db_name);
-	if(isset($_GET['src'])){
 		switch ($_GET['src']) {
 			case 'barcode_barang':
 				$term = trim(strip_tags($_GET['term']));
@@ -23,6 +23,16 @@
 			default:
 				# do nothing
 				break;
+		}
+	} else if(isset($_GET['kode_awal'])){
+		try{
+			$query = $db->prepare("SELECT id_karyawan FROM karyawan WHERE id_karyawan LIKE '" . $_GET['kode_awal'] . "%' ORDER BY id_karyawan DESC LIMIT 1");
+			$query->execute();
+			$urutan = $query->fetch();
+        	$urutan_terakhir = explode("-", $urutan['id_karyawan']);
+        	echo json_encode($urutan_terakhir);
+		}catch(Exception $e){
+    		if($mode_debug = true) echo $e->getMessage();
 		}
 	}
 ?>

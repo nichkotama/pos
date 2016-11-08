@@ -6,20 +6,22 @@ require_once('../php/modular/otentifikasi.php');
 if(isset($_POST['submit'])){
     try{
         // new data
-        $barcode = $_POST['barcode'];
-        $barcode_lama = $_POST['barcode_lama'];
+        $nik = $_POST['nik'];
+        $nik_lama = $_POST['nik_lama'];
         $nama = $_POST['nama'];
-        $hbeli = $_POST['harga_beli'];
-        $hjual = $_POST['harga_jual'];
+        $email = $_POST['email'];
+        $telp = $_POST['telp'];
+        $alamat = $_POST['alamat'];
         $aktif = ($_POST['status_aktif'] == 'on' ? 1:0);
         // query
-        $sql = "UPDATE barang 
-                SET nama_barang=?, harga_beli=?, harga_jual=?, barcode_barang=?, status_aktif=?
-                WHERE barcode_barang=?";
+        $sql = "UPDATE karyawan 
+                SET id_karyawan=?, nama_karyawan=?, email=? , telp_karyawan=?, alamat_karyawan=?
+                WHERE id_karyawan=?";
         $q = $db->prepare($sql);
-        $q->execute(array($nama, $hbeli, $hjual, $barcode, $aktif, $barcode_lama));
+        $q->execute(array($nik, $nama, $email, $telp, $alamat, $nik_lama));
         header("location: index.php");
     }catch(Exception $e){
+        if($mode_debug = true) echo $e->getMessage();
         echo "<div class='col-md-12'>
                 <div class='j-forms'>
                     <div class='form-content'>
@@ -98,10 +100,19 @@ window.onload = function() {
             <div class="widget-container">
                 <div class="widget-content">
                     <form class="j-forms" method="post" id="order-forms-quantity" novalidate>
-                        <div class="form-group">
+                        <div class="form-group">    
                             <div class="unit">
                                 <div class="input">
-                                    <label class="icon-left" for="nama_barang">
+                                    <label class="icon-left" for="id_karyawan">
+                                        <i class="zmdi zmdi-assignment-account"></i>
+                                    </label>
+                                    <input class="form-control login-frm-input"  type="text" id="nik" name="nik" placeholder="Masukkan ID Karyawan" required="true" value="<?php echo $row['id_karyawan']; ?>">
+                                    <input type="hidden" name="nik_lama" value="<?php echo $row['id_karyawan'];?>">
+                                </div>
+                            </div>
+                            <div class="unit">
+                                <div class="input">
+                                    <label class="icon-left" for="nama_karyawan">
                                         <i class="zmdi zmdi-account"></i>
                                     </label>
                                     <input class="form-control login-frm-input"  type="text" id="nama" name="nama" placeholder="Masukkan Nama Karyawan" required="true" value="<?php echo $row['nama_karyawan']; ?>">
@@ -109,27 +120,26 @@ window.onload = function() {
                             </div>
                             <div class="unit">
                                 <div class="input">
-                                    <label class="icon-left" for="barcode">
+                                    <label class="icon-left" for="email">
                                         <i class="fa fa-barcode"></i>
                                     </label>
-                                    <input class="form-control login-frm-input"  type="text" id="barcode" name="barcode" placeholder="Masukkan Barcode" required="true" value="<?php echo $row['barcode_barang'];?>">
-                                    <input type="hidden" name="barcode_lama" value="<?php echo $row['barcode_barang'];?>">
+                                    <input class="form-control login-frm-input"  type="email" id="email" name="email" placeholder="Masukkan Email Karyawan" required="true" value="<?php echo $row['email'];?>">
+                                    </div>
+                            </div>
+                            <div class="unit">
+                                <div class="input">
+                                    <label class="icon-left" for="telp">
+                                        <i class="fa fa-money"></i>
+                                    </label>
+                                    <input class="form-control login-frm-input"  type="telp" id="telp" name="telp" placeholder="Masukkan Nomor Telepon Karyawan" value="<?php echo $row['telp_karyawan'];?>">
                                 </div>
                             </div>
                             <div class="unit">
                                 <div class="input">
-                                    <label class="icon-left" for="hargabeli">
+                                    <label class="icon-left" for="alamat">
                                         <i class="fa fa-money"></i>
                                     </label>
-                                    <input class="form-control login-frm-input"  type="text" id="hargabeli" name="hargabeli" placeholder="Masukkan Harga Beli" value="<?php echo $row['harga_beli'];?>">
-                                </div>
-                            </div>
-                            <div class="unit">
-                                <div class="input">
-                                    <label class="icon-left" for="hargajual">
-                                        <i class="fa fa-money"></i>
-                                    </label>
-                                    <input class="form-control login-frm-input"  type="text" id="hargajual" name="hargajual" placeholder="Masukkan Harga Jual" value="<?php echo $row['harga_jual'];?>">
+                                    <textarea class="form-control login-frm-input" id="alamat" name="alamat" placeholder="Masukkan Alamat Karyawan"><?php echo $row['alamat_karyawan'];?></textarea>
                                 </div>
                             </div>
                             <div class="unit">

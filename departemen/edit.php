@@ -1,62 +1,54 @@
 <?php 
 require_once('../php/modular/koneksi.php');
-require_once('../php/modular/otentifikasi.php'); 
-$result = $db->prepare("SELECT kary.*, dept.departemen AS nama_departemen FROM karyawan kary LEFT JOIN departemen dept ON kary.departemen = dept.kode_awal ORDER BY nama_karyawan");
-$result->execute(); 
+require_once('../php/modular/otentifikasi.php');
 
-$departemen = $db->prepare("SELECT * FROM departemen ORDER BY kode_awal");
-$departemen->execute();
-
-try{
-    if(isset($_POST['submit-tambah'])){
-        $a = $_POST['nama'];
-        $b = $_POST['email'];
-        $c = $_POST['telp'];
-        $d = $_POST['alamat'];
-        $e = $_POST['password'];
-        $f = $_POST['departemen'];
-        // $dept = $db->prepare("SELECT departemen FROM departemen WHERE kode_awal = '" . $f . "'");
-        // $dept->execute();
-        // $res = $dept->fetch();
-        $file_name = $_FILES['foto']['name'];
-        $file_tmp  = $_FILES['foto']['tmp_name'];
-        $file_size = $_FILES['foto']['size'];
-        $file_ext = strtolower(end(explode(".", $file_name)));
-        $ext_boleh = array("jpg", "png");
-        if(in_array($file_ext, $ext_boleh) || $_FILES['foto']['size'] == 0 ){
-            if($file_size <= 2*1024*1024)
-            {
-                if($_FILES['foto']['size'] != 0 ){
-                    $sumber = $file_tmp;
-                    $tujuan = $url_web . "images/karyawan/" . $nik . $file_ext;
-                    move_uploaded_file($sumber, $tujuan);
-                }
-            }
-            else{
-                echo "Ukuran file maximal adalah 2MB, file anda terlalu besar.";
-            }
-        // echo "EXT FILE BOLEH DI UPLOAD.";
-        }else{
-            echo "Jenis/extensi file tidak diizinkan.";
-        }
-        $sql = "INSERT INTO karyawan (nama_karyawan,email,telp_karyawan,alamat_karyawan,password,id_karyawan,departemen) 
-        VALUES (:a,:b,:c,:d,:e,:f,:g)";
+// Kalo disubmit (edit) maka menjalankan script dibawah ini
+if(isset($_POST['submit'])){
+    try{
+        // new data
+		$kode = $_POST['kode_awal'];
+        $dept = $_POST['departemen'];
+        $prod_aktif = ($_POST['prod_aktif'] == 'on' ? 1:0);
+        $kary_aktif = ($_POST['kary_aktif'] == 'on' ? 1:0);
+		$lap_aktif = ($_POST['lap_aktif'] == 'on' ? 1:0);
+		$pos_aktif = ($_POST['pos_aktif'] == 'on' ? 1:0);
+        // query
+        $sql = "UPDATE departemen 
+                SET kode_awal=?, departemen=?, hak_akses_produk=?, hak_akses_karyawan=?, hak_akses_laporan=?, hak_akses_pos=?
+                WHERE kode_awal=?";
         $q = $db->prepare($sql);
-        $q->execute(array(':a'=>$a,':b'=>$b,':c'=>$c,':d'=>$d,':e'=>$e,':f'=>$f,':g'=>$f));
+        $q->execute(array($kode, $dept, $prod_aktif, $kary_aktif, $lap_aktif, $pos_aktif));
         header("location: index.php");
+    }catch(Exception $e){
+        echo "<div class='col-md-12'>
+                <div class='j-forms'>
+                    <div class='form-content'>
+                        <div class='unit'> 
+                            <div class='error-message text-center'>
+                                <i class='fa fa-close'></i>Data yang anda masukan sudah ada atau salah.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>";
     }
-}catch(Exception $e){
-    if($mode_debug = true) echo $e->getMessage();
 }
 
+// Pas load data
+if(isset($_GET['key']) AND $_GET['method'] == 'departemen'){
+    $kodeDept=$_GET['key'];
+    $result = $db->prepare("SELECT * FROM departemen WHERE kode_awal = :kode");
+    $result->bindParam(':kode', $kodeDept);
+    $result->execute();
+    for($i=0; $row = $result->fetch(); $i++){
 ?>
-<!doctype html>
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
-    <title><?php echo $judul;?> - Karyawan</title>
+    <title><?php echo $judul;?> - Departemen</title>
     <link type="text/css" rel="stylesheet" href="../css/font-awesome.css">
     <link type="text/css" rel="stylesheet" href="../css/material-design-iconic-font.css">
     <link type="text/css" rel="stylesheet" href="../css/bootstrap.css">
@@ -72,24 +64,16 @@ try{
     <link type="text/css" rel="stylesheet" href="../css/custom.css">
 
 <script>
-function fokus_teks() {
-    document.getElementById("nama").focus();
-}
-function cek_terakhir(kode_awal){
-    $.ajax({
-        type: 'GET',
-        url: '../php/modular/autocomplete.php?kode_awal='+kode_awal,
-        success: function(response) {
-                var result = $.parseJSON( response ) ;
-                document.getElementById("sementara").innerHTML = result.urutan_terakhir[0];
-                // $("#sementara").html(result.urutan_terakhir[0]);
-            }
-        });
-
-    }
+window.onload = function() {
+        var SetFokus = $('#nama');
+        SetFokus.val(SetFokus.val());
+        var strLength= SetFokus.val().length;
+        SetFokus.focus();
+        SetFokus[0].setSelectionRange(strLength, strLength);
 }
 </script>
 </head>
+
 <body class="overlay-leftbar">
 <?php include('../php/modular/top-menu.php') ?>
 <?php include('../php/modular/side-menu.php') ?>
@@ -99,350 +83,107 @@ function cek_terakhir(kode_awal){
 <div class="page-header filled light single-line">
     <div class="row widget-header block-header">
         <div class="col-sm-6">
-            <h2>Karyawan</h2>
+            <h2>Edit Departemen</h2>
         </div>
         <div class="col-sm-6">
             <ul class="list-page-breadcrumb">
-                <li><a href="#">Karyawan <i class="zmdi zmdi-chevron-right"></i></a></li>
-                <li class="active-page"> Manage</li>
+                <li><a href="#">Departemen <i class="zmdi zmdi-chevron-right"></i></a></li>
+                <li class="active-page"> Sunting</li>
             </ul>
         </div>
     </div>
 
-    <div class="row widget-header block-header">
-        <div class="col-sm-2 unit">
-            <div class="input">
-                <button type="button" class="btn btn-success" data-toggle="modal" data-target="#modalAdd" onclick="fokus_teks()"><i class="zmdi zmdi-plus"> Tambah Karyawan</i></button>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="widget-container">
+                <div class="widget-content">
+                    <form class="j-forms" method="post" id="order-forms-quantity" novalidate>
+                        <div class="form-group">
+                            <div class="unit">
+                                <div class="input">
+                                    <label class="icon-left" for="departemen">
+                                        <i class="fa fa-book"></i>
+                                    </label>
+									<input disabled selected class="form-control login-frm-input"  type="text" id="kode_awal" name="kode_awal" placeholder="Masukkan Kode" required="true" value="<?php echo $row['kode_awal']; ?>">
+                                    <input class="form-control login-frm-input"  type="text" id="nama_dept" name="nama_dept" placeholder="Masukkan Nama Departemen" required="true" value="<?php echo $row['departemen']; ?>">
+                                </div>
+                            </div>
+                            <div class="unit">
+                                <div class="input">
+                                    <label class="label">Hak Akses Produk</label>
+                                    <label class="radio-toggle">
+                                        <input type="checkbox" name="prod_aktif" <?php if ($row['hak_akses_produk'] == 1){?> checked="checked" <?php } ?> >
+                                        <i></i>
+                                    </label>
+                                </div>
+								<div class="input">
+                                    <label class="label">Hak Akses Karyawan</label>
+                                    <label class="radio-toggle">
+                                        <input type="checkbox" name="kary_aktif" <?php if ($row['hak_akses_karyawan'] == 1){?> checked="checked" <?php } ?> >
+                                        <i></i>
+                                    </label>
+                                </div>
+								<div class="input">
+                                    <label class="label">Hak Akses Laporan</label>
+                                    <label class="radio-toggle">
+                                        <input type="checkbox" name="lap_aktif" <?php if ($row['hak_akses_laporan'] == 1){?> checked="checked" <?php } ?> >
+                                        <i></i>
+                                    </label>
+                                </div>
+								<div class="input">
+                                    <label class="label">Hak Akses Pos</label>
+                                    <label class="radio-toggle">
+                                        <input type="checkbox" name="pos_aktif" <?php if ($row['hak_akses_pos'] == 1){?> checked="checked" <?php } ?> >
+                                        <i></i>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="unit">
+                                <div class="input">
+                                    <button type="submit" class="btn btn-success col-md-4" name="submit">Simpan</button>
+                                    <button type="button" class="btn btn-default col-md-4" onclick="window.location.href='<?php echo $url_web?>departemen'">Batal</button>
+                                    <button type="button" class="btn btn-danger col-md-4" data-toggle="modal" data-target="#modalHapus" name="hapus">Hapus Permanen</button>
 
-                <!-- Modal -->
-                <div class="modal fade" id="modalAdd" role="dialog">
-                    <div class="modal-dialog modal-lg">
-                    <!-- Modal content-->
-                        <form action="index.php" method="post" class="j-forms">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                <h4 class="modal-title">Tambah Karyawan</h4>
-                                <h4 class="modal-title" id="sementara">Tambah Karyawan</h4>
-                            </div>
-                            <div class="modal-body">
-                                <div class="unit">
-                                    <div class="input">
-                                        <label class="icon-left" for="nama_karyawan">
-                                            <i class="zmdi zmdi-account"></i>
-                                        </label>
-                                        <input class="form-control login-frm-input"  type="text" id="nama" name="nama" placeholder="Masukkan Nama Karyawan" required="true">
-                                    </div>
                                 </div>
-                                <div class="unit">
-                                    <div class="input">
-                                        <label>
-                                            Departemen
-                                        </label>
-                                            
-                                        <label class="input select">
-                                            <select class="form-control" name="departemen" onchange="if (this.value === 'add'){ 
-                                                    $('#modalAdd').modal('toggle');
-                                                    $('#modalAddDept').modal('toggle');
-                                                }else{
-                                                    cek_terakhir(this.value);
-                                                }
-                                            ">
-                                                <option disabled selected style="display:none;">-- Pilih departemen --</option>
-                                                <?php
-                                                for ($i = 0; $data = $departemen->fetch(); $i++) {
-                                                    echo "<option value = '" . $data['kode_awal'] . "'>" . $data['departemen'] . "</option>";
-                                                }
-                                                ?>
-                                                <option value="add" style="color:#ccc">Tambah Departemen...</option>
-                                            </select>
-                                            <i></i>
-                                        </label>
-                                    </div>
-                                </div>
-                                <div class="unit">
-                                    <div class="input">
-                                        <label class="icon-left" for="nik">
-                                            <i class="zmdi zmdi-assignment-account"></i>
-                                        </label>
-                                        <input class="form-control login-frm-input"  type="text" id="nik" name="nik" placeholder="Pilih Departemen" disabled="true">
-                                    </div>
-                                </div>
-                                <div class="unit">
-                                    <div class="input">
-                                        <label class="icon-left" for="email">
-                                            <i class="zmdi zmdi-email"></i>
-                                        </label>
-                                        <input class="form-control login-frm-input"  type="email" id="email" name="email" placeholder="Masukkan Email Karyawan" required="true">
-                                    </div>
-                                </div>
-                                <div class="unit">
-                                    <div class="input">
-                                        <label class="icon-left" for="telp">
-                                            <i class="zmdi zmdi-phone"></i>
-                                        </label>
-                                        <input class="form-control login-frm-input"  type="text" id="telp" name="telp" placeholder="Masukkan Nomor Telepon Karyawan" required="true">
-                                    </div>
-                                </div>
-                                <div class="unit">
-                                    <div class="input">
-                                        <label class="icon-left" for="password">
-                                            <i class="zmdi zmdi-key"></i>
-                                        </label>
-                                        <input class="form-control login-frm-input"  type="password" id="password" name="password" placeholder="Masukkan Password Awal Karyawan" required="true">
-                                    </div>
-                                </div>
-                                <div class="unit">
-                                    <div class="input">
-                                        <label class="icon-left" for="alamat">
-                                            <i class="zmdi zmdi-home"></i>
-                                        </label>
-                                        <textarea class="form-control login-frm-input"  type="text" id="alamat" name="alamat" placeholder="Masukkan Alamat Lengkap Karyawan" required="true"></textarea> 
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <label class="col-md-1 control-label">Foto</label>
-                                    <div class="col-md-11">
-                                        <input type="file" name="foto" class="filestyle bootstrap-file" data-buttonbefore="true">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-default" data-dismiss="modal">Batal</button>
-                                <button type="submit" class="btn btn-success" name="submit-tambah">Simpan</button>
                             </div>
                         </div>
-                        </form>
-                    </div>
+                    </form>
                 </div>
             </div>
         </div>
-    </div>
-    <div class="row">
-        <div class="col-sm-12">
-                    <table class="table table-striped data-tbl">
-                        <thead>
-                        <tr>
-                            <th>ID Karyawan</th>
-                            <th>Nama Karyawan</th>
-                            <th>Departemen</th>
-                            <th>Email</th>
-                            <th>Foto</th>
-                            <th class="td-center">Action</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <?php
-                            for ($i = 0; $row = $result->fetch(); $i++) {
-                                echo "<tr>";
-                                # kolom id karyawan
-                                echo "<td>" . $row['id_karyawan'] . "</td>";
-                                # kolom nama karyawan
-                                echo "<td>" . $row['nama_karyawan'] . "</td>";
-                                # kolom barcode barang
-                                echo "<td>" . $row['nama_departemen'] . "</td>";
-                                # kolom barcode barang
-                                echo "<td>" . $row['email'] . "</td>";
-                                # kolom barcode barang
-                                echo "<td><i class='td-profile-thumb'><img src='". $url_web . "images/karyawan/" . $row['id_karyawan'] . ".jpg'></i></td>";
-                                # kolom aksi
-                                echo "<td class='td-center'>
-                                <div class='btn-toolbar' role='toolbar'>
-                                    <div class='btn-group' role='group'>
-                                        <a href='edit.php?method=karyawan&key=" . $row['id_karyawan'] . "' class='btn btn-default btn-sm m-user-edit'><i class='zmdi zmdi-edit'></i></a>
-                                    </div>
-                                </div>
-                                </td>";
-                            }
-                        ?>
-                        <!-- JANGAN DIHAPUS DULU BUAT SAMPEL WARNING STOCK
-                        <tr>
-                            <td>Garrett Winters</td>
-                            <td>Chief Executive Officer (CEO)</td>
-                            <td class="td-center">
-                                <a href="#" class="td-profile-thumb"><img src="../images/avatar/amarkdalen.jpg" alt="user"></a>
-                            </td>
-                            <td><label class="label label-warning">Pending</label></td>
-                            <td class="td-center">
-                                <div class="btn-toolbar" role="toolbar">
-                                    <div class="btn-group" role="group">
-                                        <a href="#" class="btn btn-default btn-sm m-user-edit"><i class="zmdi zmdi-edit"></i></a>
-                                        <a href="#" class="btn btn-default btn-sm m-user-delete"><i class="zmdi zmdi-close"></i></a>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Wyatt Ruiz</td>
-                            <td>Software Engineer</td>
-                            <td class="td-center">
-                                <a href="#" class="td-profile-thumb"><img src="../images/avatar/michael-owens.jpg" alt="user"></a>
-                            </td>
-                            <td class="success"><label class="label label-success">Approved</label></td>
-                            <td class="td-center">
-                                <div class="btn-toolbar" role="toolbar">
-                                    <div class="btn-group" role="group">
-                                        <a href="#" class="btn btn-default btn-sm m-user-edit"><i class="zmdi zmdi-edit"></i></a>
-                                        <a href="#" class="btn btn-default btn-sm m-user-delete"><i class="zmdi zmdi-close"></i></a>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr class="danger">
-                            <td>Randall Martinez</td>
-                            <td>Senior Javascript Developer</td>
-                            <td class="td-center">
-                                <a href="#" class="td-profile-thumb"><img src="../images/avatar/bobbyjkane.jpg" alt="user"></a>
-                            </td>
-                            <td><label class="label label-danger">Suspended</label></td>
-                            <td  class="td-center">
-                                <div class="btn-toolbar" role="toolbar">
-                                    <div class="btn-group" role="group">
-                                        <a href="#" class="btn btn-default btn-sm m-user-edit"><i class="zmdi zmdi-edit"></i></a>
-                                        <a href="#" class="btn btn-default btn-sm m-user-delete"><i class="zmdi zmdi-close"></i></a>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Orlando Mullen</td>
-                            <td>Integration Specialist</td>
-                            <td class="td-center">
-                                <a href="#" class="td-profile-thumb"><img src="../images/avatar/coreyweb.jpg" alt="user"></a>
-                            </td>
-                            <td><label class="label label-default">Waiting for Review</label></td>
-                            <td  class="td-center">
-                                <div class="btn-toolbar" role="toolbar">
-                                    <div class="btn-group" role="group">
-                                        <a href="#" class="btn btn-default btn-sm m-user-edit"><i class="zmdi zmdi-edit"></i></a>
-                                        <a href="#" class="btn btn-default btn-sm m-user-delete"><i class="zmdi zmdi-close"></i></a>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Leonard Hodge</td>
-                            <td>Senior Marketing Designer</td>
-                            <td class="td-center">
-                                <a href="#" class="td-profile-thumb"><img src="../images/avatar/kurafire.jpg" alt="user"></a>
-                            </td>
-                            <td class="success"> <label class="label label-success">Approved</label></td>
-                            <td  class="td-center">
-                                <div class="btn-toolbar" role="toolbar">
-                                    <div class="btn-group" role="group">
-                                        <a href="#" class="btn btn-default btn-sm m-user-edit"><i class="zmdi zmdi-edit"></i></a>
-                                        <a href="#" class="btn btn-default btn-sm m-user-delete"><i class="zmdi zmdi-close"></i></a>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Yardley Bond</td>
-                            <td>Office Manager</td>
-                            <td class="td-center">
-                                <a href="#" class="td-profile-thumb"><img src="../images/avatar/joostvanderree.jpg" alt="user"></a>
-                            </td>
-                            <td> <label class="label label-warning">Pending</label></td>
-                            <td  class="td-center">
-                                <div class="btn-toolbar" role="toolbar">
-                                    <div class="btn-group" role="group">
-                                        <a href="#" class="btn btn-default btn-sm m-user-edit"><i class="zmdi zmdi-edit"></i></a>
-                                        <a href="#" class="btn btn-default btn-sm m-user-delete"><i class="zmdi zmdi-close"></i></a>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr> -->
-
-                        </tbody>
-
-
-                    </table>
-    </div>
     </div>
 </div>
-
-<!-- Modal -->
-<div class="modal fade" id="modalAddDept" role="dialog">
+</div>
+<!-- KETIKA KLIK HAPUS, doc by Nicholas -->
+<div class="modal fade" id="modalHapus" role="dialog">
     <div class="modal-dialog modal-lg">
-    <!-- Modal content-->
-        <form action="tambah.php" method="post" class="j-forms">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">Tambah Departemen</h4>
-            </div>
-            <div class="modal-body">
-                <div class="unit">
-                    <div class="input">
-                        <label class="icon-left" for="nama_karyawan">
-                            <i class="zmdi zmdi-account"></i>
-                        </label>
-                        <input class="form-control login-frm-input"  type="text" id="nama" name="nama" placeholder="Masukkan Nama Karyawan" required="true">
-                    </div>
+        <form action="hapus.php" method="post">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Hapus Departemen</h4>
                 </div>
-                <div class="unit">
-                    <div class="input">
-                        <label>
-                            Departemen
-                        </label>
-                            
-                        <label class="input select">
-                            <select class="form-control" name="departemen" onchange="if (this.selectedIndex = 'add'){ 
-                                    $('#modalAdd').modal('toggle');
-                                    $('#modalAddDept').modal('toggle');
-                                }
-                            ";>
-                                <option>-- Pilih departemen --</option>
-                                <?php
-                                for ($i = 0; $data = $departemen->fetch(); $i++) {
-                                    echo "<option value = '" . $data['kode_awal'] . "'>" . $data['departemen'] . "</option>";
-                                }
-                                ?>
-                                <option value="add" style="color:#ccc;">Tambah Departemen...</option>
-                            </select>
-                            <i></i>
-                        </label>
-                    </div>
+                <div class="modal-body">
+                    <p class="text-center">
+                    <i class="zmdi zmdi-alert-circle-o zmdi-hc-5x"></i>
+                    <br/>
+                    <br/>
+                    Apakah anda yakin akan menghapus <?php echo $row['departemen'] . " ( : " . $row['departemen'] . ")" ?>?
+                    </p>
                 </div>
-                <div class="unit">
-                    <div class="input">
-                        <label class="icon-left" for="email">
-                            <i class="zmdi zmdi-email"></i>
-                        </label>
-                        <input class="form-control login-frm-input"  type="email" id="email" name="email" placeholder="Masukkan Email Karyawan" required="true">
-                    </div>
-                </div>
-                <div class="unit">
-                    <div class="input">
-                        <label class="icon-left" for="telp">
-                            <i class="zmdi zmdi-phone"></i>
-                        </label>
-                        <input class="form-control login-frm-input"  type="text" id="telp" name="telp" placeholder="Masukkan Nomor Telepon Karyawan" required="true">
-                    </div>
-                </div>
-                <div class="unit">
-                    <div class="input">
-                        <label class="icon-left" for="alamat">
-                            <i class="zmdi zmdi-home"></i>
-                        </label>
-                        <textarea class="form-control login-frm-input"  type="text" id="alamat" name="alamat" placeholder="Masukkan Alamat Lengkap Karyawan" required="true"></textarea> 
-                    </div>
-                </div>
-                <div class="row">
-                    <label class="col-md-1 control-label">Foto</label>
-                    <div class="col-md-11">
-                        <input type="file" class="filestyle bootstrap-file" data-buttonbefore="true">
-                    </div>
+                <div class="modal-footer">
+                    <input type="hidden" name="kode_awal" value="<?php echo $row['kode_awal'] ?>"/>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-success" name="submit">Yakin</button>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Batal</button>
-                <button type="submit" class="btn btn-success" name="submit">Simpan</button>
-            </div>
-        </div>
         </form>
     </div>
 </div>
+<!-- End of KETIKA KLIK HAPUS -->
+<?php
+}}
+?>
 </section>
 <section class="main-container m-t-min-20"><?php include('../php/modular/footer.php') ?></section>
 <!--Page Container End Here-->
@@ -840,7 +581,7 @@ function cek_terakhir(kode_awal){
 </div>
 </div>
 </aside>
-<!--Rightbar End Here-->
+
 <script src="../js/lib/jquery.js"></script>
 <script src="../js/lib/jquery-migrate.js"></script>
 <script src="../js/lib/bootstrap.js"></script>

@@ -41,7 +41,7 @@ $hasil = $logged->fetch();
                     <a href="<?php echo $url_web?>produk"><i class="zmdi zmdi-view-dashboard"></i><span class="list-label">Manage Product</span></a>
                 </li>
                 <li>
-                    <a href="<?php echo $url_web?>karyawan"><i class="zmdi zmdi-accounts-list"></i><span class="list-label">Manage Departemen</span></a>
+                    <a href="<?php echo $url_web?>departemen"><i class="zmdi zmdi-accounts-list"></i><span class="list-label">Manage Departemen</span></a>
                     <a href="<?php echo $url_web?>karyawan"><i class="zmdi zmdi-accounts-alt"></i><span class="list-label">Manage Employee</span></a>
                 </li>
                 <li>

@@ -30,7 +30,7 @@
 			$query->execute();
 			$urutan = $query->fetch();
         	$urutan_terakhir = explode("-", $urutan['id_karyawan']);
-        	echo json_encode($urutan_terakhir);
+        	echo $urutan_terakhir[1];
 		}catch(Exception $e){
     		if($mode_debug = true) echo $e->getMessage();
 		}

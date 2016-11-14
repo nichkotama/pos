@@ -5,7 +5,7 @@ $result = $db->prepare("SELECT
                         kary.*, dept.departemen AS nama_departemen
                         FROM karyawan kary
                         LEFT JOIN departemen dept ON kary.departemen = dept.kode_awal
-                        ORDER BY nama_karyawan");
+                        ORDER BY id_karyawan ASC");
 $result->execute(); 
 
 $departemen = $db->prepare("SELECT * FROM departemen ORDER BY kode_awal");
@@ -18,7 +18,8 @@ try{
         $email = $_POST['email'];
         $telp = str_replace('-', '', $_POST['telp']);
         $alamat = $_POST['alamat'];
-        $password = $_POST['password'];
+        $pass = $_POST['password'];
+        $password    = crypt($pass, salt);
         $departemen_select = $_POST['departemen'];
         // $dept = $db->prepare("SELECT departemen FROM departemen WHERE kode_awal = '" . $f . "'");
         // $dept->execute();
@@ -232,7 +233,8 @@ function cek_terakhir(kode_awal){
                                         <label class="icon-left" for="password">
                                             <i class="zmdi zmdi-key"></i>
                                         </label>
-                                        <input class="form-control login-frm-input"  type="password" id="password" name="password" placeholder="Masukkan Password Awal Karyawan" required="true" value="<?php if(isset($password)) echo $password?>">
+                                        <input class="form-control login-frm-input"  type="password" id="password" name="password" placeholder="Masukkan Password Awal Karyawan" required="true" value="<?php if(isset($password)){ echo $password;}
+                                        else{echo "123456";}?>">
                                     </div>
                                 </div>
                                 </div>

@@ -1,7 +1,11 @@
 <?php
-$logged = $db->prepare("SELECT * FROM karyawan WHERE id_karyawan = '" . $_SESSION['uname'] ."'");
+$logged = $db->prepare("SELECT karyawan.*, departemen.* FROM karyawan LEFT JOIN departemen ON karyawan.departemen = departemen.kode_awal WHERE id_karyawan = '" . $_SESSION['uname'] ."'");
 $logged->execute(); 
 $hasil = $logged->fetch();
+$hak_akses_produk = $hasil['hak_akses_produk'];
+$hak_akses_pos = $hasil['hak_akses_pos'];
+$hak_akses_laporan = $hasil['hak_akses_laporan'];
+$hak_akses_karyawan = $hasil['hak_akses_karyawan'];
 ?>
 <!--Leftbar Start Here-->
 <aside class="leftbar">
@@ -9,7 +13,7 @@ $hasil = $logged->fetch();
         <div class="user-profile-container">
             <div class="user-profile clearfix">
                 <div class="admin-user-thumb">
-                    <img src="<?php echo $url_web ?>images/avatar/nicholaskotama.png" alt="admin">
+                    <?php echo "<img src='" . $url_web . "images/karyawan/" . $hasil['foto'] . "' alt='admin'>" ?>
                 </div>
                 <div class="admin-user-info">
                     <ul>
@@ -26,35 +30,60 @@ $hasil = $logged->fetch();
                     <li><a href="#" data-toggle="tooltip" data-placement="bottom" title="Edit Profile"><i class="zmdi zmdi-account"></i>
                     </a>
                     </li>
-                    <li><a href="#" data-toggle="tooltip" data-placement="bottom" title="Sales Session"><i class="zmdi zmdi-key"></i>
-                    </a>
-                    </li>
-                    <li><a href="#" data-toggle="tooltip" data-placement="bottom" title="Config"><i class="zmdi zmdi-settings"></i>
-                    </a>
-                    </li>
                 </ul>
             </div>
         </div>
         <ul class="list-accordion tree-style">
-            <li class="list-title">Manage</li>
-                <li>
-                    <a href="<?php echo $url_web?>produk"><i class="zmdi zmdi-view-dashboard"></i><span class="list-label">Manage Product</span></a>
-                </li>
-                <li>
-                    <a href="<?php echo $url_web?>karyawan"><i class="zmdi zmdi-accounts-list"></i><span class="list-label">Manage Departemen</span></a>
-                    <a href="<?php echo $url_web?>karyawan"><i class="zmdi zmdi-accounts-alt"></i><span class="list-label">Manage Employee</span></a>
-                </li>
-                <li>
-                    <a href="<?php echo $url_web?>supplier"><i class="zmdi zmdi-account-box"></i><span class="list-label">Manage Supplier</span></a>
-                </li>
-            <li class="list-title">Transaksi</li>
-                <li><a href="#"><i class="zmdi zmdi-view-dashboard"></i><span class="list-label">Beli Barang (?)</span></a></li>
-                <li><a href="<?php echo $url_web?>sales/"><i class="zmdi zmdi-time-restore"></i><span class="list-label">Sesi Penjualan</span></a></li>
-            <li class="list-title">Laporan (?)</li>
-                <li><a href="#"><i class="zmdi zmdi-receipt"></i><span class="list-label">Laporan Pembelian</span></a></li>
-                <li><a href="#"><i class="zmdi zmdi-receipt"></i><span class="list-label">Laporan Stok</span></a></li>
-                <li><a href="#"><i class="zmdi zmdi-receipt"></i><span class="list-label">Laporan Penjualan</span></a></li>
-            
+            <!-- MANAGE -->
+            <li class="list-title">
+                    <?php if($hak_akses_produk == 1 or $hak_akses_karyawan == 1 or $hak_akses_produk == 1) echo "Manage"?>
+            </li>
+            <li>
+                <?php if($hak_akses_produk == 1) echo "<a href='" . $url_web . "produk'><i class='zmdi zmdi-view-dashboard'></i><span class='list-label'>Manage Product</span></a> "?>
+            </li>
+            <li>
+                <?php if($hak_akses_karyawan == 1) echo "<a href='" . $url_web . "departemen'><i class='zmdi zmdi-accounts-list'></i><span class='list-label'>Manage Departemen</span></a> "?>
+            </li>
+            <li>
+                <?php if($hak_akses_karyawan == 1) echo "<a href='" . $url_web . "karyawan'><i class='zmdi zmdi-accounts-alt'></i><span class='list-label'>Manage Employee</span></a> "?>
+            </li>
+            <li>
+                <?php if($hak_akses_produk == 1) echo "<a href='" . $url_web . "supplier'><i class='zmdi zmdi-account-box'></i><span class='list-label'>Manage Supplier</span></a> "?>
+            </li>
+            <!-- end of MANAGE -->
+
+            <!-- TRANSAKSI -->
+            <li class="list-title">Transaksi</li><!-- 
+            <li>
+                <?php if($hak_akses_produk == 1) echo "<a href='" . $url_web . "produk'><i class='zmdi zmdi-view-dashboard'></i><span class='list-label'>Pembelian Barang</span></a> "?>
+            </li> -->
+            <li>
+                <?php if($hak_akses_pos == 1) echo "<a href='" . $url_web . "sales'><i class='zmdi zmdi-time-restore'></i><span class='list-label'>Aplikasi Kasir</span></a> "?>
+            </li>
+            <?php if($hak_akses_produk == 1){ ?>
+            <li>
+                <a href="#"><i class="zmdi zmdi-view-dashboard"></i><span class="list-label">Pemesanan Barang</span></a>
+                <ul>
+                    <li><a href="#">List Pemesanan Barang</a></li>
+                    <li><a href="#">List Purchase Order</a></li>
+                    <li><a href="#">List Barang Masuk</a></li>
+                </ul>
+            </li>
+            <?php } ?>
+            <!-- end of TRANSAKSI -->
+
+            <!-- LAPORAN -->
+            <?php
+                if($hak_akses_laporan == 1){
+                    echo "<li class='list-title'>Laporan</li>
+                    <li><a href='#'><i class='zmdi zmdi-receipt'></i><span class='list-label'>Laporan Pembelian</span></a></li>
+                    <li><a href='#'><i class='zmdi zmdi-receipt'></i><span class='list-label'>Laporan Penjualan</span></a></li>";
+                }
+            ?>
+            <!-- end of LAPORAN -->
+
+
+            <!-- 
             <li class="list-title">Layouts</li>
             <li>
                 <a href="#"><i class="zmdi zmdi-view-dashboard"></i><span class="list-label">Layouts Variations</span></a>
@@ -167,7 +196,7 @@ $hasil = $logged->fetch();
                     <li><a href="login-social.html">Social Login</a></li>
                     <li><a href="404-error.html">404 Error Page</a></li>
                 </ul>
-            </li> 
+            </li>  -->
         </ul>
     </div>
 </aside>

@@ -1,4 +1,4 @@
-<!--Topbar Start Here-->
+<!-- Topbar Start Here--> 
 <header class="topbar clearfix">
     <!--Top Search Bar Start Here-->
     <div class="top-search-bar">
@@ -42,7 +42,7 @@
             </ul>
             <ul class="pull-right top-right-icons">
                 <!-- <li><a href="#" class="btn-top-search"><i class="zmdi zmdi-search"></i></a></li> -->
-                <li class="dropdown apps-dropdown">
+                <!-- <li class="dropdown apps-dropdown">
                     <a href="#" class="btn-apps dropdown-toggle" data-toggle="dropdown"><i class="zmdi zmdi-apps"></i></a>
                     <div class="dropdown-menu">
                         <ul class="apps-shortcut clearfix">
@@ -74,7 +74,7 @@
                             <li><a href="#"><i class="zmdi zmdi-comments"></i> Chat</a></li>
                         </ul>
                     </div>
-                </li>
+                </li> -->
                 <li class="dropdown notifications-dropdown">
                     <a href="#" class="btn-notification dropdown-toggle" data-toggle="dropdown"><span class="noty-bubble">1</span><i class="zmdi zmdi-globe"></i></a>
                     <div class="dropdown-menu notifications-tabs">
@@ -120,10 +120,10 @@
                         </div>
                     </div>
                 </li>
-                <li><a href="#" class="right-toggle-switch"><i class="zmdi zmdi-format-align-left"></i><span class="more-noty"></span></a></li>
+                <!-- <li><a href="#" class="right-toggle-switch"><i class="zmdi zmdi-format-align-left"></i><span class="more-noty"></span></a></li> -->
             </ul>
         </div>
     </div>
     <!--Topbar Right End-->
 </header>
-<!--Topbar End Here-->
+<!--Topbar End Here

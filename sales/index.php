@@ -1,6 +1,17 @@
 <?php
 require_once('../php/modular/koneksi.php');
-require_once('../php/modular/otentifikasi.php');  
+require_once('../php/modular/otentifikasi.php'); 
+
+
+try {
+    $nik = $_SESSION['uname'];
+    $hari = date("Y-m-d");
+    $sql = "INSERT INTO transaksi_kasir (id_petugas, tgl_transaksi, harga_total) 
+        VALUES (:id_karyawan, :tgl, :total)";
+    $q = $db->prepare($sql);
+    $q->execute(array(':id_karyawan'=>$nik, ':tgl'=>$hari,':total'=>0));
+} catch(Exception $e) {
+}
 ?>
 <!doctype html>
 <html>
@@ -28,33 +39,46 @@ require_once('../php/modular/otentifikasi.php');
 
 <body class="overlay-leftbar">
 <script type="text/javascript">
+    var barcode = '';
     var number = 0;
     var items = [];
     var qty = [];
-    var value = '';
+    var isaNumber = false;
+    var nilai = '';
     var barang = [];
     var banyak = [];
     window.onload = function() {
         var input = document.getElementById("barcode").focus();
     }
 
-    function myFunction(src, value) {
+    function myFunction(src, isi) {
         var table = document.getElementById("myTable");
         if( src == 'barcode' ){
-            items[number] = value;
-            qty[number] = 1;
+            try{
+                nilai = !isNaN(parseInt(isi)); //number = true; string = false
+                barcode = document.getElementById("barcode").value;
+                items[number] = isi;
+                qty[number] = 1;
+                if( src == 'qty' ){
+                    qty[number] = nilai;
+                }
+                $.get("add_to_cart.php?whatever="+barcode, function(data){
+                    var row = JSON.parse(data);
+                    table.innerHTML = table.innerHTML +
+                        '<div id = "baris-' + number + '">'  
+                        + '<div class="col-sm-1"><button class="btn btn-danger" onclick="deleteRow(' + number+1 + ')"><i class="zmdi zmdi-close"></i></button></div>' 
+                        + '<div class="col-sm-1 p-tb-9">' + number + '</div>' 
+                        + '<div class="col-sm-3 p-tb-9">' + row.nama_barang +'</div>' 
+                        + '<div class="col-sm-1"><input class="form-control" type="number" value="' + qty[number] +'"/></div>' 
+                        + '<div class="col-sm-3"><input class="form-control" type="text" value="' + row.harga_jual +'" readonly=""/></div>' 
+                        + '<div class="col-sm-3"><input class="form-control" type="text" value="' + (qty[number] * row.harga_jual) +'" readonly=""/></div>' 
+                        + '</div>'
+                });
+            }catch(err){
+            }
         }else if( src == 'qty' ){
-            qty[number] = value;
+            qty[number] = nilai;
         }
-        table.innerHTML = table.innerHTML +
-            '<div id = "baris-' + number + '">'  
-            + '<div class="col-sm-1"><button class="btn btn-danger" onclick="deleteRow(' + number + ')"><i class="zmdi zmdi-close"></i></button></div>' 
-            + '<div class="col-sm-1 p-tb-9">' + number + '</div>' 
-            + '<div class="col-sm-3 p-tb-9">' + items[number] +'</div>' 
-            + '<div class="col-sm-1"><input class="form-control" type="number" value="' + qty[number] +'"/></div>' 
-            + '<div class="col-sm-3"><input class="form-control" type="number" value="' + qty[number] +'" readonly=""/></div>' 
-            + '<div class="col-sm-3"><input class="form-control" type="number" value="' + qty[number] +'" readonly=""/></div>' 
-            + '</div>'
         document.getElementById("barcode").value = '';
         document.getElementById("qty").value = 1;
         document.getElementById("barcode").focus();
@@ -86,12 +110,12 @@ require_once('../php/modular/otentifikasi.php');
     function cek_enter(e, src) {
         if (e.keyCode == 13) {
             if( src == 'barcode' ){
-                value = document.getElementById('barcode').value;
-                if (value == "") value = "item tidak diinput";
+                nilai = document.getElementById('barcode').value;
+                if (nilai == "") nilai = "item tidak diinput";
             }else if( src == 'qty' ){
-                value = document.getElementById('qty').value;
+                nilai = document.getElementById('qty').value;
             }
-            return myFunction(src, value);
+            return myFunction(src, nilai);
             // var field_barcode = document.getElementById('barcode');
             // var field_qty = document.getElementById('qty');
             // field_barcode.innerHTML = "";
@@ -105,12 +129,15 @@ require_once('../php/modular/otentifikasi.php');
 <script>
     $(function() {  
         $( "#barcode" ).autocomplete({
-         source: "../php/modular/autocomplete.php?src=barcode_barang",  
+            source: "../php/modular/autocomplete.php?src=barcode_barang",  
             minLength:2, 
             autoFocus:true,
             select: function( event, ui ) {
               document.getElementById('tampilan').innerHTML = ui.item.value;
             },
+            focus: function (event, ui) {
+                $(this).val(ui.item.value);
+            }
         });
     });
 </script>
@@ -132,30 +159,6 @@ require_once('../php/modular/otentifikasi.php');
                 <li class="active-page"> Session</li>
             </ul>
         </div>
-        <!-- <div class="col-sm-12 m-t-20">
-            <button class="btn btn-success active col-sm-6"><i class="zmdi zmdi-keyboard"> Keyboard Mode</i></button>
-            <button type="button"  data-toggle="modal" data-target="#myModal" class="btn btn-success col-sm-6"><i class="zmdi zmdi-image"> Mouse Mode</i></button>
-
-            <!-- Modal --
-            <div class="modal fade" id="myModal" role="dialog">
-            <div class="modal-dialog">
-                <!-- Modal content--
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4 class="modal-title">Validasi</h4>
-                    </div>
-                    <div class="modal-body">
-                        <p class="text-center"><i class="zmdi zmdi-alert-circle-o zmdi-hc-5x"></i><br/><br/>Apakah anda yakin ingin beralih ke mode mouse?</p>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Batal</button>
-                        <button type="button" class="btn btn-danger"  onclick="window.location.href='https://fb.com'"">Yakin</button>
-                    </div>
-                </div>
-            </div>
-            </div>
-        </div> -->
     </div>
     <div class="row">
         <div class="col-md-12">
@@ -174,14 +177,14 @@ require_once('../php/modular/otentifikasi.php');
                                         <input class="form-control" type="text" id="barcode" name="barcode" placeholder="Scan or Type Barcode Item Here" onkeypress="return cek_enter(event, 'barcode')">
                                     </div>
                                 </div>
-                                <div class="col-sm-3 unit">
+                                <!-- <div class="col-sm-3 unit">
                                     <div class="input">
                                         <label class="icon-left" for="name">
                                             <i class="zmdi zmdi-shopping-basket"></i>
                                         </label>
                                         <input class="form-control" type="number" id="qty" placeholder="Qty" value=1 min=1 onkeypress="return cek_enter(event, 'qty')"> 
                                     </div>
-                                </div>
+                                </div> -->
                                 <div class="col-sm-2 unit">
                                     <div class="input">
                                         <button type="submit" class="btn btn-success" onclick="myFunction()"><i class="zmdi zmdi-plus"> Add Item</i></button>
@@ -216,12 +219,13 @@ require_once('../php/modular/otentifikasi.php');
                             <!-- end /.content -->
 
                             <div class="form-footer">
-                                <button type="submit" class="btn btn-success primary-btn">Order Now</button>
+                                <button type="submit" class="btn btn-success primary-btn" style="width:30%; height:50px">Pay</button>
                             </div>
                             <!-- end /.footer -->
-                            <button class="btn btn-danger" onclick="printData()">TEST Data</button>
+                            <!-- <button class="btn btn-danger" onclick="printData()">TEST Data</button> -->
                             <div id="cumateksbung"></div>
                             <div id="tampilan"></div>
+                            <div id="wowtd"></div>
                         </div>
                     </div>
             </div>

@@ -6,8 +6,8 @@ require_once('../php/modular/otentifikasi.php');
 if(isset($_POST['submit'])){
     try{
         // new data
-        $nik = $_POST['nik'];
-        $nik_lama = $_POST['nik_lama'];
+        $id_supplier = $_POST['id_supplier'];
+        $id_supplier_lama = $_POST['id_supplier_lama'];
         $nama = $_POST['nama'];
         $email = $_POST['email'];
         $telp = $_POST['telp'];
@@ -15,10 +15,10 @@ if(isset($_POST['submit'])){
         $aktif = ($_POST['status_aktif'] == 'on' ? 1:0);
         // query
         $sql = "UPDATE karyawan 
-                SET id_karyawan=?, nama_karyawan=?, email=? , telp_karyawan=?, alamat_karyawan=?
-                WHERE id_karyawan=?";
+                SET id_supplier=?, nama_karyawan=?, email=? , telp_karyawan=?, alamat_karyawan=?
+                WHERE id_supplier=?";
         $q = $db->prepare($sql);
-        $q->execute(array($nik, $nama, $email, $telp, $alamat, $nik_lama));
+        $q->execute(array($id_supplier, $nama, $email, $telp, $alamat, $id_supplier_lama));
         header("location: index.php");
     }catch(Exception $e){
         if($mode_debug = true) echo $e->getMessage();
@@ -37,10 +37,10 @@ if(isset($_POST['submit'])){
 }
 
 // Pas load data
-if(isset($_GET['key']) AND $_GET['method'] == 'karyawan'){
-    $nik=$_GET['key'];
-    $result = $db->prepare("SELECT * FROM karyawan WHERE id_karyawan = :nik");
-    $result->bindParam(':nik', $nik);
+if(isset($_GET['key']) AND $_GET['method'] == 'supplier'){
+    $id_supplier=$_GET['key'];
+    $result = $db->prepare("SELECT * FROM supplier WHERE id_supplier = :id_supplier");
+    $result->bindParam(':id_supplier', $id_supplier);
     $result->execute();
     for($i=0; $row = $result->fetch(); $i++){
 ?>
@@ -50,7 +50,7 @@ if(isset($_GET['key']) AND $_GET['method'] == 'karyawan'){
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
-    <title><?php echo $judul;?> - Karyawan</title>
+    <title><?php echo $judul;?> - Supplier</title>
     <link type="text/css" rel="stylesheet" href="../css/font-awesome.css">
     <link type="text/css" rel="stylesheet" href="../css/material-design-iconic-font.css">
     <link type="text/css" rel="stylesheet" href="../css/bootstrap.css">
@@ -85,11 +85,11 @@ window.onload = function() {
 <div class="page-header filled light single-line">
     <div class="row widget-header block-header">
         <div class="col-sm-6">
-            <h2>Edit Karyawan</h2>
+            <h2>Edit Supplier</h2>
         </div>
         <div class="col-sm-6">
             <ul class="list-page-breadcrumb">
-                <li><a href="#">Karyawan <i class="zmdi zmdi-chevron-right"></i></a></li>
+                <li><a href="#">Supplier <i class="zmdi zmdi-chevron-right"></i></a></li>
                 <li class="active-page"> Sunting</li>
             </ul>
         </div>
@@ -103,19 +103,19 @@ window.onload = function() {
                         <div class="form-group">    
                             <div class="unit">
                                 <div class="input">
-                                    <label class="icon-left" for="id_karyawan">
+                                    <label class="icon-left" for="id_supplier">
                                         <i class="zmdi zmdi-assignment-account"></i>
                                     </label>
-                                    <input class="form-control login-frm-input"  type="text" id="nik" name="nik" placeholder="Masukkan ID Karyawan" required="true" value="<?php echo $row['id_karyawan']; ?>">
-                                    <input type="hidden" name="nik_lama" value="<?php echo $row['id_karyawan'];?>">
+                                    <input class="form-control login-frm-input"  type="text" id="id_supplier" name="id_supplier" placeholder="Masukkan ID Supplier" required="true" value="<?php echo $row['id_supplier']; ?>">
+                                    <input type="hidden" name="id_supplier_lama" value="<?php echo $row['id_supplier'];?>">
                                 </div>
                             </div>
                             <div class="unit">
                                 <div class="input">
-                                    <label class="icon-left" for="nama_karyawan">
+                                    <label class="icon-left" for="nama_supplier">
                                         <i class="zmdi zmdi-account"></i>
                                     </label>
-                                    <input class="form-control login-frm-input"  type="text" id="nama" name="nama" placeholder="Masukkan Nama Karyawan" required="true" value="<?php echo $row['nama_karyawan']; ?>">
+                                    <input class="form-control login-frm-input"  type="text" id="nama" name="nama" placeholder="Masukkan Nama Supplier" required="true" value="<?php echo $row['nama_supplier']; ?>">
                                 </div>
                             </div>
                             <div class="unit">
@@ -123,7 +123,7 @@ window.onload = function() {
                                     <label class="icon-left" for="email">
                                         <i class="fa fa-barcode"></i>
                                     </label>
-                                    <input class="form-control login-frm-input"  type="email" id="email" name="email" placeholder="Masukkan Email Karyawan" required="true" value="<?php echo $row['email'];?>">
+                                    <input class="form-control login-frm-input"  type="email" id="email" name="email" placeholder="Masukkan Email Supplier" required="true" value="<?php echo $row['email'];?>">
                                     </div>
                             </div>
                             <div class="unit">
@@ -131,7 +131,7 @@ window.onload = function() {
                                     <label class="icon-left" for="telp">
                                         <i class="fa fa-money"></i>
                                     </label>
-                                    <input class="form-control login-frm-input"  type="telp" id="telp" name="telp" placeholder="Masukkan Nomor Telepon Karyawan" value="<?php echo $row['telp_karyawan'];?>">
+                                    <input class="form-control login-frm-input"  type="telp" id="telp" name="telp" placeholder="Masukkan Nomor Telepon Supplier" value="<?php echo $row['no_telp'];?>">
                                 </div>
                             </div>
                             <div class="unit">
@@ -139,18 +139,13 @@ window.onload = function() {
                                     <label class="icon-left" for="alamat">
                                         <i class="fa fa-money"></i>
                                     </label>
-                                    <textarea class="form-control login-frm-input" id="alamat" name="alamat" placeholder="Masukkan Alamat Karyawan"><?php echo $row['alamat_karyawan'];?></textarea>
-                                </div>
-                            </div>
-                            <div class="unit">
-                                <div class="input">
-                                    <img src="<?php echo $url_web . "images/karyawan/" . $row['foto']?>">
+                                    <textarea class="form-control login-frm-input" id="alamat" name="alamat" placeholder="Masukkan Alamat Supplier"><?php echo $row['alamat'];?></textarea>
                                 </div>
                             </div>
                             <div class="unit">
                                 <div class="input">
                                     <button type="submit" class="btn btn-success col-md-4" name="submit">Simpan</button>
-                                    <button type="button" class="btn btn-default col-md-4" onclick="window.location.href='<?php echo $url_web?>karyawan'">Batal</button>
+                                    <button type="button" class="btn btn-default col-md-4" onclick="window.location.href='<?php echo $url_web?>supplier'">Batal</button>
                                     <button type="button" class="btn btn-danger col-md-4" data-toggle="modal" data-target="#modalHapus" name="hapus">Hapus Permanen</button>
 
                                 </div>
@@ -170,18 +165,18 @@ window.onload = function() {
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Hapus Karyawan</h4>
+                    <h4 class="modal-title">Hapus Supplier</h4>
                 </div>
                 <div class="modal-body">
                     <p class="text-center">
                     <i class="zmdi zmdi-alert-circle-o zmdi-hc-5x"></i>
                     <br/>
                     <br/>
-                    Apakah anda yakin akan menghapus <?php echo $row['nama_karyawan'] . " (NIK: " . $row['id_karyawan'] . ")" ?>?
+                    Apakah anda yakin akan menghapus <?php echo $row['nama_supplier'] . " (ID Supplier: " . $row['id_supplier'] . ")" ?>?
                     </p>
                 </div>
                 <div class="modal-footer">
-                    <input type="hidden" name="nik" value="<?php echo $row['id_karyawan'] ?>"/>
+                    <input type="hidden" name="id_supplier" value="<?php echo $row['id_supplier'] ?>"/>
                     <button type="button" class="btn btn-default" data-dismiss="modal">Batal</button>
                     <button type="submit" class="btn btn-success" name="submit">Yakin</button>
                 </div>

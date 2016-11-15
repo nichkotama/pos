@@ -68,11 +68,48 @@ function fokus_teks() {
                             <div class="modal-body">
                                 <div class="unit">
                                     <div class="input">
-                                        <label class="icon-left" for="departemen">
+                                        <label class="icon-left" for="kode_awal">
                                             <i class="fa fa-book"></i>
                                         </label>
-										<input class="form-control login-frm-input"  type="text" id="kode_awal" name="kode_awal" placeholder="Masukkan Kode" required="true">
+                                        <input class="form-control login-frm-input"  type="text" id="kode_awal" name="kode_awal" placeholder="Masukkan Kode Departemen" required="true" onkeypress="return AvoidSpace(event)">
+                                    </div>
+                                </div>
+                                <div class="unit">
+                                    <div class="input">
+                                        <label class="icon-left" for="nama_dept">
+                                            <i class="fa fa-book"></i>
+                                        </label>
                                         <input class="form-control login-frm-input"  type="text" id="nama_dept" name="nama_dept" placeholder="Masukkan Nama Departemen" required="true">
+                                    </div>
+                                </div>
+                                <div class="unit">
+                                    <div class="input col-md-6">
+                                        <label class="label">Hak Akses Produk</label>
+                                        <label class="radio-toggle">
+                                            <input type="checkbox" name="prod_aktif" required="true">
+                                            <i></i>
+                                        </label>
+                                    </div>
+                                    <div class="input col-md-6">
+                                        <label class="label">Hak Akses Karyawan</label>
+                                        <label class="radio-toggle">
+                                            <input type="checkbox" name="kary_aktif">
+                                            <i></i>
+                                        </label>
+                                    </div>
+                                    <div class="input col-md-6">
+                                        <label class="label">Hak Akses Laporan</label>
+                                        <label class="radio-toggle">
+                                            <input type="checkbox" name="lap_aktif">
+                                            <i></i>
+                                        </label>
+                                    </div>
+                                    <div class="input col-md-6">
+                                        <label class="label">Hak Akses Pos</label>
+                                        <label class="radio-toggle">
+                                            <input type="checkbox" name="pos_aktif">
+                                            <i></i>
+                                        </label>
                                     </div>
                                 </div>
                             </div>
@@ -158,5 +195,6 @@ function fokus_teks() {
 <script src="../js/lib/select2.full.js"></script>
 <script src="../js/lib/j-forms.js"></script>
 <script src="../js/apps.js"></script>
+<script src="../js/custom.js"></script>
 </body>
 </html>

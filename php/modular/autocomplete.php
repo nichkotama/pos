@@ -9,7 +9,7 @@
 				$term = trim(strip_tags($_GET['term']));
 				$qstring = "SELECT barcode_barang, nama_barang 
 							FROM barang 
-							WHERE nama_barang LIKE '%".$term."%' OR barcode_barang LIKE '".$term."%'";
+							WHERE nama_barang LIKE '%".$term."%'";
 				$result = mysql_query($qstring);
 				while ($row = mysql_fetch_array($result))
 				{
@@ -30,7 +30,19 @@
 			$query->execute();
 			$urutan = $query->fetch();
         	$urutan_terakhir = explode("-", $urutan['id_karyawan']);
-        	echo json_encode($urutan_terakhir);
+        	echo $urutan_terakhir[1];
+		}catch(Exception $e){
+    		if($mode_debug = true) echo $e->getMessage();
+		}
+	} else if(isset($_GET['method'])){
+		try{
+			if($_GET['method'] === 'id_supplier'){
+				$query = $db->prepare("SELECT id_supplier FROM supplier ORDER BY id_supplier DESC LIMIT 1");
+				$query->execute();
+				$urutan = $query->fetch();
+	        	$urutan_terakhir = explode("-", $urutan['id_supplier']);
+	        	echo $urutan_terakhir[1];
+	        }
 		}catch(Exception $e){
     		if($mode_debug = true) echo $e->getMessage();
 		}

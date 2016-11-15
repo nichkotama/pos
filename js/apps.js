@@ -452,8 +452,8 @@ jQuery(document).ready(function ($) {
         $('.cep-mask').mask('00000-000', {
             placeholder: "00000-000"
         });
-        $('.phone-mask').mask('0000-0000', {
-            placeholder: "0000-0000"
+        $('.phone-mask').mask('0000-0000-0000', {
+            placeholder: "Masukkan Nomor Telepon"
         });
         $('.phone_with_ddd-mask').mask('(00) 0000-0000', {
             placeholder: "(00) 0000-0000"

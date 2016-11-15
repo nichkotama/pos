@@ -1,23 +1,29 @@
 <?php 
 require_once('../php/modular/koneksi.php');
 require_once('../php/modular/otentifikasi.php'); 
-$result = $db->prepare("SELECT kary.*, dept.departemen AS nama_departemen FROM karyawan kary LEFT JOIN departemen dept ON kary.departemen = dept.kode_awal ORDER BY nama_karyawan");
+$result = $db->prepare("SELECT 
+                        kary.*, dept.departemen AS nama_departemen
+                        FROM karyawan kary
+                        LEFT JOIN departemen dept ON kary.departemen = dept.kode_awal
+                        ORDER BY id_karyawan ASC");
 $result->execute(); 
 
 $departemen = $db->prepare("SELECT * FROM departemen ORDER BY kode_awal");
 $departemen->execute();
 
 try{
-    if(isset($_POST['submit-tambah'])){
-        $a = $_POST['nama'];
-        $b = $_POST['email'];
-        $c = $_POST['telp'];
-        $d = $_POST['alamat'];
-        $e = $_POST['password'];
-        $f = $_POST['departemen'];
+    if(isset($_POST['submit-tambah']) AND isset($_FILES['foto'])){
+        $nik = $_POST['nik_hidden'];
+        $nama = $_POST['nama'];
+        $email = $_POST['email'];
+        $telp = str_replace('-', '', $_POST['telp']);
+        $alamat = $_POST['alamat'];
+        $pass = $_POST['password'];
+        $password    = crypt($pass, salt);
+        $departemen_select = $_POST['departemen'];
         // $dept = $db->prepare("SELECT departemen FROM departemen WHERE kode_awal = '" . $f . "'");
         // $dept->execute();
-        // $res = $dept->fetch();
+        // $res = $dept->fetch(); //single return db
         $file_name = $_FILES['foto']['name'];
         $file_tmp  = $_FILES['foto']['tmp_name'];
         $file_size = $_FILES['foto']['size'];
@@ -28,21 +34,42 @@ try{
             {
                 if($_FILES['foto']['size'] != 0 ){
                     $sumber = $file_tmp;
-                    $tujuan = $url_web . "images/karyawan/" . $nik . $file_ext;
+                    $tujuan = "../images/karyawan/" . $nik . "." . $file_ext;
+                    // die("sumber: " . $sumber . ", tujuan: " . $tujuan);
                     move_uploaded_file($sumber, $tujuan);
                 }
             }
             else{
-                echo "Ukuran file maximal adalah 2MB, file anda terlalu besar.";
+                echo "<div class='col-md-12'>
+                    <div class='j-forms'>
+                        <div class='form-content'>
+                            <div class='unit'> 
+                                <div class='error-message text-center'>
+                                    <i class='fa fa-close'></i>Ukuran file maximal adalah 2MB, file anda terlalu besar.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>";
             }
-        // echo "EXT FILE BOLEH DI UPLOAD.";
+        // die("EXT FILE BOLEH DI UPLOAD.");
         }else{
-            echo "Jenis/extensi file tidak diizinkan.";
+            echo "<div class='col-md-12'>
+                <div class='j-forms'>
+                    <div class='form-content'>
+                        <div class='unit'> 
+                            <div class='error-message text-center'>
+                                <i class='fa fa-close'></i>File yang dibolehkan adalah JPG dan PNG.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>";
         }
-        $sql = "INSERT INTO karyawan (nama_karyawan,email,telp_karyawan,alamat_karyawan,password,id_karyawan,departemen) 
-        VALUES (:a,:b,:c,:d,:e,:f,:g)";
+        $sql = "INSERT INTO karyawan (nama_karyawan,email,telp_karyawan,alamat_karyawan,password,id_karyawan,departemen,foto) 
+        VALUES (:nama,:email,:telp,:alamat,:password,:nik,:dept,:foto_w_path)";
         $q = $db->prepare($sql);
-        $q->execute(array(':a'=>$a,':b'=>$b,':c'=>$c,':d'=>$d,':e'=>$e,':f'=>$f,':g'=>$f));
+        $q->execute(array(':nama'=>$nama,':email'=>$email,':telp'=>$telp,':alamat'=>$alamat,':password'=>$password,':nik'=>$nik,':dept'=>$departemen_select,':foto_w_path'=>$nik.".".$file_ext));
         header("location: index.php");
     }
 }catch(Exception $e){
@@ -76,17 +103,16 @@ function fokus_teks() {
     document.getElementById("nama").focus();
 }
 function cek_terakhir(kode_awal){
-    $.ajax({
-        type: 'GET',
-        url: '../php/modular/autocomplete.php?kode_awal='+kode_awal,
-        success: function(response) {
-                var result = $.parseJSON( response ) ;
-                document.getElementById("sementara").innerHTML = result.urutan_terakhir[0];
-                // $("#sementara").html(result.urutan_terakhir[0]);
-            }
-        });
-
-    }
+    $.get("../php/modular/autocomplete.php?kode_awal="+kode_awal, function(data){
+        var last_num = parseInt(data);
+        if (isNaN(last_num)) last_num = 0;
+        var current_num = last_num + 1;
+        var digit = "" + current_num
+        var pad = "000";
+        var ans = pad.substring(0, pad.length - digit.length) + digit;
+        document.getElementById("nik").value = kode_awal + "-" + ans;
+        document.getElementById("nik_hidden").value = kode_awal + "-" + ans;
+    });
 }
 </script>
 </head>
@@ -118,23 +144,25 @@ function cek_terakhir(kode_awal){
                 <div class="modal fade" id="modalAdd" role="dialog">
                     <div class="modal-dialog modal-lg">
                     <!-- Modal content-->
-                        <form action="index.php" method="post" class="j-forms">
+                        <form action="index.php" method="post" class="j-forms" enctype="multipart/form-data">
                         <div class="modal-content">
                             <div class="modal-header">
                                 <button type="button" class="close" data-dismiss="modal">&times;</button>
                                 <h4 class="modal-title">Tambah Karyawan</h4>
-                                <h4 class="modal-title" id="sementara">Tambah Karyawan</h4>
                             </div>
                             <div class="modal-body">
-                                <div class="unit">
+                                <div class="row">
+                                <div class=" col-md-12 unit">
                                     <div class="input">
                                         <label class="icon-left" for="nama_karyawan">
                                             <i class="zmdi zmdi-account"></i>
                                         </label>
-                                        <input class="form-control login-frm-input"  type="text" id="nama" name="nama" placeholder="Masukkan Nama Karyawan" required="true">
+                                        <input class="form-control login-frm-input"  type="text" id="nama" name="nama" placeholder="Masukkan Nama Karyawan" required="true" value="<?php if(isset($nama)) echo $nama?>">
                                     </div>
                                 </div>
-                                <div class="unit">
+                                </div>
+                                <div class="row">
+                                <div class="col-md-12 unit">
                                     <div class="input">
                                         <label>
                                             Departemen
@@ -143,7 +171,7 @@ function cek_terakhir(kode_awal){
                                         <label class="input select">
                                             <select class="form-control" name="departemen" onchange="if (this.value === 'add'){ 
                                                     $('#modalAdd').modal('toggle');
-                                                    $('#modalAddDept').modal('toggle');
+                                                    $('#modalAddDept').modal('toggle'); //harus ganti windows.redorect
                                                 }else{
                                                     cek_terakhir(this.value);
                                                 }
@@ -160,45 +188,65 @@ function cek_terakhir(kode_awal){
                                         </label>
                                     </div>
                                 </div>
-                                <div class="unit">
+                                </div>
+                                <div class="row">
+                                <div class="col-md-6 unit">
                                     <div class="input">
                                         <label class="icon-left" for="nik">
                                             <i class="zmdi zmdi-assignment-account"></i>
                                         </label>
-                                        <input class="form-control login-frm-input"  type="text" id="nik" name="nik" placeholder="Pilih Departemen" disabled="true">
+                                        <input class="form-control login-frm-input"  type="text" id="nik" name="nik" placeholder="Pilih Departemen Terlebih Dahulu" disabled="true" value="<?php if(isset($nik)) echo $nik?>">
+                                        <input type="hidden" name="nik_hidden" id="nik_hidden">
                                     </div>
                                 </div>
-                                <div class="unit">
+                                <div class="unit col-md-4">
+                                    <label class="checkbox">
+                                        <input type="checkbox" onchange="document.getElementById('nik').disabled = !this.checked;" >
+                                        <i></i>
+                                        Input NIK Secara Manual
+                                    </label>
+                                </div>
+                                </div>
+                                <div class="row">
+                                <div class="col-md-12 unit">
                                     <div class="input">
                                         <label class="icon-left" for="email">
                                             <i class="zmdi zmdi-email"></i>
                                         </label>
-                                        <input class="form-control login-frm-input"  type="email" id="email" name="email" placeholder="Masukkan Email Karyawan" required="true">
+                                        <input class="form-control login-frm-input"  type="email" id="email" name="email" placeholder="Masukkan Email Karyawan" required="true" value="<?php if(isset($email)) echo $email?>">
                                     </div>
                                 </div>
-                                <div class="unit">
+                                </div>
+                                <div class="row">
+                                <div class="col-md-12 unit">
                                     <div class="input">
                                         <label class="icon-left" for="telp">
                                             <i class="zmdi zmdi-phone"></i>
                                         </label>
-                                        <input class="form-control login-frm-input"  type="text" id="telp" name="telp" placeholder="Masukkan Nomor Telepon Karyawan" required="true">
+                                        <input class="form-control login-frm-input phone-mask"  type="text" id="telp" name="telp" placeholder="Masukkan Nomor Telepon Karyawan" required="true" value="<?php if(isset($telp)) echo $telp?>">
                                     </div>
                                 </div>
-                                <div class="unit">
+                                </div>
+                                <div class="row">
+                                <div class="col-md-12 unit">
                                     <div class="input">
                                         <label class="icon-left" for="password">
                                             <i class="zmdi zmdi-key"></i>
                                         </label>
-                                        <input class="form-control login-frm-input"  type="password" id="password" name="password" placeholder="Masukkan Password Awal Karyawan" required="true">
+                                        <input class="form-control login-frm-input"  type="password" id="password" name="password" placeholder="Masukkan Password Awal Karyawan" required="true" value="<?php if(isset($password)){ echo $password;}
+                                        else{echo "123456";}?>">
                                     </div>
                                 </div>
-                                <div class="unit">
+                                </div>
+                                <div class="row">
+                                <div class="col-md-12 unit">
                                     <div class="input">
                                         <label class="icon-left" for="alamat">
                                             <i class="zmdi zmdi-home"></i>
                                         </label>
-                                        <textarea class="form-control login-frm-input"  type="text" id="alamat" name="alamat" placeholder="Masukkan Alamat Lengkap Karyawan" required="true"></textarea> 
+                                        <textarea class="form-control login-frm-input"  type="text" id="alamat" name="alamat" placeholder="Masukkan Alamat Lengkap Karyawan" required="true"> <?php if(isset($alamat)) echo $alamat?></textarea> 
                                     </div>
+                                </div>
                                 </div>
                                 <div class="row">
                                     <label class="col-md-1 control-label">Foto</label>
@@ -244,7 +292,7 @@ function cek_terakhir(kode_awal){
                                 # kolom barcode barang
                                 echo "<td>" . $row['email'] . "</td>";
                                 # kolom barcode barang
-                                echo "<td><i class='td-profile-thumb'><img src='". $url_web . "images/karyawan/" . $row['id_karyawan'] . ".jpg'></i></td>";
+                                echo "<td><i class='td-profile-thumb'><img src='". $url_web . "images/karyawan/" . $row['foto'] . "'></i></td>";
                                 # kolom aksi
                                 echo "<td class='td-center'>
                                 <div class='btn-toolbar' role='toolbar'>
@@ -255,104 +303,6 @@ function cek_terakhir(kode_awal){
                                 </td>";
                             }
                         ?>
-                        <!-- JANGAN DIHAPUS DULU BUAT SAMPEL WARNING STOCK
-                        <tr>
-                            <td>Garrett Winters</td>
-                            <td>Chief Executive Officer (CEO)</td>
-                            <td class="td-center">
-                                <a href="#" class="td-profile-thumb"><img src="../images/avatar/amarkdalen.jpg" alt="user"></a>
-                            </td>
-                            <td><label class="label label-warning">Pending</label></td>
-                            <td class="td-center">
-                                <div class="btn-toolbar" role="toolbar">
-                                    <div class="btn-group" role="group">
-                                        <a href="#" class="btn btn-default btn-sm m-user-edit"><i class="zmdi zmdi-edit"></i></a>
-                                        <a href="#" class="btn btn-default btn-sm m-user-delete"><i class="zmdi zmdi-close"></i></a>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Wyatt Ruiz</td>
-                            <td>Software Engineer</td>
-                            <td class="td-center">
-                                <a href="#" class="td-profile-thumb"><img src="../images/avatar/michael-owens.jpg" alt="user"></a>
-                            </td>
-                            <td class="success"><label class="label label-success">Approved</label></td>
-                            <td class="td-center">
-                                <div class="btn-toolbar" role="toolbar">
-                                    <div class="btn-group" role="group">
-                                        <a href="#" class="btn btn-default btn-sm m-user-edit"><i class="zmdi zmdi-edit"></i></a>
-                                        <a href="#" class="btn btn-default btn-sm m-user-delete"><i class="zmdi zmdi-close"></i></a>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr class="danger">
-                            <td>Randall Martinez</td>
-                            <td>Senior Javascript Developer</td>
-                            <td class="td-center">
-                                <a href="#" class="td-profile-thumb"><img src="../images/avatar/bobbyjkane.jpg" alt="user"></a>
-                            </td>
-                            <td><label class="label label-danger">Suspended</label></td>
-                            <td  class="td-center">
-                                <div class="btn-toolbar" role="toolbar">
-                                    <div class="btn-group" role="group">
-                                        <a href="#" class="btn btn-default btn-sm m-user-edit"><i class="zmdi zmdi-edit"></i></a>
-                                        <a href="#" class="btn btn-default btn-sm m-user-delete"><i class="zmdi zmdi-close"></i></a>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Orlando Mullen</td>
-                            <td>Integration Specialist</td>
-                            <td class="td-center">
-                                <a href="#" class="td-profile-thumb"><img src="../images/avatar/coreyweb.jpg" alt="user"></a>
-                            </td>
-                            <td><label class="label label-default">Waiting for Review</label></td>
-                            <td  class="td-center">
-                                <div class="btn-toolbar" role="toolbar">
-                                    <div class="btn-group" role="group">
-                                        <a href="#" class="btn btn-default btn-sm m-user-edit"><i class="zmdi zmdi-edit"></i></a>
-                                        <a href="#" class="btn btn-default btn-sm m-user-delete"><i class="zmdi zmdi-close"></i></a>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Leonard Hodge</td>
-                            <td>Senior Marketing Designer</td>
-                            <td class="td-center">
-                                <a href="#" class="td-profile-thumb"><img src="../images/avatar/kurafire.jpg" alt="user"></a>
-                            </td>
-                            <td class="success"> <label class="label label-success">Approved</label></td>
-                            <td  class="td-center">
-                                <div class="btn-toolbar" role="toolbar">
-                                    <div class="btn-group" role="group">
-                                        <a href="#" class="btn btn-default btn-sm m-user-edit"><i class="zmdi zmdi-edit"></i></a>
-                                        <a href="#" class="btn btn-default btn-sm m-user-delete"><i class="zmdi zmdi-close"></i></a>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Yardley Bond</td>
-                            <td>Office Manager</td>
-                            <td class="td-center">
-                                <a href="#" class="td-profile-thumb"><img src="../images/avatar/joostvanderree.jpg" alt="user"></a>
-                            </td>
-                            <td> <label class="label label-warning">Pending</label></td>
-                            <td  class="td-center">
-                                <div class="btn-toolbar" role="toolbar">
-                                    <div class="btn-group" role="group">
-                                        <a href="#" class="btn btn-default btn-sm m-user-edit"><i class="zmdi zmdi-edit"></i></a>
-                                        <a href="#" class="btn btn-default btn-sm m-user-delete"><i class="zmdi zmdi-close"></i></a>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr> -->
-
                         </tbody>
 
 
@@ -872,5 +822,6 @@ function cek_terakhir(kode_awal){
 <script src="../js/lib/select2.full.js"></script>
 <script src="../js/lib/j-forms.js"></script>
 <script src="../js/apps.js"></script>
+<script src="../js/lib/jquery.mask.js"></script>
 </body>
 </html>

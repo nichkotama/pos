@@ -144,17 +144,13 @@ window.onload = function() {
                             </div>
                             <div class="unit">
                                 <div class="input">
-                                    <label class="label">Aktif</label>
-                                    <label class="radio-toggle">
-                                        <input type="checkbox" name="status_aktif" <?php if ($row['status_aktif'] == 1){?> checked="checked" <?php } ?> >
-                                        <i></i>
-                                    </label>
+                                    <img src="<?php echo $url_web . "images/karyawan/" . $row['foto']?>">
                                 </div>
                             </div>
                             <div class="unit">
                                 <div class="input">
                                     <button type="submit" class="btn btn-success col-md-4" name="submit">Simpan</button>
-                                    <button type="button" class="btn btn-default col-md-4" onclick="window.location.href='<?php echo $url_web?>produk'">Batal</button>
+                                    <button type="button" class="btn btn-default col-md-4" onclick="window.location.href='<?php echo $url_web?>karyawan'">Batal</button>
                                     <button type="button" class="btn btn-danger col-md-4" data-toggle="modal" data-target="#modalHapus" name="hapus">Hapus Permanen</button>
 
                                 </div>
@@ -174,18 +170,18 @@ window.onload = function() {
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Hapus Produk</h4>
+                    <h4 class="modal-title">Hapus Karyawan</h4>
                 </div>
                 <div class="modal-body">
                     <p class="text-center">
                     <i class="zmdi zmdi-alert-circle-o zmdi-hc-5x"></i>
                     <br/>
                     <br/>
-                    Apakah anda yakin akan menghapus <?php echo $row['nama_barang'] . " (Barcode: " . $row['barcode_barang'] . ")" ?>?
+                    Apakah anda yakin akan menghapus <?php echo $row['nama_karyawan'] . " (NIK: " . $row['id_karyawan'] . ")" ?>?
                     </p>
                 </div>
                 <div class="modal-footer">
-                    <input type="hidden" name="barcode" value="<?php echo $row['barcode_barang'] ?>"/>
+                    <input type="hidden" name="nik" value="<?php echo $row['id_karyawan'] ?>"/>
                     <button type="button" class="btn btn-default" data-dismiss="modal">Batal</button>
                     <button type="submit" class="btn btn-success" name="submit">Yakin</button>
                 </div>

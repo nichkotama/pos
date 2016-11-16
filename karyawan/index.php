@@ -304,10 +304,8 @@ function cek_terakhir(kode_awal){
                             }
                         ?>
                         </tbody>
-
-
                     </table>
-    </div>
+		</div>
     </div>
 </div>
 

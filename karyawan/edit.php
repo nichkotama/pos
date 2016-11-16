@@ -198,7 +198,7 @@ window.onload = function() {
 												$querydept_select->execute();
 												$return_selected=$querydept_select->fetch();
 												for ($i = 0; $data = $querydept->fetch(); $i++) {
-													echo "<option value = '" . $data['kode_awal'];
+													echo "<option value='" . $data['kode_awal'] . "'";
 													if($data['kode_awal'] == $return_selected['departemen']){ echo " selected='selected'";}
 													echo ">" . $data['nama_departemen'] . "</option>";
 												}

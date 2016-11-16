@@ -4,30 +4,45 @@ require_once('../php/modular/otentifikasi.php');
 
 
 try {
-    // $sql = "INSERT INTO transaksi_kasir (id_petugas, tgl_transaksi, harga_total) 
-    //     VALUES (:id_karyawan, :tgl, :total)";
-    // $q = $db->prepare($sql);
-    // $q->execute(array(':id_karyawan'=>$nik, ':tgl'=>$hari,':total'=>0));
-    // if(!isset($_SESSION['kode_transaksi_header'])){
-        // $_SESSION['kode_transaksi_header'] = date('Ymd').str_pad($test2,3,'0',STR_PAD_LEFT);
-    // }
-    // unset($_SESSION['kode_transaksi_header']);
-    $top = $db->prepare("SELECT * FROM transaksi_kasir WHERE id_transaksi_header LIKE '" . date(Ymd) . "%' ORDER BY id_transaksi_header DESC LIMIT 1");
-    $top->execute();
-    $terakhir = $top->fetch();
-    if(isset($terakhir['id_transaksi_header'])){ 
-        $kode_terakhir = (int) $terakhir['id_transaksi_header'] + 1;
-    }else{
-        $nik = $_SESSION['uname'];
-        $hari = date("Y-m-d");
-        $id_transaksi_header = date(Ymd)."001";
+    $nik = $_SESSION['uname'];
+    $hari = date("Y-m-d");
+    /* *
+    * note : later must be added : SELECT * FROM transaksi_kasir_detail WHERE id_transaksi_header LIKE;
+    * buat ngecek apa dia ngeklik pay now tanpa ada barang
+    * */
+    if(isset($_POST['bayar'])){
+        $terakhir = (int) $_SESSION['kode_transaksi_header'] + 1;
         $sql = "INSERT INTO transaksi_kasir (id_transaksi_header, id_petugas, tgl_transaksi, harga_total) 
             VALUES (:id_transaksi_header, :id_karyawan, :tgl, :total)";
         $q = $db->prepare($sql);
+        $q->execute(array(':id_transaksi_header'=>$terakhir,':id_karyawan'=>$nik, ':tgl'=>$hari,':total'=>0));
+        $_SESSION['kode_transaksi_header'] = $terakhir;
+    echo $_SESSION['kode_transaksi_header'];
+    }
+
+    $top = $db->prepare("SELECT * FROM transaksi_kasir WHERE id_transaksi_header LIKE '" . date(Ymd) . "%' ORDER BY id_transaksi_header DESC LIMIT 1");
+    $top->execute();
+    $terakhir = $top->fetch();
+
+    if(isset($_SESSION['kode_transaksi_header'])){
+        if(isset($terakhir['id_transaksi_header'])){
+            $load_data = $db->prepare("SELECT * FROM transaksi_kasir_detail WHERE id_transaksi_header = " . $_SESSION['kode_transaksi_header']);
+            $load_data->execute();
+            $data = $load_data->fetch();
+            $kode_terakhir = (int) $terakhir['id_transaksi_header'];
+        }else{
+            unset($_SESSION['kode_transaksi_header']);
+        }
+    }else{
+        // Kalau belum, buat baru
+        $id_transaksi_header = date(Ymd)."0001";
+        $q = $db->prepare("INSERT INTO transaksi_kasir (id_transaksi_header, id_petugas, tgl_transaksi, harga_total) 
+            VALUES (:id_transaksi_header, :id_karyawan, :tgl, :total)");
         $q->execute(array(':id_transaksi_header'=>$id_transaksi_header,':id_karyawan'=>$nik, ':tgl'=>$hari,':total'=>0));
         $kode_terakhir = $id_transaksi_header;
+    
+        $_SESSION['kode_transaksi_header'] = $kode_terakhir;
     }
-    // echo $_SESSION['kode_transaksi_header'];
 } catch(Exception $e) {
     if($mode_debug = true) echo $e->getMessage();
 }
@@ -78,10 +93,7 @@ try {
                 barcode = document.getElementById("barcode").value;
                 items[number] = isi;
                 qty[number] = 1;
-                if( src == 'qty' ){
-                    qty[number] = nilai;
-                }
-                $.get("add_to_cart.php?whatever="+barcode, function(data){
+                $.get("add_to_cart.php?whatever="+barcode+"&string="+nilai, function(data){
                     var row = JSON.parse(data);
                     table.innerHTML = table.innerHTML +
                         '<div id = "baris-' + number + '">'  
@@ -103,6 +115,7 @@ try {
         document.getElementById("barcode").focus();
         barang[number] = items[number];
         number++;
+            alert("entered kok");
         // var row = table.insertRow(1);
         // var cell1 = row.insertCell(0);
         // var cell2 = row.insertCell(1);
@@ -151,9 +164,10 @@ try {
             source: "../php/modular/autocomplete.php?src=barcode_barang",  
             minLength:2, 
             autoFocus:true,
-            select: function( event, ui ) {
-              document.getElementById('tampilan').innerHTML = ui.item.value;
-            },
+            // select: function( event, ui ) {
+              // document.getElementById('tampilan').innerHTML = ui.item.value;
+              // harusnya laksanakan fungsi myFunction()
+            // },
             focus: function (event, ui) {
                 $(this).val(ui.item.value);
             }
@@ -181,65 +195,61 @@ try {
     </div>
     <div class="row">
         <div class="col-md-12">
-                <div class="widget-container">
-                    <div class="widget-content">
-                        <!-- <form action="#" method="post" class="j-forms" id="order-forms-quantity" novalidate> -->
-                        <div class="j-forms" id="order-forms-quantity" novalidate>
-
-                            <div class="form-group">
-                                <!-- start name -->
-                                <div class="col-sm-7 unit">
-                                    <div class="input">
-                                        <label class="icon-left" for="name">
-                                            <i class="fa fa-barcode"></i>
-                                        </label>
-                                        <input class="form-control" type="text" id="barcode" name="barcode" placeholder="Scan or Type Barcode Item Here" onkeypress="return cek_enter(event, 'barcode')">
-                                    </div>
+            <div class="widget-container">
+                <div class="widget-content">
+                    <!-- <form action="#" method="post" class="j-forms" id="order-forms-quantity" novalidate> -->
+                    <div class="j-forms" id="order-forms-quantity" novalidate>
+                        <div class="form-group">
+                            <div class="col-sm-7 unit">
+                                <div class="input">
+                                    <label class="icon-left" for="name">
+                                        <i class="fa fa-barcode"></i>
+                                    </label>
+                                    <input class="form-control" type="text" id="barcode" name="barcode" placeholder="Scan or Type Barcode Item Here" onkeypress="return cek_enter(event, 'barcode')">
                                 </div>
-                                <!-- <div class="col-sm-3 unit">
+                            </div>
+                            <!-- start name -->
+                            <!-- <div class="col-sm-3 unit">
+                                <div class="input">
+                                    <label class="icon-left" for="name">
+                                        <i class="zmdi zmdi-shopping-basket"></i>
+                                    </label>
+                                    <input class="form-control" type="number" id="qty" placeholder="Qty" value=1 min=1 onkeypress="return cek_enter(event, 'qty')"> 
+                                </div>
+                            </div> -->
+                            <div class="col-sm-2 unit">
+                                <div class="input">
+                                    <button type="submit" class="btn btn-success" onclick="myFunction()"><i class="zmdi zmdi-plus"> Add Item</i></button>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-12" id="myTable">
+                                    <div class="col-sm-1 heading-tabel">Remove</div>
+                                    <div class="col-sm-1 heading-tabel">#</div>
+                                    <div class="col-sm-3 heading-tabel">Item</div>
+                                    <div class="col-sm-1 heading-tabel">Qty</div>
+                                    <div class="col-sm-3 heading-tabel">Harga Satuan</div>
+                                    <div class="col-sm-3 heading-tabel">Sub-Total</div>
+                                </div>
+                            </div>
+                            <!-- start totals -->
+                            <div class="row m-t-20">
+                                <div class="col-md-offset-8 col-md-4 unit">
                                     <div class="input">
-                                        <label class="icon-left" for="name">
-                                            <i class="zmdi zmdi-shopping-basket"></i>
-                                        </label>
-                                        <input class="form-control" type="number" id="qty" placeholder="Qty" value=1 min=1 onkeypress="return cek_enter(event, 'qty')"> 
-                                    </div>
-                                </div> -->
-                                <div class="col-sm-2 unit">
-                                    <div class="input">
-                                        <button type="submit" class="btn btn-success" onclick="myFunction()"><i class="zmdi zmdi-plus"> Add Item</i></button>
+                                        <input class="form-control" type="text" placeholder="Totals" id="field_totals" readonly="" name="field_totals">
                                     </div>
                                 </div>
                             </div>
-                                <div class="row">
-                                    <div class="col-sm-12" id="myTable">
-                                        <div class="col-sm-1 heading-tabel">Remove</div>
-                                        <div class="col-sm-1 heading-tabel">#</div>
-                                        <div class="col-sm-3 heading-tabel">Item</div>
-                                        <div class="col-sm-1 heading-tabel">Qty</div>
-                                        <div class="col-sm-3 heading-tabel">Harga Satuan</div>
-                                        <div class="col-sm-3 heading-tabel">Sub-Total</div>
-                                    </div>
-                                </div>
-
-                                <!-- start totals -->
-                                <div class="row m-t-20">
-                                    <div class="col-md-offset-8 col-md-4 unit">
-                                        <div class="input">
-                                            <input class="form-control" type="text" placeholder="Totals" id="field_totals" readonly="" name="field_totals">
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- end totals -->
-
-                                <!-- start response from server -->
-                                <div id="response"></div>
-                                <!-- end response from server -->
-
+                            <!-- end totals -->
+                            <!-- start response from server -->
+                            <div id="response"></div>
+                            <!-- end response from server -->
                             <!-- end /.content -->
-
+                            <form action="index.php" method="post">
                             <div class="form-footer">
-                                <button type="submit" class="btn btn-success primary-btn" style="width:30%; height:50px">Pay</button>
+                                <button type="submit" name="bayar" class="btn btn-success primary-btn" style="width:30%; height:50px">Pay Now</button>
                             </div>
+                            </form>
                             <!-- end /.footer -->
                             <!-- <button class="btn btn-danger" onclick="printData()">TEST Data</button> -->
                             <div id="cumateksbung"></div>
@@ -247,6 +257,7 @@ try {
                             <div id="wowtd"></div>
                         </div>
                     </div>
+                </div>
             </div>
         </div>
     </div>

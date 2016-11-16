@@ -96,9 +96,7 @@ if(isset($_GET['key']) AND $_GET['method'] == 'karyawan'){
     $result = $db->prepare("SELECT * FROM karyawan WHERE id_karyawan = :nik");
     $result->bindParam(':nik', $nik);
     $result->execute();
-    
-	$row = $result->fetch();
-}
+    for($i=0; $row = $result->fetch(); $i++){
 ?>
 <!DOCTYPE html>
 <html>
@@ -197,10 +195,11 @@ window.onload = function() {
 																			FROM karyawan WHERE id_karyawan='$nik'");
 												$querydept_select->execute();
 												$return_selected=$querydept_select->fetch();
+												if($data['kode_awal'] == $return_selected['kode_awal']) echo "selected='selected'";
 												for ($i = 0; $data = $querydept->fetch(); $i++) {
 													echo "<option value = '" . $data['kode_awal'];
 													if($data['kode_awal'] == $return_selected['departemen']){ echo " selected='selected'";}
-													echo ">" . $data['nama_departemen'] . "</option>";
+													echo "'>" . $data['nama_departemen'] . "</option>";
 												}
 											?>
 										</select>
@@ -281,6 +280,9 @@ window.onload = function() {
     </div>
 </div>
 <!-- End of KETIKA KLIK HAPUS -->
+<?php
+}}
+?>
 </section>
 <section class="main-container m-t-min-20"><?php include('../php/modular/footer.php') ?></section>
 <!--Page Container End Here-->

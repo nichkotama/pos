@@ -154,7 +154,7 @@ try {
         var jumlah = document.getElementById('qty_'+barcode).value;
         $.get("index.php?updateQty="+kode+"&bc="+barcode+"&jumlah="+jumlah, function(data){
             var hsatuan = document.getElementById("hargasatuan_"+barcode).value;
-            angka_harga = hsatuan.replace(".", ",");
+            angka_harga = hsatuan.replace(".", "");
             angka_harga = hsatuan.replace(",", ".");
             document.getElementById("hargasub_"+barcode).value = parseFloat(angka_harga) * parseFloat(jumlah);
             // do nothing

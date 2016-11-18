@@ -1,24 +1,78 @@
 <?php 
 require_once('../php/modular/koneksi.php');
 require_once('../php/modular/otentifikasi.php');
+$result = $db->prepare("SELECT 
+                        kary.*, dept.departemen AS nama_departemen
+                        FROM karyawan kary
+                        LEFT JOIN departemen dept ON kary.departemen = dept.kode_awal
+                        ORDER BY id_karyawan ASC");
+$result->execute(); 
+
+$departemen = $db->prepare("SELECT * FROM departemen ORDER BY kode_awal");
+$departemen->execute();
 
 // Kalo disubmit (edit) maka menjalankan script dibawah ini
-if(isset($_POST['submit'])){
+if(isset($_POST['submit']) AND isset($_FILES['fotoedit'])){
     try{
         // new data
         $nik = $_POST['nik'];
         $nik_lama = $_POST['nik_lama'];
         $nama = $_POST['nama'];
+		$depart = $_POST['departemen'];
         $email = $_POST['email'];
         $telp = $_POST['telp'];
         $alamat = $_POST['alamat'];
+		
+		$file_name = $_FILES['foto']['name'];
+        $file_tmp  = $_FILES['foto']['tmp_name'];
+        $file_size = $_FILES['foto']['size'];
+        $file_ext = strtolower(end(explode(".", $file_name)));
+        $ext_boleh = array("jpg", "png");
+        if(in_array($file_ext, $ext_boleh) || $_FILES['foto']['size'] == 0 ){
+            if($file_size <= 2*1024*1024)
+            {
+                if($_FILES['foto']['size'] != 0 ){
+                    $sumber = $file_tmp;
+                    $tujuan = "../images/karyawan/" . $nik . "." . $file_ext;
+                    // die("sumber: " . $sumber . ", tujuan: " . $tujuan);
+                    move_uploaded_file($sumber, $tujuan);
+                }
+            }
+            else{
+                echo "<div class='col-md-12'>
+                    <div class='j-forms'>
+                        <div class='form-content'>
+                            <div class='unit'> 
+                                <div class='error-message text-center'>
+                                    <i class='fa fa-close'></i>Ukuran file maximal adalah 2MB, file anda terlalu besar.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>";
+            }
+        // die("EXT FILE BOLEH DI UPLOAD.");
+        }else{
+            echo "<div class='col-md-12'>
+                <div class='j-forms'>
+                    <div class='form-content'>
+                        <div class='unit'> 
+                            <div class='error-message text-center'>
+                                <i class='fa fa-close'></i>File yang dibolehkan adalah JPG dan PNG.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>";
+        }
+		
         $aktif = ($_POST['status_aktif'] == 'on' ? 1:0);
         // query
         $sql = "UPDATE karyawan 
-                SET id_karyawan=?, nama_karyawan=?, email=? , telp_karyawan=?, alamat_karyawan=?
+                SET id_karyawan=?, nama_karyawan=?, departemen=?, email=? , telp_karyawan=?, alamat_karyawan=?, foto=?
                 WHERE id_karyawan=?";
         $q = $db->prepare($sql);
-        $q->execute(array($nik, $nama, $email, $telp, $alamat, $nik_lama));
+        $q->execute(array($nik, $nama, $depart, $email, $telp, $alamat, $file_ext));
         header("location: index.php");
     }catch(Exception $e){
         if($mode_debug = true) echo $e->getMessage();
@@ -42,7 +96,9 @@ if(isset($_GET['key']) AND $_GET['method'] == 'karyawan'){
     $result = $db->prepare("SELECT * FROM karyawan WHERE id_karyawan = :nik");
     $result->bindParam(':nik', $nik);
     $result->execute();
-    for($i=0; $row = $result->fetch(); $i++){
+    
+	$row = $result->fetch();
+}
 ?>
 <!DOCTYPE html>
 <html>
@@ -118,6 +174,40 @@ window.onload = function() {
                                     <input class="form-control login-frm-input"  type="text" id="nama" name="nama" placeholder="Masukkan Nama Karyawan" required="true" value="<?php echo $row['nama_karyawan']; ?>">
                                 </div>
                             </div>
+							<div class="unit">
+								<div class="input">
+									<label>
+										Departemen
+									</label>
+									<label class="input select">
+										<select class="form-control" name="departemen" onchange="if (this.value === 'add'){ 
+														$('#modalAdd').modal('toggle');
+														$('#modalAddDept').modal('toggle'); //harus ganti windows.redorect
+													}else{
+														cek_terakhir(this.value);
+													}
+										">
+											<?php
+												$querydept = $db->prepare("SELECT 
+																			kary.*, dept.departemen AS nama_departemen, dept.kode_awal AS kode_awal
+																			FROM karyawan kary
+																			LEFT JOIN departemen dept ON kary.departemen = dept.kode_awal");
+												$querydept->execute();
+												$querydept_select = $db->prepare("SELECT *
+																			FROM karyawan WHERE id_karyawan='$nik'");
+												$querydept_select->execute();
+												$return_selected=$querydept_select->fetch();
+												for ($i = 0; $data = $querydept->fetch(); $i++) {
+													echo "<option value='" . $data['kode_awal'] . "'";
+													if($data['kode_awal'] == $return_selected['departemen']){ echo " selected='selected'";}
+													echo ">" . $data['nama_departemen'] . "</option>";
+												}
+											?>
+										</select>
+										<i></i>
+									</label>
+								</div>
+							</div>
                             <div class="unit">
                                 <div class="input">
                                     <label class="icon-left" for="email">
@@ -145,6 +235,7 @@ window.onload = function() {
                             <div class="unit">
                                 <div class="input">
                                     <img src="<?php echo $url_web . "images/karyawan/" . $row['foto']?>">
+									<input type="file" name="foto" class="filestyle bootstrap-file" data-buttonbefore="true">
                                 </div>
                             </div>
                             <div class="unit">
@@ -190,9 +281,6 @@ window.onload = function() {
     </div>
 </div>
 <!-- End of KETIKA KLIK HAPUS -->
-<?php
-}}
-?>
 </section>
 <section class="main-container m-t-min-20"><?php include('../php/modular/footer.php') ?></section>
 <!--Page Container End Here-->

@@ -24,7 +24,7 @@ $hak_akses_karyawan = $hasil['hak_akses_karyawan'];
             </div>
             <div class="admin-bar">
                 <ul>
-                    <li><a href="<?php echo $url_web;?>logout_user.php" data-toggle="tooltip" data-r="bottom" title="Logout"><i class="zmdi zmdi-power"></i>
+                    <li><a href="<?php echo $url_web;?>logout_user.php" data-toggle="tooltip" data-placement="bottom" title="Logout"><i class="zmdi zmdi-power"></i>
                     </a>
                     </li>
                     <li><a href="#" data-toggle="tooltip" data-placement="bottom" title="Edit Profile"><i class="zmdi zmdi-account"></i>

@@ -20,6 +20,7 @@ if(isset($_POST['submit'])){
         $q->execute(array($nama, $hbeli, $hjual, $barcode, $aktif, $barcode_lama));
         header("location: index.php");
     }catch(Exception $e){
+        if($mode_debug = true) echo $e->getMessage();
         echo "<div class='col-md-12'>
                 <div class='j-forms'>
                     <div class='form-content'>

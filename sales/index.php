@@ -51,7 +51,7 @@ try {
 
         $sql = "UPDATE transaksi_kasir_detail SET jml_barang= " . $jml . ", harga_sub_total=" . ($harga_satuan * $jml) . " WHERE id_transaksi_header = '" . $kode_kasir . "' AND barcode_barang='" . $bcode ."'";
         $q = $db->prepare($sql);
-        $q->execute(); // pertama kali input jml_barangnya 1
+        $q->execute();
         die();
     }
 
@@ -155,8 +155,8 @@ try {
         $.get("index.php?updateQty="+kode+"&bc="+barcode+"&jumlah="+jumlah, function(data){
             var hsatuan = document.getElementById("hargasatuan_"+barcode).value;
             angka_harga = hsatuan.replace(".", "");
-            angka_harga = hsatuan.replace(",", ".");
-            document.getElementById("hargasub_"+barcode).value = parseFloat(angka_harga) * parseFloat(jumlah);
+            // angka_harga = hsatuan.replace(",", ".");
+            document.getElementById("hargasub_"+barcode).value = toRp(parseFloat(angka_harga) * parseFloat(jumlah));
             // do nothing
         });
     }
@@ -234,7 +234,7 @@ try {
                     . "<div class='col-sm-1'><button class='btn btn-danger' name='hapus_item' type='submit'><i class='zmdi zmdi-close'></i></button>" . "<input type='hidden' name='remove' value='" . $_SESSION['kode_transaksi_header'] . "'/><input type='hidden' name='item' value='" . $data['barcode_barang'] . "'/></div>" 
                     . "<div class='col-sm-1 p-tb-9'>" . ($i+1) . "</div>" 
                     . "<div class='col-sm-3 p-tb-9'>" . $data['nama_barang'] . '</div>' 
-                    . "<div class='col-sm-1'><input class='form-control' style='width:60px' type='number' id='qty_" .$data['barcode_barang'] . "' value='" . $data['jml_barang'] . "' onblur='updateQty(" . $_SESSION['kode_transaksi_header'] . "," . $data['barcode_barang'] . " )'></div>"
+                    . "<div class='col-sm-1'><input class='form-control' style='width:60px' type='number' id='qty_" .$data['barcode_barang'] . "' value='" . $data['jml_barang'] . "' onblur='updateQty(" . $_SESSION['kode_transaksi_header'] . "," . $data['barcode_barang'] . " )' min='1'></div>"
                     . "<div class='col-sm-3'><input class='form-control' type='text' id='hargasatuan_" .$data['barcode_barang'] . "' value='" . number_format(($data['harga_jual']),2,',','.') . "' readonly=''></div>" 
                     . "<div class='col-sm-3'><input class='form-control' type='text' id='hargasub_" .$data['barcode_barang'] . "' value='" . number_format(($data['harga_sub_total']),2,',','.') . "' readonly=''></div>"
                     . "</div>";
@@ -324,5 +324,6 @@ try {
 <script src="../js/lib/vmap.init.js"></script>
 <script src="../js/lib/theme-switcher.js"></script>
 <script src="../js/apps.js"></script>
+<script src="../js/custom.js"></script>
 </body>
 </html>

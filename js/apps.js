@@ -692,7 +692,7 @@ jQuery(document).ready(function ($) {
             calendarWeeks: true,
             autoclose: true,
             language: 'it-IT',
-            format: 'dd/mm/yyyy',
+            format: 'yyyy-mm-dd',
             todayHighlight: true
         });
         $('.cal-date-picker').DatePicker({

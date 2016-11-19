@@ -47,6 +47,10 @@
 	padding: 9px 0 !important;
 }
 
+.p-tb-5{
+	padding: 5px 0 !important;
+}
+
 .borderless td, .borderless th {
     border: none;
 }

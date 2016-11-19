@@ -19,7 +19,20 @@
 				}
 				echo json_encode($row_set);
 				break;
-			
+			case 'supplier':
+				$term = trim(strip_tags($_GET['term']));
+				$qstring = "SELECT id_supplier, nama_supplier 
+							FROM supplier 
+							WHERE nama_supplier LIKE '%".$term."%'";
+				$result = mysql_query($qstring);
+				while ($row = mysql_fetch_array($result))
+				{
+				    $row['value']=htmlentities(stripslashes($row['nama_supplier']));
+				    $row['id']=(int)$row['id_supplier'];
+				    $row_set[] = $row;
+				}
+				echo json_encode($row_set);
+				break;
 			default:
 				# do nothing
 				break;

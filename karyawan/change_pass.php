@@ -1,26 +1,9 @@
 <?php 
 require_once('../php/modular/koneksi.php');
-require_once('../php/modular/otentifikasi.php');
+require_once('../php/modular/otentifikasi.php'); 
 $user = $_SESSION['uname'];
-$result = $db->prepare("SELECT 
-                        kary.*, dept.departemen AS nama_departemen
-                        FROM karyawan kary
-                        LEFT JOIN departemen dept ON kary.departemen = dept.kode_awal
-                        ORDER BY id_karyawan ASC");
-$result->execute(); 
-
-$departemen = $db->prepare("SELECT * FROM departemen ORDER BY kode_awal");
-$departemen->execute();
-
-// Pas load data
-if(isset($_GET['key']) AND $_GET['method'] == 'karyawan'){
-    $nik=$_GET['key'];
-    $result = $db->prepare("SELECT * FROM karyawan WHERE id_karyawan = :nik");
-    $result->bindParam(':nik', $nik);
-    $result->execute();
-    for($i=0; $row = $result->fetch(); $i++){
 ?>
-<!DOCTYPE html>
+<!doctype html>
 <html>
 <head>
     <meta charset="utf-8">
@@ -42,16 +25,23 @@ if(isset($_GET['key']) AND $_GET['method'] == 'karyawan'){
     <link type="text/css" rel="stylesheet" href="../css/custom.css">
 
 <script>
-window.onload = function() {
-        var SetFokus = $('#nama');
-        SetFokus.val(SetFokus.val());
-        var strLength= SetFokus.val().length;
-        SetFokus.focus();
-        SetFokus[0].setSelectionRange(strLength, strLength);
+function fokus_teks() {
+    document.getElementById("nama").focus();
+}
+function cek_terakhir(kode_awal){
+    $.get("../php/modular/autocomplete.php?kode_awal="+kode_awal, function(data){
+        var last_num = parseInt(data);
+        if (isNaN(last_num)) last_num = 0;
+        var current_num = last_num + 1;
+        var digit = "" + current_num
+        var pad = "000";
+        var ans = pad.substring(0, pad.length - digit.length) + digit;
+        document.getElementById("nik").value = kode_awal + "-" + ans;
+        document.getElementById("nik_hidden").value = kode_awal + "-" + ans;
+    });
 }
 </script>
 </head>
-
 <body class="overlay-leftbar">
 <?php include('../php/modular/top-menu.php') ?>
 <?php include('../php/modular/side-menu.php') ?>
@@ -61,124 +51,87 @@ window.onload = function() {
 <div class="page-header filled light single-line">
     <div class="row widget-header block-header">
         <div class="col-sm-6">
-            <h2>Edit Karyawan</h2>
+            <h2>Karyawan</h2>
         </div>
         <div class="col-sm-6">
             <ul class="list-page-breadcrumb">
                 <li><a href="#">Karyawan <i class="zmdi zmdi-chevron-right"></i></a></li>
-                <li class="active-page"> Sunting</li>
+                <li class="active-page"> Manage</li>
             </ul>
         </div>
     </div>
 
-    <div class="row">
-        <div class="col-md-12">
-            <div class="widget-container">
-                <div class="widget-content">
-                    <form action="edit_proses.php" class="j-forms" method="post" id="order-forms-quantity" novalidate>
-                        <div class="form-group">    
-                            <div class="unit">
-                                <div class="input">
-                                    <label class="icon-left" for="id_karyawan">
-                                        <i class="zmdi zmdi-assignment-account"></i>
-                                    </label>
-                                    <input class="form-control login-frm-input"  type="text" id="nik" name="nik" placeholder="Masukkan ID Karyawan" required="true" value="<?php echo $row['id_karyawan']; ?>">
-                                    <input type="hidden" name="nik_lama" value="<?php echo $row['id_karyawan'];?>">
-                                </div>
+    <div class="row widget-header block-header">
+        <div class="col-sm-2 unit">
+            <div class="input">
+                <button type="button" class="btn btn-success" data-toggle="modal" data-target="#modalAdd" onclick="fokus_teks()"><i class="zmdi zmdi-plus"> Ganti Password</i></button>
+
+                <!-- Modal -->
+                <div class="modal fade" id="modalAdd" role="dialog">
+                    <div class="modal-dialog modal-lg">
+                    <!-- Modal content-->
+                        <form action="change_pass_proses.php" method="post" class="j-forms" enctype="multipart/form-data">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                <h4 class="modal-title">Ganti Password</h4>
                             </div>
-                            <div class="unit">
-                                <div class="input">
-                                    <label class="icon-left" for="nama_karyawan">
-                                        <i class="zmdi zmdi-account"></i>
-                                    </label>
-                                    <input class="form-control login-frm-input"  type="text" id="nama" name="nama" placeholder="Masukkan Nama Karyawan" required="true" value="<?php echo $row['nama_karyawan']; ?>">
-                                </div>
-                            </div>
-							<div class="unit">
-								<div class="input">
-									<label>
-										Departemen
-									</label>
-									<label class="input select">
-										<select class="form-control" name="departemen" onchange="if (this.value === 'add'){ 
-														$('#modalAdd').modal('toggle');
-														$('#modalAddDept').modal('toggle'); //harus ganti windows.redorect
-													}else{
-														cek_terakhir(this.value);
-													}
-										">
-											<?php
-												$querydept = $db->prepare("SELECT 
-																			kary.*, dept.departemen AS nama_departemen, dept.kode_awal AS kode_awal
-																			FROM karyawan kary
-																			LEFT JOIN departemen dept ON kary.departemen = dept.kode_awal");
-												$querydept->execute();
-												$querydept_select = $db->prepare("SELECT *
-																			FROM karyawan WHERE id_karyawan='$nik'");
-												$querydept_select->execute();
-												$return_selected=$querydept_select->fetch();
-												if($data['kode_awal'] == $return_selected['kode_awal']) echo "selected='selected'";
-												for ($i = 0; $data = $querydept->fetch(); $i++) {
-													echo "<option value='" . $data['kode_awal'] . "'";
-													if($data['kode_awal'] == $return_selected['departemen']){ echo " selected='selected'";}
-													echo "'>" . $data['nama_departemen'] . "</option>";
-												}
-											?>
-										</select>
-										<i></i>
-									</label>
+                            <div class="modal-body">
+                                <div class="row">
+									<div class=" col-md-12 unit">
+										<div class="input">
+											<label class="icon-left" for="id_karyawan">
+												<i class="zmdi zmdi-assignment-account"></i>
+											</label>
+											<input class="form-control login-frm-input"  type="text" id="nik" name="nik" placeholder="Masukkan ID Karyawan" required="true" value="<?php echo $user; ?>" disabled>
+											<input type="hidden" name="nik_lama" value="<?php echo $user;?>">
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-md-12 unit">
+										<div class="input">
+											<label class="icon-left" for="password">
+												<i class="zmdi zmdi-key"></i>
+											</label>
+											<input class="form-control login-frm-input"  type="password" id="password" name="pass_lama" placeholder="Masukkan Password Lama" required="true">
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-md-12 unit">
+										<div class="input">
+											<label class="icon-left" for="password">
+												<i class="zmdi zmdi-key"></i>
+											</label>
+											<input class="form-control login-frm-input"  type="password" id="password" name="pass_baru" placeholder="Masukkan Password Baru" required="true">
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-md-12 unit">
+										<div class="input">
+											<label class="icon-left" for="password">
+												<i class="zmdi zmdi-key"></i>
+											</label>
+											<input class="form-control login-frm-input"  type="password" id="password" name="konf_pass" placeholder="Masukkan Konfirmasi Password" required="true">
+										</div>
+									</div>
 								</div>
 							</div>
-                            <div class="unit">
-                                <div class="input">
-                                    <label class="icon-left" for="email">
-                                        <i class="fa fa-barcode"></i>
-                                    </label>
-                                    <input class="form-control login-frm-input"  type="email" id="email" name="email" placeholder="Masukkan Email Karyawan" required="true" value="<?php echo $row['email'];?>">
-                                    </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Batal</button>
+                                <button type="submit" class="btn btn-success" name="submit-update">Simpan</button>
                             </div>
-                            <div class="unit">
-                                <div class="input">
-                                    <label class="icon-left" for="telp">
-                                        <i class="fa fa-money"></i>
-                                    </label>
-                                    <input class="form-control login-frm-input"  type="telp" id="telp" name="telp" placeholder="Masukkan Nomor Telepon Karyawan" value="<?php echo $row['telp_karyawan'];?>">
-                                </div>
-                            </div>
-                            <div class="unit">
-                                <div class="input">
-                                    <label class="icon-left" for="alamat">
-                                        <i class="fa fa-money"></i>
-                                    </label>
-                                    <textarea class="form-control login-frm-input" id="alamat" name="alamat" placeholder="Masukkan Alamat Karyawan"><?php echo $row['alamat_karyawan'];?></textarea>
-                                </div>
-                            </div>
-                            <div class="unit">
-                                <div class="input">
-                                    <img src="<?php echo $row['foto'];?>">
-									<input type="file" class="filestyle bootstrap-file" data-buttonbefore="true" name="foto">
-                                </div>
-                            </div>
-                            <div class="unit">
-                                <div class="input">
-                                    <button type="submit" class="btn btn-success col-md-4" name="submit">Simpan</button>
-                                    <button type="button" class="btn btn-default col-md-4" onclick="window.location.href='<?php echo $url_web?>karyawan'">Batal</button>
-                                    <button type="button" class="btn btn-danger col-md-4" data-toggle="modal" data-target="#modalHapus" name="hapus">Hapus Permanen</button>
-
-                                </div>
-                            </div>
-                        </div>
-                    </form>
+						</div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
 </div>
-
-<?php
-}}
-?>
 </section>
 <section class="main-container m-t-min-20"><?php include('../php/modular/footer.php') ?></section>
 <!--Page Container End Here-->
@@ -576,7 +529,7 @@ window.onload = function() {
 </div>
 </div>
 </aside>
-
+<!--Rightbar End Here-->
 <script src="../js/lib/jquery.js"></script>
 <script src="../js/lib/jquery-migrate.js"></script>
 <script src="../js/lib/bootstrap.js"></script>
@@ -608,5 +561,6 @@ window.onload = function() {
 <script src="../js/lib/select2.full.js"></script>
 <script src="../js/lib/j-forms.js"></script>
 <script src="../js/apps.js"></script>
+<script src="../js/lib/jquery.mask.js"></script>
 </body>
 </html>

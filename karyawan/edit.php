@@ -11,85 +11,6 @@ $result->execute();
 $departemen = $db->prepare("SELECT * FROM departemen ORDER BY kode_awal");
 $departemen->execute();
 
-// Kalo disubmit (edit) maka menjalankan script dibawah ini
-if(isset($_POST['submit']) AND isset($_FILES['fotoedit'])){
-    try{
-        // new data
-        $nik = $_POST['nik'];
-        $nik_lama = $_POST['nik_lama'];
-        $nama = $_POST['nama'];
-		$depart = $_POST['departemen'];
-        $email = $_POST['email'];
-        $telp = $_POST['telp'];
-        $alamat = $_POST['alamat'];
-		
-		$file_name = $_FILES['foto']['name'];
-        $file_tmp  = $_FILES['foto']['tmp_name'];
-        $file_size = $_FILES['foto']['size'];
-        $file_ext = strtolower(end(explode(".", $file_name)));
-        $ext_boleh = array("jpg", "png");
-        if(in_array($file_ext, $ext_boleh) || $_FILES['foto']['size'] == 0 ){
-            if($file_size <= 2*1024*1024)
-            {
-                if($_FILES['foto']['size'] != 0 ){
-                    $sumber = $file_tmp;
-                    $tujuan = "../images/karyawan/" . $nik . "." . $file_ext;
-                    // die("sumber: " . $sumber . ", tujuan: " . $tujuan);
-                    move_uploaded_file($sumber, $tujuan);
-                }
-            }
-            else{
-                echo "<div class='col-md-12'>
-                    <div class='j-forms'>
-                        <div class='form-content'>
-                            <div class='unit'> 
-                                <div class='error-message text-center'>
-                                    <i class='fa fa-close'></i>Ukuran file maximal adalah 2MB, file anda terlalu besar.
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>";
-            }
-        // die("EXT FILE BOLEH DI UPLOAD.");
-        }else{
-            echo "<div class='col-md-12'>
-                <div class='j-forms'>
-                    <div class='form-content'>
-                        <div class='unit'> 
-                            <div class='error-message text-center'>
-                                <i class='fa fa-close'></i>File yang dibolehkan adalah JPG dan PNG.
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>";
-        }
-		
-        $aktif = ($_POST['status_aktif'] == 'on' ? 1:0);
-        // query
-        $sql = "UPDATE karyawan 
-                SET id_karyawan=?, nama_karyawan=?, departemen=?, email=? , telp_karyawan=?, alamat_karyawan=?, foto=?
-                WHERE id_karyawan=?";
-        $q = $db->prepare($sql);
-        $q->execute(array($nik, $nama, $depart, $email, $telp, $alamat, $file_ext));
-        header("location: index.php");
-    }catch(Exception $e){
-        if($mode_debug = true) echo $e->getMessage();
-        echo "<div class='col-md-12'>
-                <div class='j-forms'>
-                    <div class='form-content'>
-                        <div class='unit'> 
-                            <div class='error-message text-center'>
-                                <i class='fa fa-close'></i>Data yang anda masukan sudah ada atau salah.
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>";
-    }
-}
-
 // Pas load data
 if(isset($_GET['key']) AND $_GET['method'] == 'karyawan'){
     $nik=$_GET['key'];
@@ -153,7 +74,7 @@ window.onload = function() {
         <div class="col-md-12">
             <div class="widget-container">
                 <div class="widget-content">
-                    <form class="j-forms" method="post" id="order-forms-quantity" novalidate>
+                    <form action="edit_proses.php" class="j-forms" method="post" id="order-forms-quantity" novalidate>
                         <div class="form-group">    
                             <div class="unit">
                                 <div class="input">
@@ -233,8 +154,8 @@ window.onload = function() {
                             </div>
                             <div class="unit">
                                 <div class="input">
-                                    <img src="<?php echo $url_web . "images/karyawan/" . $row['foto']?>">
-									<input type="file" name="foto" class="filestyle bootstrap-file" data-buttonbefore="true">
+                                    <img src="<?php echo $row['foto'];?>">
+									<input type="file" class="filestyle bootstrap-file" data-buttonbefore="true" name="foto">
                                 </div>
                             </div>
                             <div class="unit">

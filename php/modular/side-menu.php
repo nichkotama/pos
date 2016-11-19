@@ -1,5 +1,5 @@
 <?php
-$logged = $db->prepare("SELECT karyawan.*, departemen.* FROM karyawan LEFT JOIN departemen ON karyawan.departemen = departemen.kode_awal WHERE id_karyawan = '" . $_SESSION['uname'] ."'");
+$logged = $db->prepare("SELECT karyawan.*, departemen.* FROM karyawan LEFT JOIN departemen ON karyawan.departemen = departemen.kode_awal WHERE id_karyawan = '" . $_SESSION['uname'] ."' ORDER BY id_karyawan ASC");
 $logged->execute(); 
 $hasil = $logged->fetch();
 $hak_akses_produk = $hasil['hak_akses_produk'];
@@ -7,13 +7,31 @@ $hak_akses_pos = $hasil['hak_akses_pos'];
 $hak_akses_laporan = $hasil['hak_akses_laporan'];
 $hak_akses_karyawan = $hasil['hak_akses_karyawan'];
 ?>
+
+<script>
+function fokus_teks() {
+    document.getElementById("nama").focus();
+}
+function cek_terakhir(kode_awal){
+    $.get("../php/modular/autocomplete.php?kode_awal="+kode_awal, function(data){
+        var last_num = parseInt(data);
+        if (isNaN(last_num)) last_num = 0;
+        var current_num = last_num + 1;
+        var digit = "" + current_num
+        var pad = "000";
+        var ans = pad.substring(0, pad.length - digit.length) + digit;
+        document.getElementById("nik").value = kode_awal + "-" + ans;
+        document.getElementById("nik_hidden").value = kode_awal + "-" + ans;
+    });
+}
+</script>
 <!--Leftbar Start Here-->
 <aside class="leftbar">
     <div class="left-aside-container">
         <div class="user-profile-container">
             <div class="user-profile clearfix">
                 <div class="admin-user-thumb">
-                    <?php echo "<img src='" . $url_web . "images/karyawan/" . $hasil['foto'] . "' alt='admin'>" ?>
+                    <img src= "<?php echo $hasil['foto'];?>" alt='admin'>" ?>
                 </div>
                 <div class="admin-user-info">
                     <ul>
@@ -27,7 +45,7 @@ $hak_akses_karyawan = $hasil['hak_akses_karyawan'];
                     <li><a href="<?php echo $url_web;?>logout_user.php" data-toggle="tooltip" data-placement="bottom" title="Logout"><i class="zmdi zmdi-power"></i>
                     </a>
                     </li>
-                    <li><a href="#" data-toggle="tooltip" data-placement="bottom" title="Edit Profile"><i class="zmdi zmdi-account"></i>
+                    <li><a href="<?php echo $url_web;?>karyawan/change_pass.php" data-toggle="tooltip" data-placement="bottom"data-target="#modalAdd" onclick="fokus_teks()" title="Change Password"><i class="zmdi zmdi-account"></i>
                     </a>
                     </li>
                 </ul>

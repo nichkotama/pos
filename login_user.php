@@ -29,7 +29,7 @@ if(isset($_POST['submit'])){
     } else{
         $_SESSION['login'] = 1;
         $_SESSION['uname'] = $user;
-        header("Location: index.php");
+        header("Location: karyawan/karyawan_profile.php");
     }
 }
 ?>
@@ -79,20 +79,13 @@ if(isset($_POST['submit'])){
             </div>
         </div>
         <div class="login-form-content">
-
-
-
             <!-- start login -->
             <div class="unit">
                 <div class="input login-input">
                     <label class="icon-left" for="login">
                         <i class="zmdi zmdi-account"></i>
                     </label>
-<<<<<<< HEAD
-                    <input class="form-control login-frm-input"  type="text" id="login" name="login" placeholder="Masukkan ID Karyawan" value="<?php if(isset($user)) echo $user?>">
-=======
                     <input class="form-control login-frm-input"  type="text" id="login" name="login" placeholder="Masukkan ID Karyawan" value="<?php if(isset($user)){ echo $user;}?>">
->>>>>>> e28dae26627c266e8ab5ae471f05f351c4fe380a
                 </div>
             </div>
             <!-- end login -->

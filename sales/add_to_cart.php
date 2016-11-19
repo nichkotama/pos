@@ -11,10 +11,10 @@ try{
 	}
 	$query->execute();
 	$data = $query->fetch();
-	while ($row = $query->fetchAll(PDO::FETCH_ASSOC))
-	{
-		$data[] = $row;
-	}
+	// while ($row = $query->fetchAll(PDO::FETCH_ASSOC))
+	// {
+	// 	$data[] = $row;
+	// }
 	echo json_encode($data);
 }catch(Exception $e){
 	echo $e->getMessage();

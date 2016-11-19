@@ -10,6 +10,25 @@ try {
     * note : later must be added : SELECT * FROM transaksi_kasir_detail WHERE id_transaksi_header LIKE;
     * buat ngecek apa dia ngeklik pay now tanpa ada barang
     * */
+    if(isset($_POST['add_to_cart'])){
+        $terakhir = $_SESSION['kode_transaksi_header'];
+        $bcode = $_POST['barcode'];
+        $harga_subTotal = 0;
+        if(!is_numeric($bcode)){
+            // dapetin barcode produk
+            $bc = $db->prepare("SELECT barcode_barang, harga_jual FROM barang WHERE nama_barang = '" . $bcode . "' AND jml_stok > 0");
+            $bc->execute();
+            $new_bc = $bc->fetch();
+            $bcode = $new_bc['barcode_barang'];
+            $harga_subTotal = $new_bc['harga_jual'];
+        }
+        // perlu cari ada duplikat apa ga
+        $sql = "INSERT INTO transaksi_kasir_detail (id_transaksi_header, barcode_barang, jml_barang, harga_sub_total) 
+            VALUES(?, ?, ?, ?)";
+        $q = $db->prepare($sql);
+        $q->execute(array($terakhir,$bcode,1,$harga_subTotal)); // pertama kali input jml_barangnya 1
+    }
+
     if(isset($_POST['bayar'])){
         $terakhir = (int) $_SESSION['kode_transaksi_header'] + 1;
         $sql = "INSERT INTO transaksi_kasir (id_transaksi_header, id_petugas, tgl_transaksi, harga_total) 
@@ -17,7 +36,33 @@ try {
         $q = $db->prepare($sql);
         $q->execute(array(':id_transaksi_header'=>$terakhir,':id_karyawan'=>$nik, ':tgl'=>$hari,':total'=>0));
         $_SESSION['kode_transaksi_header'] = $terakhir;
-    echo $_SESSION['kode_transaksi_header'];
+    // echo $_SESSION['kode_transaksi_header'];
+    }
+
+    if(isset($_GET['updateQty']) AND isset($_GET['bc'])){
+        $kode_kasir = $_GET['updateQty'];
+        $bcode = $_GET['bc'];
+        $jml = $_GET['jumlah'];
+
+        $harga = $db->prepare("SELECT harga_jual FROM barang WHERE barcode_barang='" . $bcode . "'");
+        $harga->execute();
+        $harga_get = $harga->fetch();
+        $harga_satuan = (float) $harga_get['harga_jual'];
+
+        $sql = "UPDATE transaksi_kasir_detail SET jml_barang= " . $jml . ", harga_sub_total=" . ($harga_satuan * $jml) . " WHERE id_transaksi_header = '" . $kode_kasir . "' AND barcode_barang='" . $bcode ."'";
+        $q = $db->prepare($sql);
+        $q->execute(); // pertama kali input jml_barangnya 1
+        die();
+    }
+
+    if(isset($_POST['hapus_item'])){
+        $id_transaksi_kasir = $_POST['remove'];
+        $barang = $_POST['item'];
+        $sql = "DELETE FROM transaksi_kasir_detail WHERE id_transaksi_header = '" . $id_transaksi_kasir 
+            . "' AND barcode_barang = '" . $barang . "'";
+            echo $sql;
+        $q = $db->prepare($sql);
+        $q->execute();
     }
 
     $top = $db->prepare("SELECT * FROM transaksi_kasir WHERE id_transaksi_header LIKE '" . date(Ymd) . "%' ORDER BY id_transaksi_header DESC LIMIT 1");
@@ -25,12 +70,12 @@ try {
     $terakhir = $top->fetch();
 
     if(isset($_SESSION['kode_transaksi_header'])){
-        if(isset($terakhir['id_transaksi_header'])){
+        if(isset($terakhir['id_transaksi_header'])){ // penjualan belum close atau klik pay
             $load_data = $db->prepare("SELECT * FROM transaksi_kasir_detail WHERE id_transaksi_header = " . $_SESSION['kode_transaksi_header']);
             $load_data->execute();
             $data = $load_data->fetch();
             $kode_terakhir = (int) $terakhir['id_transaksi_header'];
-        }else{
+        }else{ // session masih ada tapi belum ada transaksi
             unset($_SESSION['kode_transaksi_header']);
         }
     }else{
@@ -83,97 +128,40 @@ try {
     var banyak = [];
     window.onload = function() {
         var input = document.getElementById("barcode").focus();
-    }
 
-    function myFunction(src, isi) {
-        var table = document.getElementById("myTable");
-        if( src == 'barcode' ){
-            try{
-                nilai = !isNaN(parseInt(isi)); //number = true; string = false; buat detect dia input nama apa barcode
-                barcode = document.getElementById("barcode").value;
-                items[number] = isi;
-                qty[number] = 1;
-                $.get("add_to_cart.php?whatever="+barcode+"&string="+nilai, function(data){
-                    var row = JSON.parse(data);
-                    table.innerHTML = table.innerHTML +
-                        '<div id = "baris-' + number + '">'  
-                        + '<div class="col-sm-1"><button class="btn btn-danger" onclick="deleteRow(' + number+1 + ')"><i class="zmdi zmdi-close"></i></button></div>' 
-                        + '<div class="col-sm-1 p-tb-9">' + number + '</div>' 
-                        + '<div class="col-sm-3 p-tb-9">' + row.nama_barang +'</div>' 
-                        + '<div class="col-sm-1"><input class="form-control" type="number" value="' + qty[number] +'"/></div>' 
-                        + '<div class="col-sm-3"><input class="form-control" type="text" value="' + row.harga_jual +'" readonly=""/></div>' 
-                        + '<div class="col-sm-3"><input class="form-control" type="text" value="' + (qty[number] * row.harga_jual) +'" readonly=""/></div>' 
-                        + '</div>'
-                });
-            }catch(err){
-            }
-        }else if( src == 'qty' ){
-            qty[number] = nilai;
-        }
-        document.getElementById("barcode").value = '';
-        document.getElementById("qty").value = 1;
-        document.getElementById("barcode").focus();
-        barang[number] = items[number];
-        number++;
-            alert("entered kok");
-        // var row = table.insertRow(1);
-        // var cell1 = row.insertCell(0);
-        // var cell2 = row.insertCell(1);
-        // cell1.innerHTML = "NEW CELL1";
-        // cell2.innerHTML = "NEW CELL2"; 
     }
-    
-    function deleteRow( number ){
-        // document.getElementById('baris-'+number).remove();
-        document.getElementById('baris-'+number).innerHTML =  
-            '<div id = "baris-' + number + '">'  
-            + '<div class="col-sm-1 barang-cancel"><button class="btn btn-danger" onclick="deleteRow(' + number + ')"><i class="zmdi zmdi-close"></i></button></div>' 
-            + '<div class="col-sm-1 p-tb-9 barang-cancel">' + number + '</div>' 
-            + '<div class="col-sm-3 p-tb-9 barang-cancel">' + items[number] +'</div>' 
-            + '<div class="col-sm-1"><input class="form-control" type="number" value="' + qty[number] +'" readonly=""/></div>' 
-            + '<div class="col-sm-3"><input class="form-control" type="number" value="' + qty[number] +'" readonly=""/></div>' 
-            + '<div class="col-sm-3"><input class="form-control" type="number" value="' + qty[number] +'" readonly=""/></div>' 
-            + '</div>';
-        delete barang[number];
-        delete items[number];
-        delete qty[number];
-        }
-
-    function cek_enter(e, src) {
-        if (e.keyCode == 13) {
-            if( src == 'barcode' ){
-                nilai = document.getElementById('barcode').value;
-                if (nilai == "") nilai = "item tidak diinput";
-            }else if( src == 'qty' ){
-                nilai = document.getElementById('qty').value;
-            }
-            return myFunction(src, nilai);
-            // var field_barcode = document.getElementById('barcode');
-            // var field_qty = document.getElementById('qty');
-            // field_barcode.innerHTML = "";
-            // field_qty.innerHTML = "";
-        }
-    }
-    function printData(){
-        document.getElementById('cumateksbung').innerHTML = 'barang >> ' + barang + '<br/>items >> ' + items + '<br/>qty >> ' + qty;
-    }
-</script>
-<script>
     $(function() {  
         $( "#barcode" ).autocomplete({
             source: "../php/modular/autocomplete.php?src=barcode_barang",  
             minLength:2, 
             autoFocus:true,
-            // select: function( event, ui ) {
-              // document.getElementById('tampilan').innerHTML = ui.item.value;
-              // harusnya laksanakan fungsi myFunction()
-            // },
             focus: function (event, ui) {
                 $(this).val(ui.item.value);
             }
+            // select: function( event, ui ) {
+            //     $.ajax({ /* THEN THE AJAX CALL */
+            //         type: "POST", /* TYPE OF METHOD TO USE TO PASS THE DATA */
+            //         url: "get-data.php", /* PAGE WHERE WE WILL PASS THE DATA */
+            //         data: dataString, /* THE DATA WE WILL BE PASSING */
+            //         success: function(result){ /* GET THE TO BE RETURNED DATA */
+            //             $("#show").html(result); /* THE RETURNED DATA WILL BE SHOWN IN THIS DIV */
+            //         }
+            //     });
+            // },
         });
     });
+    function updateQty(kode,barcode){
+        var jumlah = document.getElementById('qty_'+barcode).value;
+        $.get("index.php?updateQty="+kode+"&bc="+barcode+"&jumlah="+jumlah, function(data){
+            var hsatuan = document.getElementById("hargasatuan_"+barcode).value;
+            angka_harga = hsatuan.replace(".", "");
+            angka_harga = hsatuan.replace(",", ".");
+            document.getElementById("hargasub_"+barcode).value = parseFloat(angka_harga) * parseFloat(jumlah);
+            // do nothing
+        });
+    }
 </script>
+
 <?php include('../php/modular/top-menu.php') ?>
 <?php include('../php/modular/side-menu.php') ?>
 
@@ -200,12 +188,13 @@ try {
                     <!-- <form action="#" method="post" class="j-forms" id="order-forms-quantity" novalidate> -->
                     <div class="j-forms" id="order-forms-quantity" novalidate>
                         <div class="form-group">
+                            <form action="index.php" method="post">
                             <div class="col-sm-7 unit">
                                 <div class="input">
                                     <label class="icon-left" for="name">
                                         <i class="fa fa-barcode"></i>
                                     </label>
-                                    <input class="form-control" type="text" id="barcode" name="barcode" placeholder="Scan or Type Barcode Item Here" onkeypress="return cek_enter(event, 'barcode')">
+                                    <input class="form-control" type="text" id="barcode" name="barcode" placeholder="Scan or Type Barcode Item Here">
                                 </div>
                             </div>
                             <!-- start name -->
@@ -219,24 +208,47 @@ try {
                             </div> -->
                             <div class="col-sm-2 unit">
                                 <div class="input">
-                                    <button type="submit" class="btn btn-success" onclick="myFunction()"><i class="zmdi zmdi-plus"> Add Item</i></button>
+                                    <button type="submit" name="add_to_cart" class="btn btn-success"><i class="zmdi zmdi-plus"> Add Item</i></button>
                                 </div>
                             </div>
+                            </form>
                             <div class="row">
                                 <div class="col-sm-12" id="myTable">
                                     <div class="col-sm-1 heading-tabel">Remove</div>
                                     <div class="col-sm-1 heading-tabel">#</div>
                                     <div class="col-sm-3 heading-tabel">Item</div>
                                     <div class="col-sm-1 heading-tabel">Qty</div>
-                                    <div class="col-sm-3 heading-tabel">Harga Satuan</div>
-                                    <div class="col-sm-3 heading-tabel">Sub-Total</div>
+                                    <div class="col-sm-3 heading-tabel">Harga Satuan (Rp)</div>
+                                    <div class="col-sm-3 heading-tabel">Sub-Total (Rp)</div>
                                 </div>
                             </div>
+            <form action="index.php" method="post">
+            <div class="row">
+            <?php
+                $total_belanja = 0;
+                if(isset($terakhir['id_transaksi_header'])){ // penjualan belum close atau klik pay
+                $load_data = $db->prepare("SELECT detail.*, barang.* FROM transaksi_kasir_detail detail JOIN barang ON detail.barcode_barang = barang.barcode_barang WHERE id_transaksi_header = '" . $_SESSION['kode_transaksi_header'] ."'");
+                $load_data->execute();
+                for($i=0; $data = $load_data->fetch(); $i++){
+                    echo "<div class='col-sm-12' id='baris'>"  
+                    . "<div class='col-sm-1'><button class='btn btn-danger' name='hapus_item' type='submit'><i class='zmdi zmdi-close'></i></button>" . "<input type='hidden' name='remove' value='" . $_SESSION['kode_transaksi_header'] . "'/><input type='hidden' name='item' value='" . $data['barcode_barang'] . "'/></div>" 
+                    . "<div class='col-sm-1 p-tb-9'>" . ($i+1) . "</div>" 
+                    . "<div class='col-sm-3 p-tb-9'>" . $data['nama_barang'] . '</div>' 
+                    . "<div class='col-sm-1'><input class='form-control' style='width:60px' type='number' id='qty_" .$data['barcode_barang'] . "' value='" . $data['jml_barang'] . "' onblur='updateQty(" . $_SESSION['kode_transaksi_header'] . "," . $data['barcode_barang'] . " )'></div>"
+                    . "<div class='col-sm-3'><input class='form-control' type='text' id='hargasatuan_" .$data['barcode_barang'] . "' value='" . number_format(($data['harga_jual']),2,',','.') . "' readonly=''></div>" 
+                    . "<div class='col-sm-3'><input class='form-control' type='text' id='hargasub_" .$data['barcode_barang'] . "' value='" . number_format(($data['harga_sub_total']),2,',','.') . "' readonly=''></div>"
+                    . "</div>";
+                    $total_belanja += (float) $data['harga_sub_total'];
+                }   
+                }             
+            ?>
+            </div>
+            </form>
                             <!-- start totals -->
                             <div class="row m-t-20">
-                                <div class="col-md-offset-8 col-md-4 unit">
+                                <div class="col-md-offset-9 col-sm-3 unit">
                                     <div class="input">
-                                        <input class="form-control" type="text" placeholder="Totals" id="field_totals" readonly="" name="field_totals">
+                                        <input class="form-control" type="text" placeholder="Totals" id="field_totals" readonly="" name="field_totals" value="<?php echo number_format(($total_belanja),2,',','.');?>">
                                     </div>
                                 </div>
                             </div>

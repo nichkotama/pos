@@ -88,7 +88,11 @@ if(isset($_POST['submit'])){
                     <label class="icon-left" for="login">
                         <i class="zmdi zmdi-account"></i>
                     </label>
+<<<<<<< HEAD
+                    <input class="form-control login-frm-input"  type="text" id="login" name="login" placeholder="Masukkan ID Karyawan" value="<?php if(isset($user)) echo $user?>">
+=======
                     <input class="form-control login-frm-input"  type="text" id="login" name="login" placeholder="Masukkan ID Karyawan" value="<?php if(isset($user)){ echo $user;}?>">
+>>>>>>> e28dae26627c266e8ab5ae471f05f351c4fe380a
                 </div>
             </div>
             <!-- end login -->

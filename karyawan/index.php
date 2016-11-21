@@ -67,9 +67,9 @@ try{
             </div>";
         }
         $sql = "INSERT INTO karyawan (id_karyawan,nama_karyawan,departemen,password,email,telp_karyawan,alamat_karyawan,foto) 
-        VALUES (:nik,:nama,:dept,:password,:email,:telp,:alamat,:foto_w_path)";
+        VALUES (:nik,:nama,:dept,:password,:email,:telp,:alamat,:foto_wo_path)";
         $q = $db->prepare($sql);
-        $q->execute(array(':nama'=>$nama,':email'=>$email,':telp'=>$telp,':alamat'=>$alamat,':password'=>$password,':nik'=>$nik,':dept'=>$departemen_select,':foto_w_path'=>$tujuan));
+        $q->execute(array(':nama'=>$nama,':email'=>$email,':telp'=>$telp,':alamat'=>$alamat,':password'=>$password,':nik'=>$nik,':dept'=>$departemen_select,':foto_wo_path'=>($nik . "." . $file_ext)));
         header("location: index.php");
     }
 }catch(Exception $e){
@@ -291,7 +291,7 @@ function cek_terakhir(kode_awal){
                                 # kolom barcode barang
                                 echo "<td>" . $row['email'] . "</td>";
                                 # kolom barcode barang
-                                echo "<td><i class='td-profile-thumb'><img src='". $row['foto'] . "'></i></td>";
+                                echo "<td><i class='td-profile-thumb'><img src='". $url_web . "images/karyawan/" . $row['foto'] . "'></i></td>";
                                 # kolom aksi
                                 echo "<td class='td-center'>
                                 <div class='btn-toolbar' role='toolbar'>

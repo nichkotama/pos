@@ -154,7 +154,7 @@ window.onload = function() {
                             </div>
                             <div class="unit">
                                 <div class="input">
-                                    <img  style="max-height:128px" src="<?php echo $row['foto'];?>">
+                                    <img  style="max-height:128px" src="<?php echo $url_web . "images/karyawan/" . $row['foto'];?>">
 									<input type="file" name="foto2" class="filestyle bootstrap-file" data-buttonbefore="true">
                                 </div>
                             </div>

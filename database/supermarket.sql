@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Nov 19, 2016 at 04:07 PM
+-- Generation Time: Nov 21, 2016 at 04:03 PM
 -- Server version: 5.7.13-0ubuntu0.16.04.2
 -- PHP Version: 5.6.23-2+deb.sury.org~xenial+1
 
@@ -85,7 +85,7 @@ INSERT INTO `barang` (`barcode_barang`, `nama_barang`, `harga_beli`, `harga_jual
 ('653314504513', 'KUSUKA SINGKONG RUMPUT LAUT 60G', '10000.00', '12000.00', 1, 1, NULL),
 ('6743', 'JOYKO DOUBLE TAPE (CORE BLUE)ROL 12mmx15', '10000.00', '12000.00', 1, 1, NULL),
 ('711844110113', 'ABC KECAP MANIS BTL 135mL', '10000.00', '12000.00', 1, 1, NULL),
-('711844115057', 'ABC KECAP ASIN BTL 133mL', '10000.00', '12000.00', 1, 1, NULL),
+('711844115057', 'ABC KECAP ASIN BTL 133mL', '10000.00', '12000.00', 1, 1, 'SUP-001'),
 ('711844120013', 'ABC SAMBALBTL 335mL', '10000.00', '12000.00', 1, 1, NULL),
 ('711844120037', 'ABC SAMBALBTL 135mL', '10000.00', '12000.00', 1, 1, NULL),
 ('711844120075', 'ABC SAMBAL EXTRA PEDA BTL 335mL', '10000.00', '12000.00', 1, 1, NULL),
@@ -95,8 +95,8 @@ INSERT INTO `barang` (`barcode_barang`, `nama_barang`, `harga_beli`, `harga_jual
 ('711844120310', 'ABC SAMBALPCK 22x9mL', '10000.00', '12000.00', 1, 1, NULL),
 ('711844120396', 'ABC SAMBAL TERASIBTL 200G', '10000.00', '12000.00', 1, 1, NULL),
 ('711844120563', 'ABC SAMBAL BAJAKBTL 190G', '10000.00', '12000.00', 1, 1, NULL),
-('711844130111', 'ABC SAUCE TOMAT BTL 135mL', '10000.00', '12000.00', 1, 1, NULL),
-('711844140059', 'ABC SAUS TIRAMBTL 135mL', '10000.00', '12000.00', 1, 1, NULL),
+('711844130111', 'ABC SAUCE TOMAT BTL 135mL', '10000.00', '12000.00', 1, 1, 'SUP-002'),
+('711844140059', 'ABC SAUS TIRAMBTL 135mL', '10000.00', '12000.00', 1, 1, 'SUP-002'),
 ('711844140127', 'ABC KECAP INGGRISBTL 195mL', '10000.00', '12000.00', 1, 1, NULL),
 ('711844150003', 'ABC SYRUP ORANGE BTL 580mL', '10000.00', '12000.00', 1, 1, NULL),
 ('711844330108', 'ABC SARDINES CHILI KLG 155g', '10000.00', '12000.00', 1, 1, NULL),
@@ -143,7 +143,7 @@ INSERT INTO `barang` (`barcode_barang`, `nama_barang`, `harga_beli`, `harga_jual
 ('8886020033431', 'BAGUS KAPUR AJAIB 6\'SPCK ', '10000.00', '12000.00', 1, 1, NULL),
 ('8886020209300', 'BAGUS SIKAT BAJU', '10000.00', '12000.00', 1, 1, NULL),
 ('8886022836245', 'ABC BATERY BIRU 4\'S ', '10000.00', '12000.00', 1, 1, NULL),
-('8886022910266', 'ABC BATERY 2\'S BESAR (C)', '10000.00', '12000.00', 1, 1, NULL),
+('8886022910266', 'ABC BATERY 2\'S BESAR (C)', NULL, NULL, 1, 1, 'SUP-001'),
 ('8886022920258', 'ABC2\'S TANGGUNG PCK', '10000.00', '12000.00', 1, 1, NULL),
 ('8886022941512', 'ALKALINE AAA 2\'S PCK ', '10000.00', '12000.00', 1, 1, NULL),
 ('8886022971298', 'ALKALINE AA-LR6', '10000.00', '12000.00', 1, 1, NULL),
@@ -245,7 +245,7 @@ INSERT INTO `barang` (`barcode_barang`, `nama_barang`, `harga_beli`, `harga_jual
 ('8991001770011', 'Selamat Cho Sandw 102gr ', '10000.00', '12000.00', 1, 1, NULL),
 ('8991001780225', 'DELFI TWISTER MINIS BLACK VANI PCK 80 ', '10000.00', '12000.00', 1, 1, NULL),
 ('8991001780232', 'DELFI TWISTER MINIS CHOCO CREA PCK 80 ', '10000.00', '12000.00', 1, 1, NULL),
-('8991002101630', 'ABC KOPI,GULA PCK 10X31G', '10000.00', '12000.00', 1, 1, NULL),
+('8991002101630', 'ABC KOPI,GULA PCK 10X31G', '10000.00', '12000.00', 1, 1, 'SUP-001'),
 ('8991002101746', 'ABC KOPI+SUSU+MOCHA 10X27G', '10000.00', '12000.00', 1, 1, NULL),
 ('8991002103221', 'GOOD DAY MOCACINNO BOX 5X20g', '10000.00', '12000.00', 1, 1, NULL),
 ('8991002103238', 'GOOD DAY MOCACINNO 10X ', '10000.00', '12000.00', 1, 1, NULL),
@@ -871,9 +871,10 @@ CREATE TABLE `karyawan` (
 --
 
 INSERT INTO `karyawan` (`id_karyawan`, `nama_karyawan`, `departemen`, `password`, `email`, `telp_karyawan`, `alamat_karyawan`, `foto`) VALUES
-('CSH-001', 'Joshua', 'CSH', '$2y$10$Kelompok2SuPERmarketIOuTcLeQyQDlE/JqtVskEn1lCALYOk71y', 'joshua@gmail.com', '021382188859', 'Jl. Jalan ', '../images/karyawan/CSH-001.jpg'),
-('MGR-001', 'Nicholas', 'MGR', '$2y$10$Kelompok2SuPERmarketIOO3P572WpOOk7pVJiPUEwCMe4U6o.ql2', 'nicholas@gmail.com', '021382188859', 'Jl. Jalan Jalan', '../images/karyawan/MGR-001.jpg'),
-('WHR-001', 'William', 'WHR', '$2y$10$Kelompok2SuPERmarketIOG8YrTm2Cwb0IPaJbAhoQqkWjpUBBw5K', 'william231295@gmail.com', '012832175619', 'Jl. Jalan ', '../images/karyawan/WHR-001.jpg');
+('CSH-001', 'Joshua', 'CSH', '$2y$10$Kelompok2SuPERmarketIOuTcLeQyQDlE/JqtVskEn1lCALYOk71y', 'joshua@gmail.com', '021382188859', 'Jl. Jalan ', 'CSH-001.jpg'),
+('MGR-001', 'Nicholas', 'MGR', '$2y$10$Kelompok2SuPERmarketIOO3P572WpOOk7pVJiPUEwCMe4U6o.ql2', 'nicholas@gmail.com', '082344441111', 'Jl. Jalan Jalan', 'MGR-001.png'),
+('MGR-002', 'Alvin Juvianto', 'MGR', '$2y$10$Kelompok2SuPERmarketIONA0yjdbU1mPN9p1oXHS9WSL1JgsoQVS', 'alvinjuvianto@gmail.com', '321567535635', ' aqaq', 'MGR-002.jpg'),
+('WHR-001', 'William', 'WHR', '$2y$10$Kelompok2SuPERmarketIOG8YrTm2Cwb0IPaJbAhoQqkWjpUBBw5K', 'william231295@gmail.com', '012832175619', 'Jl. Jalan ', 'WHR-001.jpg');
 
 -- --------------------------------------------------------
 
@@ -910,6 +911,13 @@ CREATE TABLE `transaksi_kasir` (
   `harga_total` decimal(10,0) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+--
+-- Dumping data for table `transaksi_kasir`
+--
+
+INSERT INTO `transaksi_kasir` (`id_transaksi_header`, `id_petugas`, `tgl_transaksi`, `harga_total`) VALUES
+('201611210001', 'MGR-001', '2016-11-21', '0');
+
 -- --------------------------------------------------------
 
 --
@@ -923,6 +931,13 @@ CREATE TABLE `transaksi_kasir_detail` (
   `jml_barang` int(11) NOT NULL,
   `harga_sub_total` int(18) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `transaksi_kasir_detail`
+--
+
+INSERT INTO `transaksi_kasir_detail` (`id_transaksi_detail`, `id_transaksi_header`, `barcode_barang`, `jml_barang`, `harga_sub_total`) VALUES
+(41, '201611210001', '272', 1, 12000);
 
 -- --------------------------------------------------------
 
@@ -1029,7 +1044,7 @@ ALTER TABLE `transaksi_pembelian_detail`
 -- AUTO_INCREMENT for table `transaksi_kasir_detail`
 --
 ALTER TABLE `transaksi_kasir_detail`
-  MODIFY `id_transaksi_detail` int(3) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `id_transaksi_detail` int(3) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=43;
 --
 -- AUTO_INCREMENT for table `transaksi_pembelian_detail`
 --

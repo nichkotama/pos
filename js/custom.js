@@ -17,5 +17,8 @@ function toRp(angka){
             rev2 += '.';
         }
     }
-    return '' + rev2.split('').reverse().join('') + ',00';
+    // return '' + rev2.split('').reverse().join('') + ',00';
+    return '' + rev2.split('').reverse().join('');
 }
+
+var tagihan = 0;

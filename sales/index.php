@@ -6,6 +6,7 @@ require_once('../php/modular/otentifikasi.php');
 try {
     $nik = $_SESSION['uname'];
     $hari = date("Y-m-d");
+    $belanja = 0;
     // Menambahkan barang ke add to cart
     if(isset($_POST['add_to_cart'])){
         $terakhir = $_SESSION['kode_transaksi_header'];
@@ -19,11 +20,23 @@ try {
             $bcode = $new_bc['barcode_barang'];
             $harga_subTotal = $new_bc['harga_jual'];
         }
-        // perlu cari ada duplikat apa ga
-        $sql = "INSERT INTO transaksi_kasir_detail (id_transaksi_header, barcode_barang, jml_barang, harga_sub_total) 
-            VALUES(?, ?, ?, ?)";
-        $q = $db->prepare($sql);
-        $q->execute(array($terakhir,$bcode,1,$harga_subTotal)); // pertama kali input jml_barangnya 1
+        
+        // Cek Duplikat
+        $cek_detailKasir = $db->prepare("SELECT * FROM 
+            transaksi_kasir_detail WHERE id_transaksi_header = ? AND barcode_barang = ?");
+        $cek_detailKasir->execute(array($terakhir,$bcode));
+        $cek_detailKasir_Hasil = $cek_detailKasir->fetch();
+        // Kalau duplikat
+        if(isset($cek_detailKasir_Hasil['id_transaksi_header']) AND isset($cek_detailKasir_Hasil['id_transaksi_header'])){
+            $sql = "UPDATE transaksi_kasir_detail SET id_transaksi_header = ?, barcode_barang = ?, jml_barang = ?, harga_sub_total = ? WHERE id_transaksi_header = ? AND barcode_barang = ?";
+            $q = $db->prepare($sql);
+            $q->execute(array($terakhir,$bcode,((int)$cek_detailKasir_Hasil['jml_barang']+1),((int)$cek_detailKasir_Hasil['harga_sub_total']+$harga_subTotal),$terakhir,$bcode)); // pertama kali input jml_barangnya 1
+        }else{
+            $sql = "INSERT INTO transaksi_kasir_detail (id_transaksi_header, barcode_barang, jml_barang, harga_sub_total) 
+                VALUES(?, ?, ?, ?)";
+            $q = $db->prepare($sql);
+            $q->execute(array($terakhir,$bcode,1,$harga_subTotal)); // pertama kali input jml_barangnya 1
+        }
     }
 
     // Klik tombol bayar
@@ -51,6 +64,7 @@ try {
         $sql = "UPDATE transaksi_kasir_detail SET jml_barang= " . $jml . ", harga_sub_total=" . ($harga_satuan * $jml) . " WHERE id_transaksi_header = '" . $kode_kasir . "' AND barcode_barang='" . $bcode ."'";
         $q = $db->prepare($sql);
         $q->execute();
+        $belanja += ($harga_satuan * $jml);
     }
 
     // Hapus barang
@@ -136,7 +150,6 @@ try {
     var banyak = [];
     window.onload = function() {
         var input = document.getElementById("barcode").focus();
-
     }
     function cekKomponen(){
         if (document.body.contains(document.getElementById('daftar_belanja'))) {
@@ -166,13 +179,18 @@ try {
         });
     });
     function updateQty(kode,barcode){
+        var grandtotal = 0;
         var jumlah = document.getElementById('qty_'+barcode).value;
         $.get("index.php?updateQty="+kode+"&bc="+barcode+"&jumlah="+jumlah, function(data){
             var hsatuan = document.getElementById("hargasatuan_"+barcode).value;
             angka_harga = hsatuan.replace(".", "");
             // angka_harga = hsatuan.replace(",", ".");
             document.getElementById("hargasub_"+barcode).value = toRp(parseFloat(angka_harga) * parseFloat(jumlah));
-            // do nothing
+            var elements = document.getElementsByName("subtotal");
+            for (var i = 0; i < elements.length; i++){
+                grandtotal += parseFloat(elements[i].value.replace(".", ""));
+            }
+            document.getElementById("field_totals").value = toRp(grandtotal);
         });
     }
 </script>
@@ -209,7 +227,7 @@ try {
                                     <label class="icon-left" for="name">
                                         <i class="fa fa-barcode"></i>
                                     </label>
-                                    <input class="form-control" type="text" id="barcode" name="barcode" placeholder="Scan or Type Barcode Item Here">
+                                    <input class="form-control" type="text" id="barcode" name="barcode" placeholder="Scan or Type Barcode Item Here" required="required">
                                 </div>
                             </div>
                             <!-- start name -->
@@ -250,10 +268,11 @@ try {
                     . "<div class='col-sm-1 p-tb-9' id='daftar_belanja'>" . ($i+1) . "</div>" 
                     . "<div class='col-sm-3 p-tb-9'>" . $data['nama_barang'] . '</div>' 
                     . "<div class='col-sm-1'><input class='form-control' style='width:60px' type='number' id='qty_" .$data['barcode_barang'] . "' value='" . $data['jml_barang'] . "' onblur='updateQty(" . $_SESSION['kode_transaksi_header'] . "," . $data['barcode_barang'] . " )' min='1'></div>"
-                    . "<div class='col-sm-3'><input class='form-control' type='text' id='hargasatuan_" .$data['barcode_barang'] . "' value='" . number_format(($data['harga_jual']),2,',','.') . "' readonly=''></div>" 
-                    . "<div class='col-sm-3'><input class='form-control' type='text' id='hargasub_" .$data['barcode_barang'] . "' value='" . number_format(($data['harga_sub_total']),2,',','.') . "' readonly=''></div>"
+                    . "<div class='col-sm-3'><input class='form-control' type='text' id='hargasatuan_" .$data['barcode_barang'] . "' value='" . number_format(($data['harga_jual']),0,',','.') . "' readonly=''></div>" 
+                    . "<div class='col-sm-3'><input class='form-control' type='text' name='subtotal' id='hargasub_" .$data['barcode_barang'] . "' value='" . number_format(($data['harga_sub_total']),0,',','.') . "' readonly=''></div>"
                     . "</div>";
                     $total_belanja += (float) $data['harga_sub_total'];
+        // echo "<script type='text/javascript'>document.getElementById('field_totals').value = " . $belanja ."</script>";
                 }   
                 }             
             ?>
@@ -261,9 +280,9 @@ try {
             </form>
                             <!-- start totals -->
                             <div class="row m-t-20">
-                                <div class="col-md-offset-9 col-sm-3 unit">
-                                    <div class="input">
-                                        <input class="form-control" type="text" placeholder="Totals" id="field_totals" readonly="" name="field_totals" value="<?php echo number_format(($total_belanja),2,',','.');?>">
+                                <div class="col-md-offset-9 col-md-3 unit">
+                                    <div class="form-footer">
+                                        <input class="form-control" type="text" placeholder="Totals" id="field_totals" readonly="" name="field_totals" value="<?php echo number_format(($total_belanja),0,',','.')?>">
                                     </div>
                                 </div>
                             </div>

@@ -468,9 +468,9 @@ jQuery(document).ready(function ($) {
             reverse: true,
             placeholder: "000.000.000-00"
         });
-        $('.money-mask').mask('000.000.000.000.000,00', {
+        $('.money-mask').mask('000.000.000.000.000', {
             reverse: true,
-            placeholder: "000.000.000.000.000,00"
+            placeholder: "Masukkan jumlah pembayaran"
         });
         $('.money2-mask').mask("#.##0,00", {
             reverse: true,

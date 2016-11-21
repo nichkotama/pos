@@ -29,7 +29,8 @@ if(isset($_POST['submit'])){
     } else{
         $_SESSION['login'] = 1;
         $_SESSION['uname'] = $user;
-        header("Location: karyawan/karyawan_profile.php");
+        header("Location: index.php");
+        // header("Location: karyawan/karyawan_profile.php");
     }
 }
 ?>

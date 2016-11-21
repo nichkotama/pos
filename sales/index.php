@@ -6,10 +6,7 @@ require_once('../php/modular/otentifikasi.php');
 try {
     $nik = $_SESSION['uname'];
     $hari = date("Y-m-d");
-    /* *
-    * note : later must be added : SELECT * FROM transaksi_kasir_detail WHERE id_transaksi_header LIKE;
-    * buat ngecek apa dia ngeklik pay now tanpa ada barang
-    * */
+    // Menambahkan barang ke add to cart
     if(isset($_POST['add_to_cart'])){
         $terakhir = $_SESSION['kode_transaksi_header'];
         $bcode = $_POST['barcode'];
@@ -29,6 +26,7 @@ try {
         $q->execute(array($terakhir,$bcode,1,$harga_subTotal)); // pertama kali input jml_barangnya 1
     }
 
+    // Klik tombol bayar
     if(isset($_POST['bayar'])){
         $terakhir = (int) $_SESSION['kode_transaksi_header'] + 1;
         $sql = "INSERT INTO transaksi_kasir (id_transaksi_header, id_petugas, tgl_transaksi, harga_total) 
@@ -39,6 +37,7 @@ try {
     // echo $_SESSION['kode_transaksi_header'];
     }
 
+    // Ubah kuatitas barang
     if(isset($_GET['updateQty']) AND isset($_GET['bc'])){
         $kode_kasir = $_GET['updateQty'];
         $bcode = $_GET['bc'];
@@ -52,15 +51,15 @@ try {
         $sql = "UPDATE transaksi_kasir_detail SET jml_barang= " . $jml . ", harga_sub_total=" . ($harga_satuan * $jml) . " WHERE id_transaksi_header = '" . $kode_kasir . "' AND barcode_barang='" . $bcode ."'";
         $q = $db->prepare($sql);
         $q->execute();
-        die();
     }
 
+    // Hapus barang
     if(isset($_POST['hapus_item'])){
         $id_transaksi_kasir = $_POST['remove'];
         $barang = $_POST['item'];
         $sql = "DELETE FROM transaksi_kasir_detail WHERE id_transaksi_header = '" . $id_transaksi_kasir 
             . "' AND barcode_barang = '" . $barang . "'";
-            echo $sql;
+            // echo $sql;
         $q = $db->prepare($sql);
         $q->execute();
     }
@@ -76,7 +75,16 @@ try {
             $data = $load_data->fetch();
             $kode_terakhir = (int) $terakhir['id_transaksi_header'];
         }else{ // session masih ada tapi belum ada transaksi
+            $delete_data = $db->prepare("DELETE FROM transaksi_kasir WHERE id_transaksi_header = " . $_SESSION['kode_transaksi_header']);
+            $delete_data->execute();
             unset($_SESSION['kode_transaksi_header']);
+            $id_transaksi_header = date(Ymd)."0001";
+            $q = $db->prepare("INSERT INTO transaksi_kasir (id_transaksi_header, id_petugas, tgl_transaksi, harga_total) 
+                VALUES (:id_transaksi_header, :id_karyawan, :tgl, :total)");
+            $q->execute(array(':id_transaksi_header'=>$id_transaksi_header,':id_karyawan'=>$nik, ':tgl'=>$hari,':total'=>0));
+            $kode_terakhir = $id_transaksi_header;
+        
+            $_SESSION['kode_transaksi_header'] = $kode_terakhir;
         }
     }else{
         // Kalau belum, buat baru
@@ -130,6 +138,13 @@ try {
         var input = document.getElementById("barcode").focus();
 
     }
+    function cekKomponen(){
+        if (document.body.contains(document.getElementById('daftar_belanja'))) {
+            $("#modalBayar").modal("show");
+        }else{
+            alert("Belum ada barang di daftar belanja");
+        }
+    }
     $(function() {  
         $( "#barcode" ).autocomplete({
             source: "../php/modular/autocomplete.php?src=barcode_barang",  
@@ -177,7 +192,7 @@ try {
         <div class="col-sm-6">
             <ul class="list-page-breadcrumb">
                 <li><a href="#">Sales <i class="zmdi zmdi-chevron-right"></i></a></li>
-                <li class="active-page"> Session</li>
+                <li class="active-page"> <?php echo $_SESSION['kode_transaksi_header'] ?></li>
             </ul>
         </div>
     </div>
@@ -232,7 +247,7 @@ try {
                 for($i=0; $data = $load_data->fetch(); $i++){
                     echo "<div class='col-sm-12' id='baris'>"  
                     . "<div class='col-sm-1'><button class='btn btn-danger' name='hapus_item' type='submit'><i class='zmdi zmdi-close'></i></button>" . "<input type='hidden' name='remove' value='" . $_SESSION['kode_transaksi_header'] . "'/><input type='hidden' name='item' value='" . $data['barcode_barang'] . "'/></div>" 
-                    . "<div class='col-sm-1 p-tb-9'>" . ($i+1) . "</div>" 
+                    . "<div class='col-sm-1 p-tb-9' id='daftar_belanja'>" . ($i+1) . "</div>" 
                     . "<div class='col-sm-3 p-tb-9'>" . $data['nama_barang'] . '</div>' 
                     . "<div class='col-sm-1'><input class='form-control' style='width:60px' type='number' id='qty_" .$data['barcode_barang'] . "' value='" . $data['jml_barang'] . "' onblur='updateQty(" . $_SESSION['kode_transaksi_header'] . "," . $data['barcode_barang'] . " )' min='1'></div>"
                     . "<div class='col-sm-3'><input class='form-control' type='text' id='hargasatuan_" .$data['barcode_barang'] . "' value='" . number_format(($data['harga_jual']),2,',','.') . "' readonly=''></div>" 
@@ -257,11 +272,50 @@ try {
                             <div id="response"></div>
                             <!-- end response from server -->
                             <!-- end /.content -->
-                            <form action="index.php" method="post">
                             <div class="form-footer">
-                                <button type="submit" name="bayar" class="btn btn-success primary-btn" style="width:30%; height:50px">Pay Now</button>
+                                <button class="btn btn-success primary-btn col-md-3" onclick="cekKomponen()">Bayar</button>
+
+                                <!-- POP UP PEMBAYARAN -->
+                                <div class="modal fade" id="modalBayar" role="dialog">
+                                    <div class="modal-dialog modal-lg">
+                                    <!-- Modal content-->
+                                        <form action="index.php" method="post" class="j-forms" enctype="multipart/form-data">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                <h4 class="modal-title">Pembayaran</h4>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="row">
+                                                    <div class=" col-md-12 unit">
+                                                        <div class="input">
+                                                            <label class="col-md-4 control-label">Jumlah Bayar</label>
+                                                            <div class="col-md-8">
+                                                                <input type="text" class="form-control money-mask"/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class=" col-md-12 unit">
+                                                        <div class="input">
+                                                            <label class="col-md-4 control-label">Total Harga Belanja</label>
+                                                            <div class="col-md-8">
+                                                                <input type="text" id="harga_total_tagihan" class="form-control money-mask"/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-default" data-dismiss="modal">Batal</button>
+                                                <button type="submit" class="btn btn-success" name="bayar">Bayar</button>
+                                            </div>
+                                        </div>
+                                        </form>
+                                    </div>
+                                </div>
                             </div>
-                            </form>
                             <!-- end /.footer -->
                             <!-- <button class="btn btn-danger" onclick="printData()">TEST Data</button> -->
                             <div id="cumateksbung"></div>
@@ -325,5 +379,6 @@ try {
 <script src="../js/lib/theme-switcher.js"></script>
 <script src="../js/apps.js"></script>
 <script src="../js/custom.js"></script>
+<script src="../js/lib/jquery.mask.js"></script>
 </body>
 </html>

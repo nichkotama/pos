@@ -31,7 +31,7 @@ function cek_terakhir(kode_awal){
         <div class="user-profile-container">
             <div class="user-profile clearfix">
                 <div class="admin-user-thumb">
-                    <img src= "<?php echo $url_web . "images/karyawan/" . $hasil['foto'];?>" alt='admin'>" ?>
+                    <img src= "<?php echo $hasil['foto'];?>" alt='admin'>" ?>
                 </div>
                 <div class="admin-user-info">
                     <ul>

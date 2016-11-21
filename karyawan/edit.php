@@ -74,7 +74,7 @@ window.onload = function() {
         <div class="col-md-12">
             <div class="widget-container">
                 <div class="widget-content">
-                    <form action="edit_proses.php" class="j-forms" method="post" id="order-forms-quantity" novalidate>
+                    <form action="edit_proses.php" class="j-forms" method="post" id="order-forms-quantity" enctype="multipart/form-data" novalidate>
                         <div class="form-group">    
                             <div class="unit">
                                 <div class="input">
@@ -141,7 +141,7 @@ window.onload = function() {
                                     <label class="icon-left" for="telp">
                                         <i class="fa fa-money"></i>
                                     </label>
-                                    <input class="form-control login-frm-input"  type="telp" id="telp" name="telp" placeholder="Masukkan Nomor Telepon Karyawan" value="<?php echo $row['telp_karyawan'];?>">
+                                    <input class="form-control login-frm-input phone-mask"  type="telp" id="telp" name="telp" placeholder="Masukkan Nomor Telepon Karyawan" value="<?php echo $row['telp_karyawan'];?>">
                                 </div>
                             </div>
                             <div class="unit">
@@ -154,8 +154,8 @@ window.onload = function() {
                             </div>
                             <div class="unit">
                                 <div class="input">
-                                    <img src="<?php echo $row['foto'];?>">
-									<input type="file" class="filestyle bootstrap-file" data-buttonbefore="true" name="foto">
+                                    <img  style="max-height:128px" src="<?php echo $row['foto'];?>">
+									<input type="file" name="foto2" class="filestyle bootstrap-file" data-buttonbefore="true">
                                 </div>
                             </div>
                             <div class="unit">
@@ -629,6 +629,7 @@ window.onload = function() {
 <script src="../js/lib/jquery.maskedinput.js"></script>
 <script src="../js/lib/jquery.validate.js"></script>
 <script src="../js/lib/jquery.form.js"></script>
+<script src="../js/lib/jquery.mask.js"></script>
 <!--Select2-->
 <script src="../js/lib/select2.full.js"></script>
 <script src="../js/lib/j-forms.js"></script>

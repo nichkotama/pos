@@ -21,7 +21,7 @@
                 <li><span class="left-toggle-switch"><i class="zmdi zmdi-menu"></i></span></li>
                 <li>
                     <div class="logo">
-                        <a href="<?php echo $url_web;?>karyawan/karyawan_profile.php?method=karyawan&key="<?php echo $row['id_karyawan']?>"" title="Home Page"><img src="<?php echo $url_web ?>images/logo.png" alt="logo" style="max-height:60px; padding-left:60%;"></a>
+                        <a href="<?php echo $url_web;?>" title="Home Page"><img src="<?php echo $url_web ?>images/logo.png" alt="logo" style="max-height:60px; padding-left:60%;"></a>
                     </div>
                 </li>
             </ul>

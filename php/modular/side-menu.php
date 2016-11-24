@@ -82,9 +82,9 @@ function cek_terakhir(kode_awal){
             <li>
                 <a href="#"><i class="zmdi zmdi-view-dashboard"></i><span class="list-label">Pemesanan Barang</span></a>
                 <ul>
-                    <li><a href="<?php echo $url_web . 'purchase/list_pesan.php'?>">List Pemesanan Barang</a></li>
-                    <li><a href="<?php echo $url_web . 'purchase/list_po.php'?>">List Purchase Order</a></li>
-                    <li><a href="<?php echo $url_web . 'purchase/barang_masuk.php'?>">List Barang Masuk</a></li>
+                    <li><a href="<?php echo $url_web . 'purchase/list_pesan.php'?>">Pemesanan Barang</a></li>
+                    <li><a href="<?php echo $url_web . 'purchase/list_po.php'?>">Purchase Order</a></li>
+                    <li><a href="<?php echo $url_web . 'purchase/barang_masuk.php'?>">Barang Masuk</a></li>
                 </ul>
             </li>
             <?php } ?>

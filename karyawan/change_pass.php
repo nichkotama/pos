@@ -114,7 +114,7 @@ function cek_terakhir(kode_awal){
 											<label class="icon-left" for="password">
 												<i class="zmdi zmdi-key"></i>
 											</label>
-											<input class="form-control login-frm-input"  type="password" id="password" name="konf_pass" placeholder="Masukkan Konfirmasi Password" required="true">
+											<input class="form-control login-frm-input"  type="password" id="password" name="konf_pass" placeholder="Masukkan Konfirmasi Password Baru" required="true">
 										</div>
 									</div>
 								</div>

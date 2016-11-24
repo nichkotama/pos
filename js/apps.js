@@ -470,7 +470,7 @@ jQuery(document).ready(function ($) {
         });
         $('.money-mask').mask('000.000.000.000.000', {
             reverse: true,
-            placeholder: "Masukkan jumlah pembayaran"
+            placeholder: "Masukkan Jumlah Uang"
         });
         $('.money2-mask').mask("#.##0,00", {
             reverse: true,
@@ -1445,7 +1445,6 @@ jQuery(document).ready(function ($) {
     if ($.fn.dataTable) {
         $('.data-tbl').DataTable({
             responsive: true,
-            "columnDefs": [{"targets": [2, 3, 4], "orderable": false}],
             "oLanguage": {
                 "sLengthMenu": '<select class="tbl-data-select">' +
                 '<option value="10">10</option>' +
@@ -1454,7 +1453,7 @@ jQuery(document).ready(function ($) {
                 '<option value="40">40</option>' +
                 '<option value="50">50</option>' +
                 '<option value="-1">All</option>' +
-                '</select>' + '<span class="r-label">Entries</span>'
+                '</select>' + '<span class="r-label">Data Per Halaman</span>'
             },
             "dom": '<"row" <"col-md-6"l><"col-md-6"f>><"row" <"col-md-12"<"td-content"rt>>><"row" <"col-md-6"i><"col-md-6"p>>'
         });

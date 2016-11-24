@@ -71,7 +71,16 @@
 	width:90%;
 	margin:2% auto;
 }
-
+ul.ui-autocomplete {
+    z-index: 1100;
+}
+.ui-state-hover, .ui-widget-content .ui-state-hover, .ui-widget-header .ui-state-hover, .ui-state-focus, .ui-widget-content .ui-state-focus, .ui-widget-header .ui-state-focus {
+    background: #17bab8;
+    border: none;
+    color:#fff;
+    border-radius:0;
+    font-weight: normal;
+}
 input:-webkit-autofill {
     -webkit-box-shadow: 0 0 0 100px #17BAB8 inset;
     -moz-box-shadow: 0 0 0 100px #17BAB8 inset;

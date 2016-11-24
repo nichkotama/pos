@@ -21,7 +21,7 @@ require_once('../php/modular/otentifikasi.php');
 				$sql_update = "UPDATE karyawan SET password = '$encrypted_new_pass' WHERE id_karyawan = '$user'";
 				mysqli_query($koneksi, $sql_update);
 				echo "<script type='text/javascript'>alert('Change Password Success')</script>";
-				echo "<script type='text/javascript'>window.location = 'change_pass.php'</script>";
+				echo "<script type='text/javascript'>window.location = '" . $url_web . "'</script>";
 			}
 		}else{
 			echo "<script type='text/javascript'>alert('Password Lama yang Anda masukkan salah')</script>";

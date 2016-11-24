@@ -9,15 +9,14 @@ if(isset($_POST['submit'])){
         $barcode = $_POST['barcode'];
         $barcode_lama = $_POST['barcode_lama'];
         $nama = $_POST['nama'];
-        $hbeli = $_POST['harga_beli'];
-        $hjual = $_POST['harga_jual'];
-        $aktif = ($_POST['status_aktif'] == 'on' ? 1:0);
+        $hbeli = $_POST['hargabeli'];
+        $hjual = $_POST['hargajual'];
         // query
         $sql = "UPDATE barang 
-                SET nama_barang=?, harga_beli=?, harga_jual=?, barcode_barang=?, status_aktif=?
+                SET nama_barang=?, harga_beli=?, harga_jual=?, barcode_barang=?
                 WHERE barcode_barang=?";
         $q = $db->prepare($sql);
-        $q->execute(array($nama, $hbeli, $hjual, $barcode, $aktif, $barcode_lama));
+        $q->execute(array($nama, $hbeli, $hjual, $barcode, $barcode_lama));
         header("location: index.php");
     }catch(Exception $e){
         if($mode_debug = true) echo $e->getMessage();
@@ -131,15 +130,6 @@ window.onload = function() {
                                         <i class="fa fa-money"></i>
                                     </label>
                                     <input class="form-control login-frm-input"  type="text" id="hargajual" name="hargajual" placeholder="Masukkan Harga Jual" value="<?php echo $row['harga_jual'];?>">
-                                </div>
-                            </div>
-                            <div class="unit">
-                                <div class="input">
-                                    <label class="label">Aktif</label>
-                                    <label class="radio-toggle">
-                                        <input type="checkbox" name="status_aktif" <?php if ($row['status_aktif'] == 1){?> checked="checked" <?php } ?> >
-                                        <i></i>
-                                    </label>
                                 </div>
                             </div>
                             <div class="unit">

@@ -3,23 +3,67 @@ require_once('../php/modular/koneksi.php');
 require_once('../php/modular/otentifikasi.php');
 
 // Kalo disubmit (edit) maka menjalankan script dibawah ini
-if(isset($_POST['submit'])){
+function get_string_between($string, $start, $end){
+    $string = ' ' . $string;
+    $ini = strpos($string, $start);
+    if ($ini == 0) return '';
+    $ini += strlen($start);
+    $len = strpos($string, $end, $ini) - $ini;
+    return substr($string, $ini, $len);
+}
+if(isset($_POST['update_po'])){
     try{
-        // new data
-        $barcode = $_POST['barcode'];
-        $barcode_lama = $_POST['barcode_lama'];
-        $nama = $_POST['nama'];
-        $hbeli = $_POST['harga_beli'];
-        $hjual = $_POST['harga_jual'];
-        $aktif = ($_POST['status_aktif'] == 'on' ? 1:0);
-        // query
-        $sql = "UPDATE barang 
-                SET nama_barang=?, harga_beli=?, harga_jual=?, barcode_barang=?, status_aktif=?
-                WHERE barcode_barang=?";
-        $q = $db->prepare($sql);
-        $q->execute(array($nama, $hbeli, $hjual, $barcode, $aktif, $barcode_lama));
+        $no_po = $_POST['nomor_po'];
+        $nama_supplier = $_POST['nama_supplier'];
+        $id_supplier = $_POST['id_supplier'];
+
+        $nama_item1 = $_POST['barang_1'];
+        $barcode_item1 = get_string_between($nama_item1, '(Barcode:', ')');
+        $kuantitas1 = $_POST['qty_1'];
+        $subtotal1 = $_POST['subtotalbeli_1'];
+
+        $nama_item2 = (isset($_POST['barang_2']) ? $_POST['barang_2'] : '');
+        $barcode_item2 = get_string_between($nama_item2, '(Barcode:', ')');
+        $kuantitas2 = (isset($_POST['qty_2']) ? $_POST['qty_2'] : 0);
+        $subtotal2 = (isset($_POST['subtotalbeli_2']) ? $_POST['subtotalbeli_2'] : 0);
+
+        $nama_item3 = (isset($_POST['barang_3']) ? $_POST['barang_3'] : '');
+        $barcode_item3 = get_string_between($nama_item3, '(Barcode:', ')');
+        $kuantitas3 = (isset($_POST['qty_3']) ? $_POST['qty_3'] : 0);
+        $subtotal3 = (isset($_POST['subtotalbeli_3']) ? $_POST['subtotalbeli_3'] : 0);
+
+        $nama_item4 = (isset($_POST['barang_4']) ? $_POST['barang_4'] : '');
+        $barcode_item4 = get_string_between($nama_item4, '(Barcode:', ')');
+        $kuantitas4 = (isset($_POST['qty_4']) ? $_POST['qty_4'] : 0);
+        $subtotal4 = (isset($_POST['subtotalbeli_4']) ? $_POST['subtotalbeli_4'] : 0);
+
+        $nama_item5 = (isset($_POST['barang_5']) ? $_POST['barang_5'] : '');
+        $barcode_item5 = get_string_between($nama_item5, '(Barcode:', ')');
+        $kuantitas5 = (isset($_POST['qty_5']) ? $_POST['qty_5'] : 0);
+        $subtotal5 = (isset($_POST['subtotalbeli_5']) ? $_POST['subtotalbeli_5'] : 0);
+
+        for($i=1; $i <= 5; $i++) {
+            ${'subtotal' . $i} = str_replace(".","",${'subtotal' . $i});
+        }
+        $total_beli = $subtotal1 + $subtotal2 + $subtotal3 + $subtotal4 + $subtotal5;
+        echo $no_po.$id_supplier.date('Y-m-d').$total_beli; die();
+        
+        // SET PEMBELIAN HEADER
+        $set_kepala = $db->prepare("INSERT INTO transaksi_pembelian (id_pembelian, id_supplier, tgl_po, total_pembelian)
+        VALUES(?,?,?,?)");
+        $set_kepala->execute(array($no_po,$id_supplier,date('Y-m-d'),$total_beli));
+        // SET PEMBELIAN DETAIL
+        for($i=1; $i<=5; $i++){
+            if(${'nama_item'.$i} != ''){
+                $q = "INSERT INTO transaksi_pembelian_detail (id_pembelian, barcode_barang, jml_beli, harga_sub_total)
+                        VALUES(?,?,?,?)";
+                $set_detail = $db->prepare($q);
+                $set_detail->execute(array($no_po,${'barcode_item'.$i},${'kuantitas'.$i},${'subtotal'.$i}));
+            }
+        }
         header("location: index.php");
     }catch(Exception $e){
+        if($mode_debug = true) echo $e->getMessage();
         echo "<div class='col-md-12'>
                 <div class='j-forms'>
                     <div class='form-content'>
@@ -35,12 +79,14 @@ if(isset($_POST['submit'])){
 }
 
 // Pas load data
-if(isset($_GET['key']) AND $_GET['method'] == 'barcode'){
-    $barcode=$_GET['key'];
-    $result = $db->prepare("SELECT * FROM barang WHERE barcode_barang = :bcode");
-    $result->bindParam(':bcode', $barcode);
+if(isset($_GET['key']) AND $_GET['method'] == 'no_po'){
+    $no_po = urldecode($_GET['key']);
+    $result = $db->prepare("SELECT a.*, b.* FROM transaksi_pembelian a JOIN supplier b ON a.id_supplier = b.id_supplier WHERE a.id_pembelian = :no_po");
+    $result->bindParam(':no_po', $no_po);
     $result->execute();
-    for($i=0; $row = $result->fetch(); $i++){
+    $row = $result->fetch();
+    // for($i=0; $row = $result->fetch(); $i++){
+}
 ?>
 <!DOCTYPE html>
 <html>
@@ -48,7 +94,7 @@ if(isset($_GET['key']) AND $_GET['method'] == 'barcode'){
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
-    <title><?php echo $judul;?> - Produk</title>
+    <title><?php echo $judul;?> - Edit PO</title>
     <link type="text/css" rel="stylesheet" href="../css/font-awesome.css">
     <link type="text/css" rel="stylesheet" href="../css/material-design-iconic-font.css">
     <link type="text/css" rel="stylesheet" href="../css/bootstrap.css">
@@ -62,19 +108,121 @@ if(isset($_GET['key']) AND $_GET['method'] == 'barcode'){
     <link type="text/css" rel="stylesheet" href="../css/common.css">
     <link type="text/css" rel="stylesheet" href="../css/responsive.css">
     <link type="text/css" rel="stylesheet" href="../css/custom.css">
+    <script src="../js/jquery.js"></script>
+    <script src="../js/jquery-ui.js"></script>
 
 <script>
 window.onload = function() {
-        var SetFokus = $('#nama');
-        SetFokus.val(SetFokus.val());
-        var strLength= SetFokus.val().length;
-        SetFokus.focus();
-        SetFokus[0].setSelectionRange(strLength, strLength);
+    var SetFokus = $('#barang_1');
+    SetFokus.val(SetFokus.val());
+    var strLength= SetFokus.val().length;
+    SetFokus.focus();
+    SetFokus[0].setSelectionRange(strLength, strLength);
+    document.getElementById("barang_1").disabled = false;
 }
 </script>
+
 </head>
 
 <body class="overlay-leftbar">
+<script type="text/javascript">
+var id_supplier_select = '';
+function fokus_teks() {
+    document.getElementById("supplier").focus();
+}
+
+$(function() {  
+    $( "#supplier" ).autocomplete({
+        source: "../php/modular/autocomplete.php?src=supplier",  
+        minLength:2, 
+        autoFocus:true,
+        select: function (event, ui) {
+            document.getElementById("id_supplier").value = (ui.item.id);
+            id_supplier_select = (ui.item.id);
+        }
+    });
+    $( ".barcode" ).autocomplete({
+        source: "../php/modular/autocomplete.php?src=nama_barang&supplier=SUP-001",  
+        minLength:2, 
+        autoFocus:true,
+        focus: function (event, ui) {
+            $(this).val(ui.item.value);
+        },
+        select: function (event, ui) {
+            var baris_ke = this.id;
+            baris_ke = baris_ke.split('_')[1];
+            var hbeli = (ui.item.hbeli);
+            document.getElementById("hargabeli_"+baris_ke).value = toRp(hbeli);
+            document.getElementById("subtotalbeli_"+baris_ke).value = toRp(hbeli);
+            get_totals();
+        }
+    });
+    for(var loop=2;loop<=5;loop++){
+        document.getElementById("barang_"+loop).disabled = true;
+        document.getElementById("qty_"+loop).disabled = true;
+        document.getElementById("hargabeli_"+loop).disabled = true;
+    }
+    document.getElementById("qty_1").value = 1;
+    document.getElementById("barang_1").required = true;
+});
+
+function enable_next(id_next){
+    if(document.getElementById("barang_"+id_next).value != ""){
+        document.getElementById("barang_"+(id_next+1)).disabled = false;
+        document.getElementById("qty_"+(id_next+1)).disabled = false;
+        document.getElementById("qty_"+(id_next+1)).value = 1;
+        document.getElementById("hargabeli_"+(id_next+1)).disabled = false;
+    }else{
+        document.getElementById("barang_"+(id_next+1)).disabled = true;
+        document.getElementById("qty_"+(id_next+1)).disabled = true;
+        document.getElementById("qty_"+(id_next+1)).value = "";
+        document.getElementById("hargabeli_"+(id_next+1)).disabled = true;
+        document.getElementById("hargabeli_"+id_next).value = "";
+        get_totals();
+    }
+}
+
+function clear_content(id_num){
+    document.getElementById("barang_"+id_num).value = "";
+    document.getElementById("qty_"+id_num).value =  1;
+    document.getElementById("hargabeli_"+id_num).value =  "";
+    enable_next(id_num);
+}
+
+function get_totals(){
+    var subtotal_hbeli = 0;
+    if(document.getElementById("barang_1").value != "") {
+        var hb1 = parseFloat(document.getElementById("hargabeli_1").value.replace(".", ""));
+        subtotal_hbeli += hb1;
+    }
+    if(document.getElementById("barang_2").value != "") {
+        var hb2 = parseFloat(document.getElementById("hargabeli_2").value.replace(".", ""));
+        subtotal_hbeli += hb2;
+    }
+    if(document.getElementById("barang_3").value != "") {
+        var hb3 = parseFloat(document.getElementById("hargabeli_3").value.replace(".", ""));
+        subtotal_hbeli += hb3;
+    }
+    if(document.getElementById("barang_4").value != "") {
+        var hb4 = parseFloat(document.getElementById("hargabeli_4").value.replace(".", ""));
+        subtotal_hbeli += hb4;
+    }
+    if(document.getElementById("barang_5").value != "") {
+        var hb5 = parseFloat(document.getElementById("hargabeli_5").value.replace(".", ""));
+        subtotal_hbeli += hb5;
+    }
+    // alert(hb1);
+    // subtotal_hbeli = hb1 + hb2 + hb3 + hb4 + hb5;
+    document.getElementById("total_beli").value = toRp(subtotal_hbeli);
+}
+
+function set_hapus(url_set){
+    var kode_po = decodeURIComponent(url_set);
+    document.getElementById("yang_mau_dihapus").innerHTML = kode_po;
+    document.getElementById("hdn_nomor_po").value = kode_po;
+}
+
+</script>
 <?php include('../php/modular/top-menu.php') ?>
 <?php include('../php/modular/side-menu.php') ?>
 <!--Page Container Start Here-->
@@ -83,11 +231,12 @@ window.onload = function() {
 <div class="page-header filled light single-line">
     <div class="row widget-header block-header">
         <div class="col-sm-6">
-            <h2>Edit Produk</h2>
+            <h2>Edit Purchase Order</h2>
         </div>
         <div class="col-sm-6">
             <ul class="list-page-breadcrumb">
-                <li><a href="#">Produk <i class="zmdi zmdi-chevron-right"></i></a></li>
+                <li>Pembelian <i class="zmdi zmdi-chevron-right"></i></li>
+                <li>Purchase Order <i class="zmdi zmdi-chevron-right"></i></li>
                 <li class="active-page"> Sunting</li>
             </ul>
         </div>
@@ -97,55 +246,64 @@ window.onload = function() {
         <div class="col-md-12">
             <div class="widget-container">
                 <div class="widget-content">
-                    <form class="j-forms" method="post" id="order-forms-quantity" novalidate>
+                    <form action="edit_po.php" class="j-forms" method="post" id="order-forms-quantity" novalidate>
                         <div class="form-group">
                             <div class="unit">
                                 <div class="input">
-                                    <label class="icon-left" for="nama_barang">
+                                    <label class="icon-left" for="nomor_po">
                                         <i class="fa fa-book"></i>
                                     </label>
-                                    <input class="form-control login-frm-input"  type="text" id="nama" name="nama" placeholder="Masukkan Nama Barang" required="true" value="<?php echo $row['nama_barang']; ?>">
+                                    <input class="form-control login-frm-input"  type="text" id="nomor_po" name="nomor_po" required="true" value="<?php if(isset($row['id_pembelian'])) echo $row['id_pembelian']; ?>" readonly>
                                 </div>
                             </div>
                             <div class="unit">
                                 <div class="input">
-                                    <label class="icon-left" for="barcode">
+                                    <label class="icon-left" for="supplier">
                                         <i class="fa fa-barcode"></i>
                                     </label>
-                                    <input class="form-control login-frm-input"  type="text" id="barcode" name="barcode" placeholder="Masukkan Barcode" required="true" value="<?php echo $row['barcode_barang'];?>">
-                                    <input type="hidden" name="barcode_lama" value="<?php echo $row['barcode_barang'];?>">
+                                    <input class="form-control login-frm-input"  type="text" id="supplier" name="supplier" placeholder="Masukkan Nama Supplier" required="true" value="<?php if(isset($row['nama_supplier']))  echo $row['nama_supplier'];?>" readonly>
+                                    <input type="hidden" name="hdn_id_supplier" value="<?php if(isset($row['id_supplier']))  echo $row['id_supplier'];?>">
                                 </div>
                             </div>
                             <div class="unit">
                                 <div class="input">
-                                    <label class="icon-left" for="hargabeli">
-                                        <i class="fa fa-money"></i>
+                                    <label class="icon-left" for="supplier">
+                                        <i class="fa fa-barcode"></i>
                                     </label>
-                                    <input class="form-control login-frm-input"  type="text" id="hargabeli" name="hargabeli" placeholder="Masukkan Harga Beli" value="<?php echo $row['harga_beli'];?>">
+                                    <input type="text" class="form-control login-frm-input input-date-picker" value="<?php if(isset($row['tgl_po'])) echo $row['tgl_po'];?>">
                                 </div>
                             </div>
-                            <div class="unit">
-                                <div class="input">
-                                    <label class="icon-left" for="hargajual">
-                                        <i class="fa fa-money"></i>
-                                    </label>
-                                    <input class="form-control login-frm-input"  type="text" id="hargajual" name="hargajual" placeholder="Masukkan Harga Jual" value="<?php echo $row['harga_jual'];?>">
+                                <div class="row">
+                                    <div class="col-sm-12" id="myTable">
+                                        <div class="col-sm-1 heading-tabel">Clear</div>
+                                        <div class="col-sm-1 heading-tabel">#</div>
+                                        <div class="col-sm-3 heading-tabel">Item</div>
+                                        <div class="col-sm-1 heading-tabel">Qty</div>
+                                        <div class="col-sm-3 heading-tabel">Harga Satuan (Rp)</div>
+                                        <div class="col-sm-3 heading-tabel">Sub-Total (Rp)</div>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="unit">
-                                <div class="input">
-                                    <label class="label">Aktif</label>
-                                    <label class="radio-toggle">
-                                        <input type="checkbox" name="status_aktif" <?php if ($row['status_aktif'] == 1){?> checked="checked" <?php } ?> >
-                                        <i></i>
-                                    </label>
+                                <?php for($i=1;$i<=5;$i++) { ?>
+                                <div class="row">
+                                    <div class="col-md-12" id="baris">
+                                        <div class="col-md-1 p-tb-9"><button type="button" class="btn btn-danger" name="hapus_item" onfocus="this.blur();" onclick="clear_content(<?php echo $i?>)"><i class="zmdi zmdi-close"></i></button></div>
+                                        <div class="col-md-1 p-tb-9"><?php echo ($i) ?></div> <!-- nomor_item_po -->
+                                        <div class="col-md-3 p-tb-9"><input type="text" class="barcode form-control" placeholder="Masukkan nama barang" id="barang_<?php echo ($i)?>" onkeyup="enable_next(<?php echo $i;?>)" name="barang_<?php echo ($i)?>"></div>
+                                        <div class="col-md-1 p-tb-9"><input type="number" class="form-control" id="qty_<?php echo ($i)?>" name="qty_<?php echo ($i)?>" min="1"></div>
+                                        <div class="col-md-3 p-tb-9"><input type="text" class="form-control money-mask" id="hargabeli_<?php echo ($i)?>" name="hargabeli_<?php echo ($i)?>" readonly  onfocus="this.blur();"></div>
+                                        <div class="col-md-3 p-tb-9"><input type="text" class="form-control money-mask" id="subtotalbeli_<?php echo ($i)?>" name="subtotalbeli_<?php echo ($i)?>" readonly  onfocus="this.blur();"></div>
+                                    </div>
                                 </div>
-                            </div>
+                                <?php } ?>
+                                <div class="row">
+                                    <div class="pull-right col-md-3 p-tb-9" style="margin-right:1%;">
+                                        <input type="text" class="form-control" id="total_beli" name="total_beli" placeholder="Total Belanja" readonly>
+                                    </div>
+                                </div>
                             <div class="unit">
                                 <div class="input">
-                                    <button type="submit" class="btn btn-success col-md-4" name="submit">Simpan</button>
-                                    <button type="button" class="btn btn-default col-md-4" onclick="window.location.href='<?php echo $url_web?>produk'">Batal</button>
-                                    <button type="button" class="btn btn-danger col-md-4" data-toggle="modal" data-target="#modalHapus" name="hapus">Hapus Permanen</button>
+                                    <button type="button" class="btn btn-default col-md-6" onclick="window.location.href='<?php echo $url_web?>purchase/list_po.php'">Batal</button>
+                                    <button type="submit" class="btn btn-success col-md-6" name="update_po">Update</button>
 
                                 </div>
                             </div>
@@ -184,406 +342,9 @@ window.onload = function() {
     </div>
 </div>
 <!-- End of KETIKA KLIK HAPUS -->
-<?php
-}}
-?>
 </section>
 <section class="main-container m-t-min-20"><?php include('../php/modular/footer.php') ?></section>
 <!--Page Container End Here-->
-<!--Rightbar Start Here-->
-<aside class="rightbar">
-<div class="rightbar-container">
-<div class="aside-chat-box">
-    <div class="coversation-toolbar">
-        <div class="chat-back">
-            <i class="zmdi zmdi-long-arrow-left"></i>
-        </div>
-        <div class="active-conversation">
-            <div class="chat-avatar">
-                <img src="../images/avatar/amarkdalen.jpg" alt="user">
-            </div>
-            <div class="chat-user-status">
-                <ul>
-                    <li>Feeling Blessed</li>
-                    <li>Amarkdalen</li>
-                </ul>
-            </div>
-        </div>
-        <div class="conversation-action">
-            <ul>
-                <li><i class="zmdi zmdi-phone-in-talk"></i></li>
-                <li class="dropdown">
-                    <a href="#" class="btn-more dropdown-toggle" data-toggle="dropdown"><i class="zmdi zmdi-more-vert"></i></a>
-                    <ul class="dropdown-menu">
-                        <li><a href="#"><i class="zmdi zmdi-attachment-alt"></i>Attach A File</a></li>
-                        <li><a href="#"><i class="zmdi zmdi-mic"></i>Voice</a></li>
-                        <li><a href="#"><i class="zmdi zmdi-block"></i>Block User</a></li>
-                    </ul>
-                </li>
-            </ul>
-        </div>
-    </div>
-    <div class="conversation-container">
-        <div class="conversation-row even">
-            <ul class="conversation-list">
-                <li>
-                    <p>
-                        Hi! this is mike how can I help you?
-                    </p>
-                </li>
-                <li>
-                    <p>
-                        Hello Sir!
-                    </p>
-                </li>
-            </ul>
-        </div>
-        <div class="conversation-row odd">
-            <ul class="conversation-list">
-                <li>
-                    <p>
-                        Hi! Mike I need a support my account is suspended but I don't know why?
-                    </p>
-                </li>
-            </ul>
-        </div>
-        <div class="conversation-row even">
-            <ul class="conversation-list">
-                <li>
-                    <p>
-                        Ok Sir! Let me check this issue please wait a min
-                    </p>
-                </li>
-            </ul>
-        </div>
-        <div class="conversation-row odd">
-            <ul class="conversation-list">
-                <li>
-                    <p>
-                        Ok sure :)
-                    </p>
-                </li>
-            </ul>
-        </div>
-    </div>
-    <div class="chat-text-input">
-        <input type="text" class="form-control">
-    </div>
-</div>
-<ul class="nav nav-tabs material-tabs rightbar-tab" role="tablist">
-    <li class="active"><a href="#chat" aria-controls="message" role="tab" data-toggle="tab">Chat</a></li>
-    <li><a href="#activities" aria-controls="notifications" role="tab" data-toggle="tab">Activities</a></li>
-</ul>
-<div class="tab-content">
-<div role="tabpanel" class="tab-pane active" id="chat">
-    <div class="chat-user-toolbar clearfix">
-        <div class="chat-user-search pull-left">
-            <span class="addon-icon"><i class="zmdi zmdi-search"></i></span>
-            <input type="text" class="form-control" placeholder="Search">
-        </div>
-        <div class="add-chat-list pull-right">
-            <i class="zmdi zmdi-accounts-add"></i>
-        </div>
-    </div>
-    <div class="chat-user-container">
-        <h3 class="clearfix"><span class="pull-left">Members</span><span class="pull-right online-counter">3 Online</span></h3>
-        <ul class="chat-user-list">
-            <li>
-                <div data-trigger="hover" title="Robertoortiz" data-content="<div class='chat-user-info'>
-                                        <div class='chat-user-avatar'>
-                                        <img src='../images/avatar/robertoortiz.jpg' alt='Avatar'>
-                                        </div>
-                                        <div class='chat-user-details'>
-                                        <ul>
-                                        <li>Status: <span>Online</span></li>
-                                        <li>Type: <span>Admin</span></li>
-                                        <li>Last Login: <span>3 hours Ago</span></li>
-                                        <li></li>
-                                        </ul>
-                                        </div>
-                                        </div>
-                                        " data-placement="left"><span class="chat-avatar"><img src="../images/avatar/robertoortiz.jpg" alt="Avatar"></span><span class="chat-u-info">Adellecharles<cite>New York</cite></span>
-                </div>
-                <span class="chat-u-status"><i class="fa fa-circle"></i></span>
-            </li>
-            <li class="chat-u-online">
-                <div data-trigger="hover" title="Kurafire" data-content="<div class='chat-user-info'>
-                                        <div class='chat-user-avatar'>
-                                        <img src='../images/avatar/kurafire.jpg' alt='Avatar'>
-                                        </div>
-                                        <div class='chat-user-details'>
-                                        <ul>
-                                        <li>Status: <span>Online</span></li>
-                                        <li>Type: <span>Moderator</span></li>
-                                        <li>Last Login: <span>3 hours Ago</span></li>
-                                        <li></li>
-                                        </ul>
-                                        </div>
-                                        </div>
-                                        " data-placement="left"><span class="chat-avatar"><img src="../images/avatar/kurafire.jpg" alt="Avatar"></span><span class="chat-u-info">Kurafire<cite>New York</cite></span>
-                </div>
-                <span class="chat-u-status"><i class="fa fa-circle"></i></span>
-            </li>
-            <li class="chat-u-away">
-                <div data-trigger="hover" title="Mikeluby" data-content="<div class='chat-user-info'>
-                                        <div class='chat-user-avatar'>
-                                        <img src='../images/avatar/mikeluby.jpg' alt='Avatar'>
-                                        </div>
-                                        <div class='chat-user-details'>
-                                        <ul>
-                                        <li>Status: <span>Online</span></li>
-                                        <li>Type: <span>Moderator</span></li>
-                                        <li>Last Login: <span>3 hours Ago</span></li>
-                                        <li></li>
-                                        </ul>
-                                        </div>
-                                        </div>
-                                        " data-placement="left">
-                    <span class="chat-avatar"><img src="../images/avatar/mikeluby.jpg" alt="Avatar"></span><span class="chat-u-info">Bobbyjkane<cite>London City</cite></span>
-                </div>
-                <span class="chat-u-status"><i class="fa fa-circle"></i></span>
-            </li>
-            <li class="chat-u-busy">
-                <div data-trigger="hover" title="Joostvanderree" data-content="<div class='chat-user-info'>
-                                        <div class='chat-user-avatar'>
-                                        <img src='../images/avatar/joostvanderree.jpg' alt='Avatar'>
-                                        </div>
-                                        <div class='chat-user-details'>
-                                        <ul>
-                                        <li>Status: <span>Online</span></li>
-                                        <li>Type: <span>Moderator</span></li>
-                                        <li>Last Login: <span>3 hours Ago</span></li>
-                                        <li></li>
-                                        </ul>
-                                        </div>
-                                        </div>
-                                        " data-placement="left">
-                    <span class="chat-avatar"><img src="../images/avatar/joostvanderree.jpg" alt="Avatar"></span><span class="chat-u-info">Joostvanderree<cite>New York</cite></span>
-                </div>
-                <span class="chat-u-status"><i class="fa fa-circle"></i></span>
-            </li>
-        </ul>
-        <h3 class="clearfix"><span class="pull-left">Guests</span><span class="pull-right online-counter">1 Online</span></h3>
-        <ul class="chat-user-list">
-            <li>
-                <div data-trigger="hover" title="Kevinthompson" data-content="<div class='chat-user-info'>
-                                        <div class='chat-user-avatar'>
-                                        <img src='../images/avatar/Kevinthompson.jpg' alt='Avatar'>
-                                        </div>
-                                        <div class='chat-user-details'>
-                                        <ul>
-                                        <li>Status: <span>Online</span></li>
-                                        <li>Type: <span>Moderator</span></li>
-                                        <li>Last Login: <span>3 hours Ago</span></li>
-                                        <li></li>
-                                        </ul>
-                                        </div>
-                                        </div>
-                                        " data-placement="left">
-                    <span class="chat-avatar"><img src="../images/avatar/kevinthompson.jpg" alt="Avatar"></span><span class="chat-u-info">Kevinthompson<cite>Scotland</cite></span>
-                </div>
-                <span class="chat-u-status"><i class="fa fa-circle"></i></span>
-            </li>
-            <li class="chat-u-online">
-                <div data-trigger="hover" title="Mds" data-content="<div class='chat-user-info'>
-                                        <div class='chat-user-avatar'>
-                                        <img src='../images/avatar/mds.jpg' alt='Avatar'>
-                                        </div>
-                                        <div class='chat-user-details'>
-                                        <ul>
-                                        <li>Status: <span>Online</span></li>
-                                        <li>Type: <span>Moderator</span></li>
-                                        <li>Last Login: <span>3 hours Ago</span></li>
-                                        <li></li>
-                                        </ul>
-                                        </div>
-                                        </div>
-                                        " data-placement="left">
-                    <span class="chat-avatar"><img src="../images/avatar/mds.jpg" alt="Avatar"></span><span class="chat-u-info">Mds<cite>South West, England</cite></span>
-                </div>
-                <span class="chat-u-status"><i class="fa fa-circle"></i></span>
-            </li>
-            <li>
-                <div data-trigger="hover" title="Mko" data-content="<div class='chat-user-info'>
-                                        <div class='chat-user-avatar'>
-                                        <img src='../images/avatar/mko.jpg' alt='Avatar'>
-                                        </div>
-                                        <div class='chat-user-details'>
-                                        <ul>
-                                        <li>Status: <span>Online</span></li>
-                                        <li>Type: <span>Moderator</span></li>
-                                        <li>Last Login: <span>3 hours Ago</span></li>
-                                        <li></li>
-                                        </ul>
-                                        </div>
-                                        </div>
-                                        " data-placement="left">
-                    <span class="chat-avatar"><img src="../images/avatar/mko.jpg" alt="Avatar"></span><span class="chat-u-info">Mko<cite>New York</cite></span>
-                </div>
-                <span class="chat-u-status"><i class="fa fa-circle"></i></span>
-            </li>
-            <li>
-                <div data-trigger="hover" title="Coreyweb" data-content="<div class='chat-user-info'>
-                                        <div class='chat-user-avatar'>
-                                        <img src='../images/avatar/coreyweb.jpg' alt='Avatar'>
-                                        </div>
-                                        <div class='chat-user-details'>
-                                        <ul>
-                                        <li>Status: <span>Online</span></li>
-                                        <li>Type: <span>Moderator</span></li>
-                                        <li>Last Login: <span>3 hours Ago</span></li>
-                                        <li></li>
-                                        </ul>
-                                        </div>
-                                        </div>
-                                        " data-placement="left">
-                    <span class="chat-avatar"><img src="../images/avatar/coreyweb.jpg" alt="Avatar"></span><span class="chat-u-info">Coreyweb<cite>Northern Ireland</cite></span>
-                </div>
-                <span class="chat-u-status"><i class="fa fa-circle"></i></span>
-            </li>
-            <li>
-                <div data-trigger="hover" title="Amarkdalen" data-content="<div class='chat-user-info'>
-                                        <div class='chat-user-avatar'>
-                                        <img src='../images/avatar/amarkdalen.jpg' alt='Avatar'>
-                                        </div>
-                                        <div class='chat-user-details'>
-                                        <ul>
-                                        <li>Status: <span>Online</span></li>
-                                        <li>Type: <span>Moderator</span></li>
-                                        <li>Last Login: <span>3 hours Ago</span></li>
-                                        <li></li>
-                                        </ul>
-                                        </div>
-                                        </div>
-                                        " data-placement="left">
-                    <span class="chat-avatar"><img src="../images/avatar/amarkdalen.jpg" alt="Avatar"></span><span class="chat-u-info">Oykun<cite>New York</cite></span>
-                </div>
-                <span class="chat-u-status"><i class="fa fa-circle"></i></span>
-            </li>
-        </ul>
-    </div>
-</div>
-<div role="tabpanel" class="tab-pane" id="activities">
-    <div class="activities-timeline">
-        <h3 class="tab-pane-header">Recent Activities</h3>
-        <ul class="activities-list">
-            <li>
-                <div class="activities-badge">
-                    <span class="w_bg_amber"><i class="zmdi zmdi-ticket-star"></i></span>
-                </div>
-                <div class="activities-details">
-                    <h3 class="activities-header"><a href="#">Resolved Tickets #LTK7865</a></h3>
-                    <div class="activities-meta">
-                        <i class="fa fa-clock-o"></i> 30 min ago
-                    </div>
-                </div>
-            </li>
-            <li>
-                <div class="activities-badge">
-                    <span class="w_bg_cyan"><i class="zmdi zmdi-file-plus"></i></span>
-                </div>
-                <div class="activities-details">
-                    <h3 class="activities-header"><a href="#">Files Uploaded</a></h3>
-                    <div class="activities-meta">
-                        <i class="fa fa-clock-o"></i> 1 hour ago
-                    </div>
-                    <div class="activities-post">
-                        <ul class="new-file-lists">
-                            <li><a href="#"><i class="fa fa-file-text"></i> change-log.txt</a></li>
-                            <li><a href="#"><i class="fa fa-file-audio-o"></i> skype-conversation.mp3</a></li>
-                            <li><a href="#"><i class="fa fa-file-powerpoint-o"></i> presentation.ppt</a></li>
-                            <li><a href="#"><i class="fa fa-file-video-o"></i> howtouse.avi</a></li>
-                            <li><a href="#"><i class="fa fa-file-image-o"></i> screenshot.jpg</a></li>
-                            <li><a href="#"><i class="fa fa-file-word-o"></i> nda.doc</a></li>
-                            <li><a href="#"><i class="fa fa-file-pdf-o"></i> resume.pdf</a></li>
-                            <li><a href="#"><i class="fa fa-file-archive-o"></i> all-files.zip</a></li>
-                            <li><a href="#"><i class="fa fa-file-excel-o"></i> bill.xls</a></li>
-                            <li><a href="#">+10</a></li>
-                        </ul>
-                    </div>
-                </div>
-            </li>
-            <li>
-                <div class="activities-badge">
-                    <span class="w_bg_light_blue"><i class="zmdi zmdi-image"></i></span>
-                </div>
-                <div class="activities-details">
-                    <h3 class="activities-header"><a href="#">Images Uploaded</a></h3>
-                    <div class="activities-meta">
-                        <i class="fa fa-clock-o"></i> July 22 at 1:12pm
-                    </div>
-                    <div class="activities-post">
-                        <ul class="new-image-lists">
-                            <li><a href="#"><img src="../images/img-1-thumb.jpg" alt="image"></a></li>
-                            <li><a href="#"><img src="../images/img-2-thumb.jpg" alt="image"></a></li>
-                            <li><a href="#"><img src="../images/img-3-thumb.jpg" alt="image"></a></li>
-                            <li><a href="#" class="more-list"><i class="zmdi zmdi-more-horiz"></i></a></li>
-                        </ul>
-                    </div>
-                </div>
-            </li>
-            <li>
-                <div class="activities-badge">
-                    <span class="w_bg_green"><i class="zmdi zmdi-accounts-alt"></i></span>
-                </div>
-                <div class="activities-details">
-                    <h3 class="activities-header"><a href="#">Users Approved</a></h3>
-                    <div class="activities-meta">
-                        <i class="fa fa-clock-o"></i> July 22 at 1:12pm
-                    </div>
-                    <div class="activities-post">
-                        <ul class="new-user-lists">
-                            <li><a href="#"><img src="../images/avatar/oykun.jpg" alt="image"></a></li>
-                            <li><a href="#"><img src="../images/avatar/mds.jpg" alt="image"></a></li>
-                            <li><a href="#"><img src="../images/avatar/robertoortiz.jpg" alt="image"></a></li>
-                            <li><a href="#" class="more-list"><i class="zmdi zmdi-more-horiz"></i></a></li>
-                        </ul>
-                    </div>
-                </div>
-            </li>
-            <li>
-                <div class="activities-badge">
-                    <span class="w_bg_deep_purple"><i class="zmdi zmdi-file-text"></i></span>
-                </div>
-                <div class="activities-details">
-                    <h3 class="activities-header"><a href="#">Post New Article</a></h3>
-                    <div class="activities-meta">
-                        <i class="fa fa-clock-o"></i> July 22 at 1:12pm
-                    </div>
-                    <div class="activities-post">
-                        <ul class="new-post-lists">
-                            <li><a href="#">Man in the Verde Valley</a></li>
-                            <li><a href="#">Sinagua Pueblo Life</a></li>
-                            <li><a href="#">Montezuma Well</a></li>
-                            <li><a href="#">The Natural Scene</a></li>
-                            <li><a href="#">+6</a></li>
-                        </ul>
-                    </div>
-                </div>
-            </li>
-            <li>
-                <div class="activities-badge">
-                    <span class="w_bg_teal"><i class="zmdi zmdi-comments"></i></span>
-                </div>
-                <div class="activities-details">
-                    <h3 class="activities-header"><a href="#">Comments Replied</a></h3>
-                    <div class="activities-meta">
-                        <i class="fa fa-clock-o"></i> July 22 at 1:12pm
-                    </div>
-                    <div class="activities-post">
-                        <ul class="new-comments-lists">
-                            <li><a href="#">As long as you are reasonably careful about where you step and avoid putting ...</a></li>
-                            <li><a href="#">Montezuma Castle is 5 miles north of Camp Verde, 60 miles south...</a></li>
-                        </ul>
-                    </div>
-                </div>
-            </li>
-        </ul>
-    </div>
-</div>
-</div>
-</div>
-</aside>
 
 <script src="../js/lib/jquery.js"></script>
 <script src="../js/lib/jquery-migrate.js"></script>
@@ -615,6 +376,8 @@ window.onload = function() {
 <!--Select2-->
 <script src="../js/lib/select2.full.js"></script>
 <script src="../js/lib/j-forms.js"></script>
+<script src="../js/lib/bootstrap-datepicker.js"></script>
 <script src="../js/apps.js"></script>
+<script src="../js/custom.js"></script>
 </body>
 </html>

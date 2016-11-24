@@ -41,13 +41,24 @@ try {
 
     // Klik tombol bayar
     if(isset($_POST['bayar'])){
-        $terakhir = (int) $_SESSION['kode_transaksi_header'] + 1;
-        $sql = "INSERT INTO transaksi_kasir (id_transaksi_header, id_petugas, tgl_transaksi, harga_total) 
-            VALUES (:id_transaksi_header, :id_karyawan, :tgl, :total)";
-        $q = $db->prepare($sql);
-        $q->execute(array(':id_transaksi_header'=>$terakhir,':id_karyawan'=>$nik, ':tgl'=>$hari,':total'=>0));
-        $_SESSION['kode_transaksi_header'] = $terakhir;
-    // echo $_SESSION['kode_transaksi_header'];
+        $bayaran = (float) $_POST['jumlah_bayar'];
+        $tagihan = (float) $_POST['tagihan'];
+
+        if(($bayaran - $tagihan) > 0){
+            $update_total_belanja = $db->prepare("UPDATE transaksi_kasir SET harga_total = " 
+                . str_replace(".", "", $_POST['tagihan'])  . " WHERE id_transaksi_header = '" 
+                . $_SESSION['kode_transaksi_header'] . "'");
+            $update_total_belanja->execute();
+    
+            $terakhir = (int) $_SESSION['kode_transaksi_header'] + 1;
+            $sql = "INSERT INTO transaksi_kasir (id_transaksi_header, id_petugas, tgl_transaksi, harga_total) 
+                VALUES (:id_transaksi_header, :id_karyawan, :tgl, :total)";
+            $q = $db->prepare($sql);
+            $q->execute(array(':id_transaksi_header'=>$terakhir,':id_karyawan'=>$nik, ':tgl'=>$hari,':total'=>0));
+            $_SESSION['kode_transaksi_header'] = $terakhir;
+        }else{
+            echo "<script type='text/javascript'>alert('Jumlah pembayaran kurang');</script>";
+        }
     }
 
     // Ubah kuatitas barang
@@ -158,6 +169,12 @@ try {
             alert("Belum ada barang di daftar belanja");
         }
     }
+    function kembalian(){
+        var adaInputan = document.getElementById('jumlah_kembalian');
+        var bayar_senilai = parseFloat(document.getElementById('jumlah_bayar').value.replace(".", ""));
+        var tagihan_senilai = parseFloat(document.getElementById('harga_total_tagihan').value.replace(".", ""));
+        if(!isNaN(bayar_senilai - tagihan_senilai)) adaInputan.value = toRp(bayar_senilai - tagihan_senilai);
+    }
     $(function() {  
         $( "#barcode" ).autocomplete({
             source: "../php/modular/autocomplete.php?src=barcode_barang",  
@@ -191,6 +208,8 @@ try {
                 grandtotal += parseFloat(elements[i].value.replace(".", ""));
             }
             document.getElementById("field_totals").value = toRp(grandtotal);
+            document.getElementById("harga_total_tagihan").value = toRp(grandtotal);
+
         });
     }
 </script>
@@ -310,7 +329,7 @@ try {
                                                         <div class="input">
                                                             <label class="col-md-4 control-label">Jumlah Bayar</label>
                                                             <div class="col-md-8">
-                                                                <input type="text" class="form-control money-mask"/>
+                                                                <input type="text" id="jumlah_bayar" name="jumlah_bayar" class="form-control money-mask" onkeyup="kembalian()"/>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -320,7 +339,17 @@ try {
                                                         <div class="input">
                                                             <label class="col-md-4 control-label">Total Harga Belanja</label>
                                                             <div class="col-md-8">
-                                                                <input type="text" id="harga_total_tagihan" class="form-control money-mask"/>
+                                                                <input type="text" id="harga_total_tagihan" class="form-control money-mask" value="<?php echo number_format(($total_belanja),0,',','.')?>" name="tagihan" readonly/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class=" col-md-12 unit">
+                                                        <div class="input">
+                                                            <label class="col-md-4 control-label">Uang Kembalian Belanja</label>
+                                                            <div class="col-md-8">
+                                                                <input type="text" id="jumlah_kembalian" class="form-control money-mask" value="" readonly/>
                                                             </div>
                                                         </div>
                                                     </div>

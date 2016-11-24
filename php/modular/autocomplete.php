@@ -19,6 +19,23 @@
 				}
 				echo json_encode($row_set);
 				break;
+			case 'nama_barang':
+				$term = trim(strip_tags($_GET['term']));
+				$supplier = trim(strip_tags($_GET['supplier']));
+				$qstring = "SELECT barcode_barang, nama_barang, harga_beli 
+							FROM barang 
+							WHERE nama_barang LIKE '%".$term."%'
+							AND id_supplier = '$supplier'";
+				$result = mysql_query($qstring);
+				while ($row = mysql_fetch_array($result))
+				{
+				    $row['value']=htmlentities(stripslashes($row['nama_barang'])) . " (Barcode:" . $row['barcode_barang'] . ")";
+				    $row['id']=(int)$row['barcode_barang'];
+				    $row['hbeli']=(int)$row['harga_beli'];
+				    $row_set[] = $row;
+				}
+				echo json_encode($row_set);
+				break;
 			case 'supplier':
 				$term = trim(strip_tags($_GET['term']));
 				$qstring = "SELECT id_supplier, nama_supplier 
@@ -28,7 +45,7 @@
 				while ($row = mysql_fetch_array($result))
 				{
 				    $row['value']=htmlentities(stripslashes($row['nama_supplier']));
-				    $row['id']=(int)$row['id_supplier'];
+				    $row['id']=$row['id_supplier'];
 				    $row_set[] = $row;
 				}
 				echo json_encode($row_set);

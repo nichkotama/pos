@@ -67,15 +67,23 @@ try {
         $bcode = $_GET['bc'];
         $jml = $_GET['jumlah'];
 
-        $harga = $db->prepare("SELECT harga_jual FROM barang WHERE barcode_barang='" . $bcode . "'");
+        $harga = $db->prepare("SELECT jml_stok, harga_jual FROM barang WHERE barcode_barang='" . $bcode . "'");
         $harga->execute();
         $harga_get = $harga->fetch();
         $harga_satuan = (float) $harga_get['harga_jual'];
+        $jml_stok_awal = (int) $harga_get['jml_stok'];
+        $jml_stok_akhir = $jml_stok_awal-$jml;
 
         $sql = "UPDATE transaksi_kasir_detail SET jml_barang= " . $jml . ", harga_sub_total=" . ($harga_satuan * $jml) . " WHERE id_transaksi_header = '" . $kode_kasir . "' AND barcode_barang='" . $bcode ."'";
         $q = $db->prepare($sql);
         $q->execute();
         $belanja += ($harga_satuan * $jml);
+
+
+        $update_stok = $db->prepare("UPDATE barang 
+                        SET jml_stok = ?
+                        WHERE barcode_barang = ?");
+        $update_stok->execute(array($jml_stok_akhir, $bcode));  
     }
 
     // Hapus barang
@@ -89,7 +97,7 @@ try {
         $q->execute();
     }
 
-    $top = $db->prepare("SELECT * FROM transaksi_kasir WHERE id_transaksi_header LIKE '" . date(Ymd) . "%' ORDER BY id_transaksi_header DESC LIMIT 1");
+    $top = $db->prepare("SELECT * FROM transaksi_kasir WHERE id_transaksi_header LIKE '" . date('Ymd') . "%' ORDER BY id_transaksi_header DESC LIMIT 1");
     $top->execute();
     $terakhir = $top->fetch();
 
@@ -103,7 +111,7 @@ try {
             $delete_data = $db->prepare("DELETE FROM transaksi_kasir WHERE id_transaksi_header = " . $_SESSION['kode_transaksi_header']);
             $delete_data->execute();
             unset($_SESSION['kode_transaksi_header']);
-            $id_transaksi_header = date(Ymd)."0001";
+            $id_transaksi_header = date('Ymd')."0001";
             $q = $db->prepare("INSERT INTO transaksi_kasir (id_transaksi_header, id_petugas, tgl_transaksi, harga_total) 
                 VALUES (:id_transaksi_header, :id_karyawan, :tgl, :total)");
             $q->execute(array(':id_transaksi_header'=>$id_transaksi_header,':id_karyawan'=>$nik, ':tgl'=>$hari,':total'=>0));

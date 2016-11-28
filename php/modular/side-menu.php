@@ -91,15 +91,12 @@ function cek_terakhir(kode_awal){
             <!-- end of TRANSAKSI -->
 
             <!-- LAPORAN -->
-            <?php
-                if($hak_akses_laporan == 1){
-                    echo "<li class='list-title'>Laporan</li>
-                    <li><a href='#'><i class='zmdi zmdi-receipt'></i><span class='list-label'>Laporan Pembelian</span></a></li>
-                    <li><a href='#'><i class='zmdi zmdi-receipt'></i><span class='list-label'>Laporan Penjualan</span></a></li>";
-                }
-            ?>
+            <?php if($hak_akses_laporan == 1){ ?>
+                <li class="list-title">Laporan</li>
+                <li><a href="<?php echo $url_web . 'laporan/laporan_pembelian.php'?>"><i class="zmdi zmdi-receipt"></i><span class="list-label">Laporan Pembelian</span></a></li>
+                <li><a href="<?php echo $url_web . 'laporan/laporan_penjualan.php'?>"><i class="zmdi zmdi-receipt"></i><span class="list-label">Laporan Penjualan</span></a></li>
+            <?php } ?>
             <!-- end of LAPORAN -->
-
 
             <li class="list-title">Layouts</li>
             <li>

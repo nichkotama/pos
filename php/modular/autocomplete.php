@@ -2,16 +2,17 @@
 	require_once('koneksi.php');
 	//connect to your database
 	if(isset($_GET['src'])){
-  	mysql_connect(db_server,db_user,db_pass);
-  	mysql_select_db(db_name);
+  	// mysql_connect(db_server,db_user,db_pass);
+  	// mysql_select_db(db_name);
 		switch ($_GET['src']) {
 			case 'barcode_barang':
 				$term = trim(strip_tags($_GET['term']));
 				$qstring = "SELECT barcode_barang, nama_barang 
 							FROM barang 
-							WHERE nama_barang LIKE '%".$term."%'";
-				$result = mysql_query($qstring);
-				while ($row = mysql_fetch_array($result))
+							WHERE jml_stok >= 1 AND nama_barang LIKE '%".$term."%'";
+				$result = $db->prepare($qstring);
+				$result->execute();
+				while ($row = $result->fetch())
 				{
 				    $row['value']=htmlentities(stripslashes($row['nama_barang']));
 				    $row['id']=(int)$row['barcode_barang'];
@@ -26,8 +27,9 @@
 							FROM barang 
 							WHERE nama_barang LIKE '%".$term."%'
 							AND id_supplier = '$supplier'";
-				$result = mysql_query($qstring);
-				while ($row = mysql_fetch_array($result))
+				$result = $db->prepare($qstring);
+				$result->execute();
+				while ($row = $result->fetch())
 				{
 				    $row['value']=htmlentities(stripslashes($row['nama_barang'])) . " (Barcode:" . $row['barcode_barang'] . ")";
 				    $row['id']=(int)$row['barcode_barang'];
@@ -41,8 +43,9 @@
 				$qstring = "SELECT id_supplier, nama_supplier 
 							FROM supplier 
 							WHERE nama_supplier LIKE '%".$term."%'";
-				$result = mysql_query($qstring);
-				while ($row = mysql_fetch_array($result))
+				$result = $db->prepare($qstring);
+				$result->execute();
+				while ($row = $result->fetch())
 				{
 				    $row['value']=htmlentities(stripslashes($row['nama_supplier']));
 				    $row['id']=$row['id_supplier'];

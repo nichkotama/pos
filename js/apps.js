@@ -735,16 +735,18 @@ jQuery(document).ready(function ($) {
      **/
 
     if ($.fn.daterangepicker) {
-        $('.input-daterange-datepicker').daterangepicker();
+        $('.input-daterange-datepicker').daterangepicker({
+            format: 'DD/MM/YYYY'
+        });
         $('.input-daterange-timepicker').daterangepicker({
             timePicker: true,
-            format: 'MM/DD/YYYY h:mm A',
+            format: 'DD/MM/YYYY h:mm A',
             timePickerIncrement: 30,
             timePicker12Hour: true,
             timePickerSeconds: false
         });
         $('.input-limit-datepicker').daterangepicker({
-            format: 'MM/DD/YYYY',
+            format: 'DD/MM/YYYY',
             minDate: '06/01/2015',
             maxDate: '06/30/2015',
             dateLimit: {
@@ -755,7 +757,7 @@ jQuery(document).ready(function ($) {
         $('#reportrange span').html(moment().subtract(29, 'days').format('MMMM D, YYYY') + ' - ' + moment().format('MMMM D, YYYY'));
 
         $('#reportrange').daterangepicker({
-            format: 'MM/DD/YYYY',
+            format: 'DD/MM/YYYY',
             startDate: moment().subtract(29, 'days'),
             endDate: moment(),
             minDate: '01/01/2012',
@@ -2201,8 +2203,8 @@ jQuery(document).ready(function ($) {
                     html: true,
                     placement: 'top',
                     content: '<div>' + event.description + '</div>' +
-                    '<div>Start: ' + moment(event.start).format('MM/DD/YYYY hh:mm') + '</div>' +
-                    '<div>End: ' + moment(event.end).format('MM/DD/YYYY hh:mm') + '</div>'
+                    '<div>Start: ' + moment(event.start).format('DD/MM/YYYY hh:mm') + '</div>' +
+                    '<div>End: ' + moment(event.end).format('DD/MM/YYYY hh:mm') + '</div>'
                 });
 
                 element.find('div.fc-title').html(element.find('div.fc-title').text());

@@ -15,7 +15,7 @@ if(isset($_POST['update_po'])){
     try{
         $no_po = $_POST['nomor_po'];
         $nama_supplier = $_POST['nama_supplier'];
-        $id_supplier = $_POST['id_supplier'];
+        $id_supplier = $_POST['hdn_id_supplier'];
 
         $nama_item1 = $_POST['barang_1'];
         $barcode_item1 = get_string_between($nama_item1, '(Barcode:', ')');
@@ -46,7 +46,7 @@ if(isset($_POST['update_po'])){
             ${'subtotal' . $i} = str_replace(".","",${'subtotal' . $i});
         }
         $total_beli = $subtotal1 + $subtotal2 + $subtotal3 + $subtotal4 + $subtotal5;
-        echo $no_po.$id_supplier.date('Y-m-d').$total_beli; die();
+        // echo $no_po.$id_supplier.date('Y-m-d').$total_beli; die();
         
         // SET PEMBELIAN HEADER
         $set_kepala = $db->prepare("INSERT INTO transaksi_pembelian (id_pembelian, id_supplier, tgl_po, total_pembelian)
@@ -85,7 +85,11 @@ if(isset($_GET['key']) AND $_GET['method'] == 'no_po'){
     $result->bindParam(':no_po', $no_po);
     $result->execute();
     $row = $result->fetch();
-    // for($i=0; $row = $result->fetch(); $i++){
+
+    $get_detail = $db->prepare("SELECT a.*, b.* FROM transaksi_pembelian_detail a JOIN barang b ON a.barcode_barang = b.barcode_barang WHERE a.id_pembelian = :no_po");
+    $get_detail->bindParam(':no_po', $no_po);
+    $get_detail->execute();
+    $detail = $get_detail->fetch();    
 }
 ?>
 <!DOCTYPE html>
@@ -261,7 +265,7 @@ function set_hapus(url_set){
                                     <label class="icon-left" for="supplier">
                                         <i class="fa fa-barcode"></i>
                                     </label>
-                                    <input class="form-control login-frm-input"  type="text" id="supplier" name="supplier" placeholder="Masukkan Nama Supplier" required="true" value="<?php if(isset($row['nama_supplier']))  echo $row['nama_supplier'];?>" readonly>
+                                    <input class="form-control login-frm-input"  type="text" id="nama_supplier" name="nama_supplier" placeholder="Masukkan Nama Supplier" required="true" value="<?php if(isset($row['nama_supplier']))  echo $row['nama_supplier'];?>" readonly>
                                     <input type="hidden" name="hdn_id_supplier" value="<?php if(isset($row['id_supplier']))  echo $row['id_supplier'];?>">
                                 </div>
                             </div>
@@ -283,13 +287,13 @@ function set_hapus(url_set){
                                         <div class="col-sm-3 heading-tabel">Sub-Total (Rp)</div>
                                     </div>
                                 </div>
-                                <?php for($i=1;$i<=5;$i++) { ?>
+                                <?php while($baris = $get_detail->fetch(PDO::FETCH_ASSOC)) { ?>
                                 <div class="row">
                                     <div class="col-md-12" id="baris">
                                         <div class="col-md-1 p-tb-9"><button type="button" class="btn btn-danger" name="hapus_item" onfocus="this.blur();" onclick="clear_content(<?php echo $i?>)"><i class="zmdi zmdi-close"></i></button></div>
                                         <div class="col-md-1 p-tb-9"><?php echo ($i) ?></div> <!-- nomor_item_po -->
-                                        <div class="col-md-3 p-tb-9"><input type="text" class="barcode form-control" placeholder="Masukkan nama barang" id="barang_<?php echo ($i)?>" onkeyup="enable_next(<?php echo $i;?>)" name="barang_<?php echo ($i)?>"></div>
-                                        <div class="col-md-1 p-tb-9"><input type="number" class="form-control" id="qty_<?php echo ($i)?>" name="qty_<?php echo ($i)?>" min="1"></div>
+                                        <div class="col-md-3 p-tb-9"><input type="text" class="barcode form-control" placeholder="Masukkan nama barang" id="barang_<?php echo ($i)?>" onkeyup="enable_next(<?php echo $i;?>)" name="barang_<?php echo ($i)?>" value="<?php if(isset($baris['nama_barang'])) echo $baris['nama_barang'];?>"></div>
+                                        <div class="col-md-1 p-tb-9"><input type="number" class="form-control" id="qty_<?php echo ($i)?>" name="qty_<?php echo ($i)?>" min="1" value="<?php if(isset($baris['jml_beli'])) echo $baris['jml_beli'];?>"></div>
                                         <div class="col-md-3 p-tb-9"><input type="text" class="form-control money-mask" id="hargabeli_<?php echo ($i)?>" name="hargabeli_<?php echo ($i)?>" readonly  onfocus="this.blur();"></div>
                                         <div class="col-md-3 p-tb-9"><input type="text" class="form-control money-mask" id="subtotalbeli_<?php echo ($i)?>" name="subtotalbeli_<?php echo ($i)?>" readonly  onfocus="this.blur();"></div>
                                     </div>
@@ -379,5 +383,6 @@ function set_hapus(url_set){
 <script src="../js/lib/bootstrap-datepicker.js"></script>
 <script src="../js/apps.js"></script>
 <script src="../js/custom.js"></script>
+<script src="../js/lib/jquery.mask.js"></script>
 </body>
 </html>

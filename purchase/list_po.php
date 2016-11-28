@@ -46,7 +46,7 @@ try{
             ${'subtotal' . $i} = str_replace(".","",${'subtotal' . $i});
         }
         $total_beli = $subtotal1 + $subtotal2 + $subtotal3 + $subtotal4 + $subtotal5;
-        
+
         // SET PEMBELIAN HEADER
         $set_kepala = $db->prepare("INSERT INTO transaksi_pembelian (id_pembelian, id_supplier, tgl_po, total_pembelian)
         VALUES(?,?,?,?)");
@@ -76,14 +76,14 @@ try{
     }
 
     // DAPATKAN KODE TERAKHIR
-    $top = $db->prepare("SELECT * FROM transaksi_pembelian WHERE id_pembelian LIKE '" . date(Y) . "/" . $bulan_romawi . "%' ORDER BY id_pembelian DESC LIMIT 1");
+    $top = $db->prepare("SELECT * FROM transaksi_pembelian WHERE id_pembelian LIKE '" . date('Y') . "/" . $bulan_romawi . "%' ORDER BY id_pembelian DESC LIMIT 1");
     $top->execute();
     $terakhir = $top->fetch();
     if(isset($terakhir['id_pembelian'])){
         $new_po =  str_pad((end(explode("/", $terakhir['id_pembelian'])) + 1), 4, '0', STR_PAD_LEFT);
-        $nomor_po = date(Y) . "/" . $bulan_romawi . "/" . $new_po;
+        $nomor_po = date('Y') . "/" . $bulan_romawi . "/" . $new_po;
     }else{
-        $nomor_po = date(Y) . "/" . $bulan_romawi . "/0001";
+        $nomor_po = date('Y') . "/" . $bulan_romawi . "/0001";
     }
 }catch(Exception $e) {
     if($mode_debug = true) echo $e->getMessage();
@@ -284,7 +284,7 @@ function set_hapus(url_set){
                                 <?php for($i=1;$i<=5;$i++) { ?>
                                 <div class="row">
                                     <div class="col-md-12" id="baris">
-                                        <div class="col-md-1 p-tb-9"><button type="button" class="btn btn-danger" name="hapus_item" onfocus="this.blur();"><i class="zmdi zmdi-close" onclick="clear_content(<?php echo $i?>)"></i></button></div>
+                                        <div class="col-md-1 p-tb-9"><button type="button" class="btn btn-danger" name="hapus_item" onfocus="this.blur();" onclick="clear_content(<?php echo $i?>)"><i class="zmdi zmdi-close"></i></button></div>
                                         <div class="col-md-1 p-tb-9"><?php echo ($i) ?></div> <!-- nomor_item_po -->
                                         <div class="col-md-3 p-tb-9"><input type="text" class="barcode form-control" placeholder="Masukkan nama barang" id="barang_<?php echo ($i)?>" onkeyup="enable_next(<?php echo $i;?>)" name="barang_<?php echo ($i)?>"></div>
                                         <div class="col-md-1 p-tb-9"><input type="number" class="form-control" id="qty_<?php echo ($i)?>" name="qty_<?php echo ($i)?>" min="1"></div>
@@ -332,9 +332,9 @@ function set_hapus(url_set){
                 <td> <?php echo $row["nama_supplier"];?></td>
                 <td class="td-center">
                     <div class="btn-toolbar" role="toolbar">
-                        <div class="btn-group" role="group">
-                            <a href="edit_po.php?method=no_po&key=<?php echo urlencode($row['id_pembelian']);?>" class="btn btn-default btn-sm m-user-edit"><i class="zmdi zmdi-edit"></i></a>
-                        </div>
+                        <!--<div class="btn-group" role="group">
+                            <a href="edit_po.php?method=no_po&key=?php echo urlencode($row['id_pembelian']);?>" class="btn btn-default btn-sm m-user-edit"><i class="zmdi zmdi-edit"></i></a>
+                        </div>-->
                         <div class="btn-group" role="group">
                             <a href="edit.php?method=barcode&key=<?php echo $row['id_pembelian'];?>" class="btn btn-default btn-sm m-user-edit"><i class="zmdi zmdi-print"></i></a>
                         </div>

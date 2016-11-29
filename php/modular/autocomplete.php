@@ -22,11 +22,15 @@
 				break;
 			case 'nama_barang':
 				$term = trim(strip_tags($_GET['term']));
-				$supplier = trim(strip_tags($_GET['supplier']));
+				$supplier = '';
+				if(isset($_GET['supplier'])) $supplier = trim(strip_tags($_GET['supplier']));
 				$qstring = "SELECT barcode_barang, nama_barang, harga_beli 
 							FROM barang 
 							WHERE nama_barang LIKE '%".$term."%'
-							AND id_supplier = '$supplier'";
+							OR barcode_barang LIKE '%".$term."%'";
+				if($supplier != ''){
+					$qstring .= "AND id_supplier = '$supplier'";
+				}
 				$result = $db->prepare($qstring);
 				$result->execute();
 				while ($row = $result->fetch())
@@ -49,6 +53,35 @@
 				{
 				    $row['value']=htmlentities(stripslashes($row['nama_supplier']));
 				    $row['id']=$row['id_supplier'];
+				    $row_set[] = $row;
+				}
+				echo json_encode($row_set);
+				break;
+			case 'nomor_struk':
+				$term = trim(strip_tags($_GET['term']));
+				$qstring = "SELECT id_transaksi_header 
+							FROM transaksi_kasir 
+							WHERE id_transaksi_header LIKE '%".$term."%'";
+				$result = $db->prepare($qstring);
+				$result->execute();
+				while ($row = $result->fetch())
+				{
+				    $row['value']=htmlentities(stripslashes($row['id_transaksi_header']));
+				    $row['id']=(int)$row['id_transaksi_header'];
+				    $row_set[] = $row;
+				}
+				echo json_encode($row_set);
+			case 'nomor_po':
+				$term = trim(strip_tags($_GET['term']));
+				$qstring = "SELECT transaksi_pembelian.id_pembelian
+							FROM transaksi_pembelian JOIN transaksi_pembelian_detail ON transaksi_pembelian.id_pembelian = transaksi_pembelian_detail.id_pembelian
+							WHERE transaksi_pembelian_detail.tgl_diterima IS NOT NULL AND transaksi_pembelian.id_pembelian LIKE '%".$term."%'";
+				$result = $db->prepare($qstring);
+				$result->execute();
+				while ($row = $result->fetch())
+				{
+				    $row['value']=htmlentities(stripslashes($row['id_pembelian']));
+				    $row['id']=(int)$row['id_pembelian'];
 				    $row_set[] = $row;
 				}
 				echo json_encode($row_set);

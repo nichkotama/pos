@@ -1,7 +1,6 @@
 <?php 
 require_once('../php/modular/koneksi.php');
-require_once('../php/modular/otentifikasi.php'); 
-// require('../php/modular/fpdf.php');
+require_once('../php/modular/otentifikasi.php');
 require('../php/modular/html_table.php');
 
 if(isset($_POST['btn_cetak'])){
@@ -9,19 +8,19 @@ if(isset($_POST['btn_cetak'])){
     $tgl = explode(' - ', $range);
     $tgl_awal = date("Y-m-d", strtotime($tgl[0]));
     $tgl_akhir = date("Y-m-d", strtotime($tgl[1]));
-    $no_struk = $_POST['filter_struk'];
+    $num_po = $_POST['filter_PO'];
     $barang = $_POST['filter_barang'];
     $bcodebarang = str_replace(')', '', end(explode('Barcode:', $barang)));
     // $penjualan
 
-    $qPenjualan = "SELECT transaksi_kasir.id_transaksi_header, transaksi_kasir.tgl_transaksi, barang.nama_barang, transaksi_kasir_detail.barcode_barang, transaksi_kasir_detail.jml_barang, transaksi_kasir_detail.harga_sub_total, (barang.harga_beli * transaksi_kasir_detail.jml_barang) AS harga_beli_subtotal, (transaksi_kasir_detail.harga_sub_total - (barang.harga_beli * transaksi_kasir_detail.jml_barang)) AS margin_penjualan FROM transaksi_kasir JOIN transaksi_kasir_detail ON transaksi_kasir.id_transaksi_header = transaksi_kasir_detail.id_transaksi_header JOIN barang ON transaksi_kasir_detail.barcode_barang = barang.barcode_barang WHERE tgl_transaksi BETWEEN '" . $tgl_awal . "' AND '" . $tgl_akhir . "' ";
-    if($no_struk != ''){
-        $qPenjualan .= "AND transaksi_kasir.id_transaksi_header = '$no_struk' ";
+    $qPenjualan = "SELECT transaksi_pembelian.id_pembelian as nomor_po, transaksi_pembelian_detail.tgl_diterima, barang.nama_barang, barang.barcode_barang, transaksi_pembelian_detail.jml_beli, transaksi_pembelian_detail.harga_sub_total FROM transaksi_pembelian JOIN transaksi_pembelian_detail ON transaksi_pembelian.id_pembelian = transaksi_pembelian_detail.id_pembelian JOIN barang ON transaksi_pembelian_detail.barcode_barang = barang.barcode_barang WHERE transaksi_pembelian_detail.tgl_diterima IS NOT NULL AND transaksi_pembelian_detail.tgl_diterima BETWEEN '" . $tgl_awal . "' AND '" . $tgl_akhir . "' ";
+    if($num_po != ''){
+        $qPenjualan .= "AND transaksi_pembelian.id_pembelian = '$num_po' ";
     }
     if($barang != ''){
-        $qPenjualan .= "AND transaksi_kasir_detail.barcode_barang = '$bcodebarang' ";
+        $qPenjualan .= "AND barang.barcode_barang = '$bcodebarang' ";
     }
-    $qPenjualan .= "GROUP BY transaksi_kasir_detail.id_transaksi_detail";
+    $qPenjualan .= "GROUP BY transaksi_pembelian.id_pembelian";
     $result_penjualan = $db->prepare($qPenjualan);
     $result_penjualan->execute();
     $pdf=new PDF();
@@ -31,34 +30,30 @@ if(isset($_POST['btn_cetak'])){
     $pdf->SetFont('Arial','B',10); 
     $kop = "BM Mart";
     $kop_2 = "Jl. Lodan Raya No. 2, Ancol - Jakarta Utara";
-    $kop_3 = "Laporan Penjualan Tanggal " . $_POST['range_cetak'];
+    $kop_3 = "Laporan Penerimaan Barang Tanggal " . $_POST['range_cetak'];
     $pdf->Text(100 - ($pdf->GetStringWidth($text) / 2), 15, $kop);
     $pdf->Text(70 - ($pdf->GetStringWidth($text) / 2), 20, $kop_2);
-    $pdf->Text(62 - ($pdf->GetStringWidth($text) / 2), 25, $kop_3);
+    $pdf->Text(55 - ($pdf->GetStringWidth($text) / 2), 25, $kop_3);
 
     // BODY
     $pdf->SetFont('Arial','B',6); 
     $htmlTable="<TABLE BORDER='1px' cellspacing='0' cellpadding='0'>";
     $htmlTable.="<TR>";
-    $htmlTable.="<TD width='75' bgcolor='#D0D0FF'>No. Struk</TD>";
-    $htmlTable.="<TD width='75' bgcolor='#D0D0FF'>Tanggal</TD>";
+    $htmlTable.="<TD width='75' bgcolor='#D0D0FF'>No. PO</TD>";
+    $htmlTable.="<TD width='75' bgcolor='#D0D0FF'>Tanggal Terima</TD>";
     $htmlTable.="<TD width='250' bgcolor='#D0D0FF'>Nama Barang</TD>";
     $htmlTable.="<TD width='80' bgcolor='#D0D0FF'>Barcode</TD>";
     $htmlTable.="<TD width='50' bgcolor='#D0D0FF'>Jumlah</TD>";
-    $htmlTable.="<TD width='75' bgcolor='#D0D0FF'>Harga Jual</TD>";
     $htmlTable.="<TD width='75' bgcolor='#D0D0FF'>Harga Beli</TD>";
-    $htmlTable.="<TD width='75' bgcolor='#D0D0FF'>Laba</TD>";
     $htmlTable.="</TR>";
     for($i=0;$row = $result_penjualan->fetch();$i++){
         $htmlTable.="<TR>";
-        $htmlTable.="<TD width='75'>".$row['id_transaksi_header']."</TD>";
-        $htmlTable.="<TD width='75'>".$row['tgl_transaksi']."</TD>";
+        $htmlTable.="<TD width='75'>".$row['nomor_po']."</TD>";
+        $htmlTable.="<TD width='75'>".$row['tgl_diterima']."</TD>";
         $htmlTable.="<TD width='250'>".$row['nama_barang']."</TD>";
         $htmlTable.="<TD width='80'>".$row['barcode_barang']."</TD>";
-        $htmlTable.="<TD width='50'>".$row['jml_barang']."</TD>";
+        $htmlTable.="<TD width='50'>".$row['jml_beli']."</TD>";
         $htmlTable.="<TD width='75'>".str_replace(',', '.', number_format($row['harga_sub_total']))."</TD>";
-        $htmlTable.="<TD width='75'>".str_replace(',', '.', number_format($row['harga_beli_subtotal']))."</TD>";
-        $htmlTable.="<TD width='75'>".str_replace(',', '.', number_format($row['margin_penjualan']))."</TD>";
         $htmlTable.="</TR>";
     }
     $htmlTable.="</TABLE>";
@@ -67,7 +62,7 @@ if(isset($_POST['btn_cetak'])){
 }
 
 
-$hasil_select = $db->prepare("SELECT transaksi_kasir.id_transaksi_header, transaksi_kasir.tgl_transaksi, barang.nama_barang, transaksi_kasir_detail.barcode_barang, transaksi_kasir_detail.jml_barang, transaksi_kasir_detail.harga_sub_total, (barang.harga_beli * transaksi_kasir_detail.jml_barang) AS harga_beli_subtotal, (transaksi_kasir_detail.harga_sub_total - (barang.harga_beli * transaksi_kasir_detail.jml_barang)) AS margin_penjualan FROM transaksi_kasir JOIN transaksi_kasir_detail ON transaksi_kasir.id_transaksi_header = transaksi_kasir_detail.id_transaksi_header JOIN barang ON transaksi_kasir_detail.barcode_barang = barang.barcode_barang GROUP BY transaksi_kasir_detail.id_transaksi_detail");
+$hasil_select = $db->prepare("SELECT transaksi_pembelian.id_pembelian as nomor_po, transaksi_pembelian_detail.tgl_diterima, barang.nama_barang, barang.barcode_barang, transaksi_pembelian_detail.jml_beli, transaksi_pembelian_detail.harga_sub_total FROM transaksi_pembelian JOIN transaksi_pembelian_detail ON transaksi_pembelian.id_pembelian = transaksi_pembelian_detail.id_pembelian JOIN barang ON transaksi_pembelian_detail.barcode_barang = barang.barcode_barang WHERE transaksi_pembelian_detail.tgl_diterima IS NOT NULL");
 $hasil_select->execute();
 
 // $result = $db->prepare("SELECT 
@@ -113,8 +108,8 @@ $(function() {
             $(this).val(ui.item.value);
         }
     });
-    $( ".struk" ).autocomplete({
-        source: "../php/modular/autocomplete.php?src=nomor_struk",  
+    $( ".po_autocomp" ).autocomplete({
+        source: "../php/modular/autocomplete.php?src=nomor_po",  
         minLength:2, 
         autoFocus:true,
         focus: function (event, ui) {
@@ -131,12 +126,12 @@ $(function() {
 <div class="page-header filled light single-line">
     <div class="row widget-header block-header">
         <div class="col-sm-6">
-            <h2>Laporan Penjualan</h2>
+            <h2>Laporan Barang Masuk</h2>
         </div>
         <div class="col-sm-6">
             <ul class="list-page-breadcrumb">
                 <li><a href="#">Laporan <i class="zmdi zmdi-chevron-right"></i></a></li>
-                <li class="active-page"> Laporan Penjualan</li>
+                <li class="active-page"> Laporan Barang Masuk</li>
             </ul>
         </div>
     </div>
@@ -145,7 +140,7 @@ $(function() {
             <div class="col-md-12">
                 <div class="widget-container">
                     <div class="widget-content">
-                        <form action="laporan_penjualan.php" class="form-horizontal" method="post" target="_blank">
+                        <form action="laporan_pembelian.php" method="post" class="form-horizontal" target="_blank">
                             <div class="form-group">
                                 <label class="col-md-1 control-label">Tanggal</label>
                                 <div class="col-md-3">
@@ -154,7 +149,7 @@ $(function() {
                                 
                                 <label class="col-md-1 control-label">Opsional <i class="zmdi zmdi-chevron-right"> </i></label>
                                 <div class="col-md-3">
-									<input type="text" name="filter_struk" class="struk form-control" placeholder="Masukkan nomor struk">
+									<input type="text" name="filter_PO" class="po_autocomp form-control" placeholder="Masukkan nomor PO">
                                 </div>
                                 <div class="col-md-3">
 									<input type="text" name="filter_barang" class="barcode form-control" placeholder="Masukkan nama atau barcode">
@@ -172,14 +167,12 @@ $(function() {
             <table class="table table-striped data-tbl">
                 <thead>
                 <tr>
-                    <th>No. Struk</th>
-                    <th>Tanggal</th>
+                    <th>No. PO</th>
+                    <th>Tanggal Terima</th>
                     <th>Nama Barang</th>
                     <th>Barcode</th>
                     <th>Jumlah</th>
                     <th>Harga Beli</th>
-                    <th>Harga Jual</th>
-                    <th>Laba</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -188,14 +181,12 @@ $(function() {
                 for ($i = 0; $row = $hasil_select->fetch(); $i++) {
             ?>
                 <tr>
-                <td> <?php echo $row["id_transaksi_header"];?> </td>
-                <td> <?php echo $row["tgl_transaksi"];?> </td>
+                <td> <?php echo $row["nomor_po"];?> </td>
+                <td> <?php echo $row["tgl_diterima"];?> </td>
                 <td> <?php echo $row["nama_barang"];?> </td>
                 <td> <?php echo $row["barcode_barang"];?> </td>
-                <td> <?php echo $row["jml_barang"];?> </td>
+                <td> <?php echo $row["jml_beli"];?> </td>
                 <td> <?php echo money_format('%.2n', $row["harga_sub_total"]);?> </td>
-                <td> <?php echo money_format('%.2n', $row["harga_beli_subtotal"]);?> </td>
-                <td> <?php echo money_format('%.2n', $row["margin_penjualan"]);?> </td>
             <?php
                 }
             ?>

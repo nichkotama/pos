@@ -1446,6 +1446,7 @@ jQuery(document).ready(function ($) {
 
     if ($.fn.dataTable) {
         $('.data-tbl').DataTable({
+            "searching": true,
             responsive: true,
             "oLanguage": {
                 "sLengthMenu": '<select class="tbl-data-select">' +

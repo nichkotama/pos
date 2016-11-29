@@ -336,7 +336,7 @@ function set_hapus(url_set){
                             <a href="edit_po.php?method=no_po&key=?php echo urlencode($row['id_pembelian']);?>" class="btn btn-default btn-sm m-user-edit"><i class="zmdi zmdi-edit"></i></a>
                         </div>-->
                         <div class="btn-group" role="group">
-                            <a href="edit.php?method=barcode&key=<?php echo $row['id_pembelian'];?>" class="btn btn-default btn-sm m-user-edit"><i class="zmdi zmdi-print"></i></a>
+                            <a href="cetak_po.php?method=nomor_po&key=<?php echo urlencode($row['id_pembelian']);?>" class="btn btn-default btn-sm m-user-edit" target="_blank"><i class="zmdi zmdi-print"></i></a>
                         </div>
                         <div class="btn-group" role="group" data-toggle="modal" data-target="#modalHapus" onclick="set_hapus('<?php echo urlencode($row['id_pembelian']);?>')" name="hapus">
                             <a class="btn btn-default btn-sm m-user-edit"><i class="zmdi zmdi-delete"></i></a>                                  

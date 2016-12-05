@@ -194,7 +194,7 @@ function cek_terakhir(kode_awal){
                                         <label class="icon-left" for="nik">
                                             <i class="zmdi zmdi-assignment-account"></i>
                                         </label>
-                                        <input class="form-control login-frm-input"  type="text" id="nik" name="nik" placeholder="Pilih Departemen Terlebih Dahulu" disabled="true" value="<?php if(isset($nik)) echo $nik?>">
+                                        <input class="form-control login-frm-input"  type="text" id="nik" name="nik" placeholder="Pilih Departemen Terlebih Dahulu" disabled="true" value="<?php if(isset($nik)) echo $nik?>" onkeyup="document.getElementById('nik_hidden').value = this.value">
                                         <input type="hidden" name="nik_hidden" id="nik_hidden">
                                     </div>
                                 </div>

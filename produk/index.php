@@ -24,6 +24,9 @@ $result->execute();
     <link type="text/css" rel="stylesheet" href="../css/common.css">
     <link type="text/css" rel="stylesheet" href="../css/responsive.css">
     <link type="text/css" rel="stylesheet" href="../css/custom.css">
+    <script src="../js/jquery.js"></script>
+    <script src="../js/jquery-ui.js"></script>
+
 
 <script>
 function fokus_teks() {
@@ -32,6 +35,19 @@ function fokus_teks() {
 </script>
 </head>
 <body class="overlay-leftbar">
+<script type="text/javascript">
+var id_supplier_select = '';
+$(function() {  
+    $( "#supplier" ).autocomplete({
+        source: "../php/modular/autocomplete.php?src=supplier",  
+        minLength:2, 
+        autoFocus:true,
+        select: function (event, ui) {
+            document.getElementById("id_supplier").value = (ui.item.id);
+        }
+    });
+});
+</script>
 <?php include('../php/modular/top-menu.php') ?>
 <?php include('../php/modular/side-menu.php') ?>
 <!--Page Container Start Here-->
@@ -107,6 +123,15 @@ function fokus_teks() {
                                             <i class="fa fa-money"></i>
                                         </label>
                                         <input class="form-control login-frm-input"  type="text" id="hargajual" name="hargajual" placeholder="Masukkan Harga Jual">
+                                    </div>
+                                </div>
+                                <div class="unit">
+                                    <div class="input">
+                                        <label class="icon-left" for="hargajual">
+                                            <i class="zmdi zmdi-assignment-account"></i>
+                                        </label>
+                                        <input class="form-control"  type="text" id="supplier" name="supplier" placeholder="Pilih Supplier" required="true">
+                                        <input type="hidden" name="id_supplier" id="id_supplier">
                                     </div>
                                 </div>
                             </div>

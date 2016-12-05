@@ -98,7 +98,7 @@ function cek_terakhir(kode_awal){
             <?php } ?>
             <!-- end of LAPORAN -->
 
-            <li class="list-title">Layouts</li>
+            <!-- <li class="list-title">Layouts</li>
             <li>
                 <a href="#"><i class="zmdi zmdi-view-dashboard"></i><span class="list-label">Layouts Variations</span></a>
                 <ul>
@@ -210,7 +210,7 @@ function cek_terakhir(kode_awal){
                     <li><a href="login-social.html">Social Login</a></li>
                     <li><a href="404-error.html">404 Error Page</a></li>
                 </ul>
-            </li>
+            </li> -->
         </ul>
     </div>
 </aside>

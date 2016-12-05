@@ -6,10 +6,11 @@ try{
 	$c = (float)$_POST['hargabeli'];
 	$d = (float)$_POST['hargajual'];
 	$e = (int)$_POST['banyak'];
-	$sql = "INSERT INTO barang (barcode_barang,nama_barang,harga_beli,harga_jual,jml_stok) 
-	VALUES (:a,:b,:c,:d,:e)";
+	$f = $_POST['id_supplier'];
+	$sql = "INSERT INTO barang (barcode_barang,nama_barang,harga_beli,harga_jual,jml_stok,id_supplier) 
+	VALUES (:a,:b,:c,:d,:e,:f)";
 	$q = $db->prepare($sql);
-	$q->execute(array(':a'=>$a,':b'=>$b,':c'=>$c,':d'=>$d,':e'=>$e));
+	$q->execute(array(':a'=>$a,':b'=>$b,':c'=>$c,':d'=>$d,':e'=>$e,':f'=>$f));
 	header("location: index.php");
 }catch(Exception $e){
 	if($mode_debug == true){

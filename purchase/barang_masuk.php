@@ -88,9 +88,11 @@ function fokus_teks() {
     document.getElementById("nama").focus();
 }
 
-function set_keterangan(url_set){
+function set_keterangan(url_set, keterangan){
     var id_pembelian_detail = decodeURIComponent(url_set);
+    var keterangan_ganti = keterangan;
     document.getElementById("hdn_keterangan").value = id_pembelian_detail;
+    document.getElementById("keterangan").value = keterangan_ganti;
 }
 
 </script>

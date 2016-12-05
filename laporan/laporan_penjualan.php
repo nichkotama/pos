@@ -25,9 +25,9 @@ if(isset($_POST['btn_cetak'])){
     $result_penjualan = $db->prepare($qPenjualan);
     $result_penjualan->execute();
     $pdf=new PDF();
-    $pdf->AddPage();
+    $pdf->AddPage('P','A4');
     // HEADER
-    $pdf->Image($url_web.'/images/logo-dark-mini.png',18,13,20);
+    $pdf->Image($url_web.'images/logo-dark-mini.png',18,13,20);
     $pdf->SetFont('Arial','B',10); 
     $kop = "BM Mart";
     $kop_2 = "Jl. Lodan Raya No. 2, Ancol - Jakarta Utara";

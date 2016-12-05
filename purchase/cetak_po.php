@@ -16,7 +16,7 @@ if(isset($_GET['key']) AND $_GET['method'] == 'nomor_po'){
 
     $hasil_satuan=$result_po->fetch();
     $pdf=new PDF();
-    $pdf->AddPage();
+    $pdf->AddPage('P','A4');
     // HEADER
     $pdf->Image($url_web.'/images/logo-dark-mini.png',18,13,20);
     $pdf->SetFont('Arial','B',10); 

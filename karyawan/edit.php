@@ -105,12 +105,13 @@ window.onload = function() {
 													}else{
 														cek_terakhir(this.value);
 													}
-										">
+										" required>
 											<?php
 												$querydept = $db->prepare("SELECT 
 																			kary.*, dept.departemen AS nama_departemen, dept.kode_awal AS kode_awal
 																			FROM karyawan kary
-																			LEFT JOIN departemen dept ON kary.departemen = dept.kode_awal");
+																			LEFT JOIN departemen dept ON kary.departemen = dept.kode_awal
+                                                                            GROUP BY kode_awal");
 												$querydept->execute();
 												$querydept_select = $db->prepare("SELECT *
 																			FROM karyawan WHERE id_karyawan='$nik'");
@@ -141,7 +142,7 @@ window.onload = function() {
                                     <label class="icon-left" for="telp">
                                         <i class="fa fa-money"></i>
                                     </label>
-                                    <input class="form-control login-frm-input phone-mask"  type="telp" id="telp" name="telp" placeholder="Masukkan Nomor Telepon Karyawan" value="<?php echo $row['telp_karyawan'];?>">
+                                    <input class="form-control login-frm-input phone-mask"  type="telp" id="telp" name="telp" placeholder="Masukkan Nomor Telepon Karyawan" value="<?php echo $row['telp_karyawan'];?>" required>
                                 </div>
                             </div>
                             <div class="unit">
@@ -149,13 +150,13 @@ window.onload = function() {
                                     <label class="icon-left" for="alamat">
                                         <i class="fa fa-money"></i>
                                     </label>
-                                    <textarea class="form-control login-frm-input" id="alamat" name="alamat" placeholder="Masukkan Alamat Karyawan"><?php echo $row['alamat_karyawan'];?></textarea>
+                                    <textarea class="form-control login-frm-input" id="alamat" name="alamat" placeholder="Masukkan Alamat Karyawan" required><?php echo $row['alamat_karyawan'];?></textarea>
                                 </div>
                             </div>
                             <div class="unit">
                                 <div class="input">
                                     <img  style="max-height:128px" src="<?php echo $url_web . "images/karyawan/" . $row['foto'];?>">
-									<input type="file" name="foto2" class="filestyle bootstrap-file" data-buttonbefore="true">
+									<input type="file" name="foto2" class="filestyle bootstrap-file" data-buttonbefore="true" required>
                                 </div>
                             </div>
                             <div class="unit">

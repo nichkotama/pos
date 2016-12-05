@@ -112,7 +112,7 @@ window.onload = function() {
                                         <label class="icon-left" for="id_supplier">
                                             <i class="zmdi zmdi-assignment-account"></i>
                                         </label>
-                                        <input class="form-control login-frm-input"  type="text" id="id_supplier" name="id_supplier" placeholder="Pilih Departemen Terlebih Dahulu" disabled="true" value="<?php if(isset($id_supplier)) echo $id_supplier?>">
+                                        <input class="form-control login-frm-input"  type="text" id="id_supplier" name="id_supplier" placeholder="Pilih Departemen Terlebih Dahulu" disabled="true" value="<?php if(isset($id_supplier)) echo $id_supplier?>" onkeyup="document.getElementById('hidden_id').value = this.value">
                                         <input type="hidden" name="hidden_id" id="hidden_id">
                                     </div>
                                 </div>
@@ -120,7 +120,7 @@ window.onload = function() {
                                     <label class="checkbox">
                                         <input type="checkbox" onchange="document.getElementById('id_supplier').disabled = !this.checked;" >
                                         <i></i>
-                                        Input id_supplier Secara Manual
+                                        Input ID Supplier Secara Manual
                                     </label>
                                 </div>
                                 </div>

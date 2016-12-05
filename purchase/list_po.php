@@ -185,23 +185,23 @@ function clear_content(id_num){
 function get_totals(){
     var subtotal_hbeli = 0;
     if(document.getElementById("barang_1").value != "") {
-        var hb1 = parseFloat(document.getElementById("hargabeli_1").value.replace(".", ""));
+        var hb1 = parseFloat(document.getElementById("subtotalbeli_1").value.replace(".", ""));
         subtotal_hbeli += hb1;
     }
     if(document.getElementById("barang_2").value != "") {
-        var hb2 = parseFloat(document.getElementById("hargabeli_2").value.replace(".", ""));
+        var hb2 = parseFloat(document.getElementById("subtotalbeli_2").value.replace(".", ""));
         subtotal_hbeli += hb2;
     }
     if(document.getElementById("barang_3").value != "") {
-        var hb3 = parseFloat(document.getElementById("hargabeli_3").value.replace(".", ""));
+        var hb3 = parseFloat(document.getElementById("subtotalbeli_3").value.replace(".", ""));
         subtotal_hbeli += hb3;
     }
     if(document.getElementById("barang_4").value != "") {
-        var hb4 = parseFloat(document.getElementById("hargabeli_4").value.replace(".", ""));
+        var hb4 = parseFloat(document.getElementById("subtotalbeli_4").value.replace(".", ""));
         subtotal_hbeli += hb4;
     }
     if(document.getElementById("barang_5").value != "") {
-        var hb5 = parseFloat(document.getElementById("hargabeli_5").value.replace(".", ""));
+        var hb5 = parseFloat(document.getElementById("subtotalbeli_5").value.replace(".", ""));
         subtotal_hbeli += hb5;
     }
     // alert(hb1);
@@ -213,6 +213,13 @@ function set_hapus(url_set){
     var kode_po = decodeURIComponent(url_set);
     document.getElementById("yang_mau_dihapus").innerHTML = kode_po;
     document.getElementById("hdn_nomor_po").value = kode_po;
+}
+
+function updateQty(idx){
+    var hb1 = parseFloat(document.getElementById("hargabeli_"+idx).value.replace(".", ""));
+    var qt1 = parseFloat(document.getElementById("qty_"+idx).value);
+    document.getElementById("subtotalbeli_"+idx).value = toRp(hb1*qt1);
+    get_totals();
 }
 
 </script>
@@ -287,7 +294,7 @@ function set_hapus(url_set){
                                         <div class="col-md-1 p-tb-9"><button type="button" class="btn btn-danger" name="hapus_item" onfocus="this.blur();" onclick="clear_content(<?php echo $i?>)"><i class="zmdi zmdi-close"></i></button></div>
                                         <div class="col-md-1 p-tb-9"><?php echo ($i) ?></div> <!-- nomor_item_po -->
                                         <div class="col-md-3 p-tb-9"><input type="text" class="barcode form-control" placeholder="Masukkan nama barang" id="barang_<?php echo ($i)?>" onkeyup="enable_next(<?php echo $i;?>)" name="barang_<?php echo ($i)?>"></div>
-                                        <div class="col-md-1 p-tb-9"><input type="number" class="form-control" id="qty_<?php echo ($i)?>" name="qty_<?php echo ($i)?>" min="1"></div>
+                                        <div class="col-md-1 p-tb-9"><input type="number" class="form-control" id="qty_<?php echo ($i)?>" name="qty_<?php echo ($i)?>" min="1" onblur="updateQty(<?php echo $i;?>)""></div>
                                         <div class="col-md-3 p-tb-9"><input type="text" class="form-control money-mask" id="hargabeli_<?php echo ($i)?>" name="hargabeli_<?php echo ($i)?>" readonly  onfocus="this.blur();"></div>
                                         <div class="col-md-3 p-tb-9"><input type="text" class="form-control money-mask" id="subtotalbeli_<?php echo ($i)?>" name="subtotalbeli_<?php echo ($i)?>" readonly  onfocus="this.blur();"></div>
                                     </div>

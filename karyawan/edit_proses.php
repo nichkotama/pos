@@ -33,6 +33,7 @@ try{
                 $sumber = $file_tmp;
                 $tujuan = "../images/karyawan/" . $nik . "." . $file_ext;
                 // die("sumber: " . $sumber . ", tujuan: " . $tujuan);
+                // unlink($tujuan);
                 move_uploaded_file($sumber, $tujuan);
             }
         }
@@ -63,10 +64,14 @@ try{
             </div>
         </div>";
     }
-    $sql1 = "UPDATE karyawan SET nama_karyawan = '$nama', departemen = '$depart', email = '$email' , telp_karyawan = '$telp', alamat_karyawan = '$alamat'";
-    if(isset($_FILES['foto2']['name'])) $sql .= ", foto = '" . $nik . "." . $file_ext . "'";
+    $sql1 = "UPDATE karyawan SET nama_karyawan = '$nama', departemen = '$depart', email = '$email' , telp_karyawan = '$telp', alamat_karyawan = '$alamat' ";
+    if(isset($_FILES['foto2']['name'])) $sql1 .= ", foto = '" . $nik . "." . $file_ext . "' ";
     $sql1 .= "WHERE id_karyawan = '$nik'";
-    mysqli_query($koneksi, $sql1);
+
+    $do_update_karyawan = $db->prepare($sql1);
+    $do_update_karyawan->execute();
+
+    sleep(3);
     header("location: index.php");
 }catch(Exception $e){
     if($mode_debug = true) echo $e->getMessage();

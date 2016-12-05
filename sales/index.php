@@ -41,8 +41,8 @@ try {
 
     // Klik tombol bayar
     if(isset($_POST['bayar'])){
-        $bayaran = (float) $_POST['jumlah_bayar'];
-        $tagihan = (float) $_POST['tagihan'];
+        $bayaran = (float) str_replace(".","",$_POST['jumlah_bayar']);
+        $tagihan = (float) str_replace(".","",$_POST['tagihan']);
 
         if(($bayaran - $tagihan) > 0){
             $update_total_belanja = $db->prepare("UPDATE transaksi_kasir SET harga_total = " 
@@ -50,11 +50,17 @@ try {
                 . $_SESSION['kode_transaksi_header'] . "'");
             $update_total_belanja->execute();
     
+            $update_stok_post = $db->prepare("UPDATE barang, transaksi_kasir_detail SET barang.jml_stok = (barang.jml_stok - transaksi_kasir_detail.jml_barang) WHERE barang.barcode_barang = transaksi_kasir_detail.barcode_barang AND transaksi_kasir_detail.id_transaksi_header = ?");
+            $update_stok_post->execute(array($_SESSION['kode_transaksi_header']));  
+        
             $terakhir = (int) $_SESSION['kode_transaksi_header'] + 1;
             $sql = "INSERT INTO transaksi_kasir (id_transaksi_header, id_petugas, tgl_transaksi, harga_total) 
                 VALUES (:id_transaksi_header, :id_karyawan, :tgl, :total)";
             $q = $db->prepare($sql);
             $q->execute(array(':id_transaksi_header'=>$terakhir,':id_karyawan'=>$nik, ':tgl'=>$hari,':total'=>0));
+            
+            echo "<script type='text/javascript'>window.open('" . $url_web . "sales/cetak_struk.php?bon=paid&nomor_struk=".$_SESSION['kode_transaksi_header']."&bayar=".$bayaran."')</script>";
+
             $_SESSION['kode_transaksi_header'] = $terakhir;
         }else{
             echo "<script type='text/javascript'>alert('Jumlah pembayaran kurang');</script>";
@@ -79,11 +85,6 @@ try {
         $q->execute();
         $belanja += ($harga_satuan * $jml);
 
-
-        $update_stok = $db->prepare("UPDATE barang 
-                        SET jml_stok = ?
-                        WHERE barcode_barang = ?");
-        $update_stok->execute(array($jml_stok_akhir, $bcode));  
     }
 
     // Hapus barang
@@ -121,7 +122,7 @@ try {
         }
     }else{
         // Kalau belum, buat baru
-        $id_transaksi_header = date(Ymd)."0001";
+        $id_transaksi_header = date('Ymd')."0001";
         $q = $db->prepare("INSERT INTO transaksi_kasir (id_transaksi_header, id_petugas, tgl_transaksi, harga_total) 
             VALUES (:id_transaksi_header, :id_karyawan, :tgl, :total)");
         $q->execute(array(':id_transaksi_header'=>$id_transaksi_header,':id_karyawan'=>$nik, ':tgl'=>$hari,':total'=>0));
@@ -178,10 +179,16 @@ try {
         }
     }
     function kembalian(){
+        var copyBayaran = document.getElementById('hdn_bayar_uang');
         var adaInputan = document.getElementById('jumlah_kembalian');
         var bayar_senilai = parseFloat(document.getElementById('jumlah_bayar').value.replace(".", ""));
         var tagihan_senilai = parseFloat(document.getElementById('harga_total_tagihan').value.replace(".", ""));
         if(!isNaN(bayar_senilai - tagihan_senilai)) adaInputan.value = toRp(bayar_senilai - tagihan_senilai);
+        if(!isNaN(bayar_senilai)){
+            copyBayaran.value = bayar_senilai;
+        }else{
+            copyBayaran.value = 0;
+        }
     }
     $(function() {  
         $( "#barcode" ).autocomplete({
@@ -294,7 +301,7 @@ try {
                     . "<div class='col-sm-1'><button class='btn btn-danger' name='hapus_item' type='submit'><i class='zmdi zmdi-close'></i></button>" . "<input type='hidden' name='remove' value='" . $_SESSION['kode_transaksi_header'] . "'/><input type='hidden' name='item' value='" . $data['barcode_barang'] . "'/></div>" 
                     . "<div class='col-sm-1 p-tb-9' id='daftar_belanja'>" . ($i+1) . "</div>" 
                     . "<div class='col-sm-3 p-tb-9'>" . $data['nama_barang'] . '</div>' 
-                    . "<div class='col-sm-1'><input class='form-control' style='width:60px' type='number' id='qty_" .$data['barcode_barang'] . "' value='" . $data['jml_barang'] . "' onblur='updateQty(" . $_SESSION['kode_transaksi_header'] . "," . $data['barcode_barang'] . " )' min='1'></div>"
+                    . "<div class='col-sm-1'><input class='form-control' style='width:60px' type='number' id='qty_" .$data['barcode_barang'] . "' value='" . $data['jml_barang'] . "' onblur='updateQty(" . $_SESSION['kode_transaksi_header'] . "," . $data['barcode_barang'] . " )' min='1' max='" . $data['jml_stok'] . "'></div>"
                     . "<div class='col-sm-3'><input class='form-control' type='text' id='hargasatuan_" .$data['barcode_barang'] . "' value='" . number_format(($data['harga_jual']),0,',','.') . "' readonly=''></div>" 
                     . "<div class='col-sm-3'><input class='form-control' type='text' name='subtotal' id='hargasub_" .$data['barcode_barang'] . "' value='" . number_format(($data['harga_sub_total']),0,',','.') . "' readonly=''></div>"
                     . "</div>";
@@ -338,6 +345,7 @@ try {
                                                             <label class="col-md-4 control-label">Jumlah Bayar</label>
                                                             <div class="col-md-8">
                                                                 <input type="text" id="jumlah_bayar" name="jumlah_bayar" class="form-control money-mask" onkeyup="kembalian()"/>
+                                                                <input type="hidden" name="hdn_bayar_uang" id="hdn_bayar_uang">
                                                             </div>
                                                         </div>
                                                     </div>

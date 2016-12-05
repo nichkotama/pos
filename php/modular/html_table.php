@@ -157,7 +157,25 @@ function OpenTag($tag, $attr)
                 }
             $this->tdbegin=true;
             break;
-
+        case 'TDRIGHT': // TD-BEGIN
+            if( !empty($attr['WIDTH']) ) $this->tdwidth=($attr['WIDTH']/4);
+            else $this->tdwidth=40; // Set to your own width if you need bigger fixed cells
+            if( !empty($attr['HEIGHT']) ) $this->tdheight=($attr['HEIGHT']/6);
+            else $this->tdheight=6; // Set to your own height if you need bigger fixed cells
+            if( !empty($attr['ALIGN']) ) {
+                $align=$attr['ALIGN'];        
+                if($align=='LEFT') $this->tdalign='L';
+                if($align=='CENTER') $this->tdalign='C';
+                if($align=='RIGHT') $this->tdalign='R';
+            }
+            else $this->tdalign='L'; // Set to your own
+            if( !empty($attr['BGCOLOR']) ) {
+                $coul=hex2dec($attr['BGCOLOR']);
+                    $this->SetFillColor($coul['R'],$coul['G'],$coul['B']);
+                    $this->tdbgcolor=true;
+                }
+            $this->tdbegin=true;
+            break;
         case 'HR':
             if( !empty($attr['WIDTH']) )
                 $Width = $attr['WIDTH'];

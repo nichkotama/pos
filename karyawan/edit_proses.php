@@ -26,8 +26,8 @@ try{
     $file_size = $_FILES['foto2']['size'];
     $file_ext = strtolower(end(explode(".", $file_name)));
     $ext_boleh = array("jpg", "png");
-    if(in_array($file_ext, $ext_boleh) || $_FILES['foto2']['size'] == 0 ){
-        if($file_size <= 2*1024*1024)
+    if(in_array($file_ext, $ext_boleh) || $file_size > 0 ){
+        if($file_size <= 2*1024*1024 AND $file_size > 0)
         {
             if($_FILES['foto2']['size'] != 0 ){
                 $sumber = $file_tmp;
@@ -65,7 +65,7 @@ try{
         </div>";
     }
     $sql1 = "UPDATE karyawan SET nama_karyawan = '$nama', departemen = '$depart', email = '$email' , telp_karyawan = '$telp', alamat_karyawan = '$alamat' ";
-    if(isset($_FILES['foto2']['name'])) $sql1 .= ", foto = '" . $nik . "." . $file_ext . "' ";
+    if($file_size > 0) $sql1 .= ", foto = '" . $nik . "." . $file_ext . "' ";
     $sql1 .= "WHERE id_karyawan = '$nik'";
 
     $do_update_karyawan = $db->prepare($sql1);

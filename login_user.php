@@ -10,9 +10,10 @@ if(isset($_POST['submit'])){
             FROM karyawan 
             WHERE id_karyawan LIKE binary '$user' AND password = '$newpass'";
     
-    $hasil = mysqli_query($koneksi, $sql);
-    $baris = mysqli_fetch_assoc($hasil);
-    if(mysqli_num_rows($hasil) == 0){
+    $login_proc = $db->prepare($sql);
+    $login_proc->execute();
+    $login_res = $login_proc->fetch();
+    if(!isset($login_res['id_karyawan'])){
         echo "<div class='row'>
             <div class='col-md-12'>
                 <div class='j-forms'>
